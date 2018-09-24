@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="DZZypE" name="pajAUanalyser" projectType="audioplug" jucerVersion="5.3.2"
+              bundleIdentifier="com.pajczur.pajAUanalyser" pluginFormats="buildAU"
+              companyName="Pajczur" companyCopyright="Pajczur &amp; co." pluginName="pajAUanalyser"
+              pluginDesc="pajAUanalyser" pluginManufacturer="Pajczur" pluginManufacturerCode="Paju"
+              pluginCode="Paua" pluginAUExportPrefix="pajAUanalyser" pluginAUMainType="'aufx'"
+              binaryDataNamespace="pajAUanalyser">
+  <MAINGROUP id="F6xOSM" name="pajAUanalyser">
+    <GROUP id="{68DE7542-BE3F-FE9B-049F-6B0DB72D32D0}" name="Source">
+      <GROUP id="{5A4F8B64-DE8F-B45C-B85B-D169933CBB88}" name="PajFFT">
+        <FILE id="XHyEce" name="PajFFT_Radix2.cpp" compile="1" resource="0"
+              file="Source/PajFFT/PajFFT_Radix2.cpp"/>
+        <FILE id="I6SN4h" name="PajFFT_Radix2.h" compile="0" resource="0" file="Source/PajFFT/PajFFT_Radix2.h"/>
+      </GROUP>
+      <GROUP id="{DAF587DF-E996-E9EB-4F83-451211D09C3C}" name="resources"/>
+      <FILE id="R3m3TV" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="ScojUK" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="pN3aAQ" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="fn9xIr" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="vyFan1" name="Display_Logarithmic.cpp" compile="1" resource="0"
+            file="Source/Display_Logarithmic.cpp"/>
+      <FILE id="qQ9fBA" name="Display_Logarithmic.h" compile="0" resource="0"
+            file="Source/Display_Logarithmic.h"/>
+      <FILE id="T532sg" name="GraphAnalyser.cpp" compile="1" resource="0"
+            file="Source/GraphAnalyser.cpp"/>
+      <FILE id="Uh9mEG" name="GraphAnalyser.h" compile="0" resource="0" file="Source/GraphAnalyser.h"/>
+      <FILE id="F1Bk3t" name="DrawingThread.cpp" compile="1" resource="0"
+            file="Source/DrawingThread.cpp"/>
+      <FILE id="hlzO47" name="DrawingThread.h" compile="0" resource="0" file="Source/DrawingThread.h"/>
+      <FILE id="NhFLdX" name="pajczurLogo.png" compile="0" resource="1" file="Source/pajczurLogo.png"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="pajAUanalyser" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="pajAUanalyser" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../Applications/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_USE_MP3AUDIOFORMAT="1"/>
+</JUCERPROJECT>
