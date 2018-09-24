@@ -9,7 +9,7 @@
 namespace pajAUanalyser
 {
     extern const char*   pajczurLogo_png;
-    const int            pajczurLogo_pngSize = 582;
+    const int            pajczurLogo_pngSize = 577;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 1;
