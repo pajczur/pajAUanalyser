@@ -220,9 +220,9 @@ void Display_Logarithmic::paint (Graphics& g)
     g.drawFittedText(" - " + graphTitle + " - ", ((getWidth()-margXLeft-margXLeft)/2.0)-50.0+margXLeft, 8.5, 100, 10, Justification::centred, 1);
     
     if(channelQuantity>1) {
-        g.setColour(Colours::red);
+        g.setColour(Colours::white);
         g.drawFittedText("LEFT", ((getWidth()-margXLeft-margXLeft)/2.0)-50.0+margXLeft -35, 8.5, 50, 10, Justification::centred, 1);
-        g.setColour(Colours::greenyellow);
+        g.setColour(Colours::red);
         g.drawFittedText("RIGHT", ((getWidth()-margXLeft-margXLeft)/2.0)-50.0+margXLeft + 90, 8.5, 50, 10, Justification::centred, 1);
     }
 }

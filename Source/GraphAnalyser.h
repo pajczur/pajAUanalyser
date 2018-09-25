@@ -35,12 +35,12 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     
-    void preparePath();
-    void prepareMagPath();
-    void preparePhaPath();
-    void prepareMagPathStat();
-    void preparePhaPathStat();
-    void prepareStaticPath();
+    void drawGraph();
+    void drawMagPath();
+    void drawPhaPath();
+    void drawGraphSTATIC();
+    void drawMagPathSTATIC();
+    void drawPhaPathSTATIC();
     void clearDisplay();
     
     Path fftGraphPath;
@@ -54,7 +54,7 @@ public:
     float dataSize;
 private:
     std::vector<float> *dataSource;
-
+    float fPIshift;
     int chan;
     int lowEndIndex=1;
     float zero_dB;

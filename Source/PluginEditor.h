@@ -32,6 +32,9 @@ public:
     
     void timerCallback(int timerID) override;
     
+    void mouseDown( const MouseEvent & event ) override;
+    void mouseUp( const MouseEvent & event ) override;
+    
     
     void connectionMade() override;
     void connectionLost() override;
@@ -43,7 +46,7 @@ public:
     void resetAnalGraph();
 private:
     PajAuanalyserAudioProcessor& processor;
-
+    
     int channelQuantity;
 
     double sampRate = processor.getSampleRate();;
@@ -98,6 +101,8 @@ private:
     TextButton pajOff;
     TextButton pajReset;
     
+    int rememberWhichButtonIsToggled;
+    
     enum buttonsID {
         muteImpulseID = 0,
         b1024ID       = 1,
@@ -129,7 +134,8 @@ private:
     enum wTimersID
     {
         drawingTimer = 0,
-        settingsTimer = 1
+        settingsTimer = 1,
+        checkBypass = 2
     };
     
     int wBufferButtonID;
@@ -137,6 +143,7 @@ private:
     bool pajIsOn=true;
     
 //    DrawingThread drawingThread;
+    bool sendBypassMessage;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)
 };

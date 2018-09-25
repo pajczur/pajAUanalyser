@@ -16,8 +16,8 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     : AudioProcessorEditor (&p), processor (p)
 {
     setResizable(true, true);
-    setResizeLimits(520, 300, 10000, 10000);
-    setSize (520, 400);
+    setResizeLimits(565, 300, 10000, 10000);
+    setSize (565, 400);
     isResized = false; // For ensure that window is update (see in timerCallback)
     
     logoSpace.setSize(40.0f, 40.0f);
@@ -159,8 +159,11 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     
     pajIsOn = true;
     
+    resizableCorner->addMouseListener(this, true);
+    
     drawButtons();
     startTimer(drawingTimer, 40);
+    startTimer(checkBypass, 10);
 }
 
 
@@ -207,16 +210,16 @@ void PajAuanalyserAudioProcessorEditor::resized()
     processor.dThread.display_magni.setBounds (0, topMarg,      displayWidth, displayHeight);
     processor.dThread.display_phase.setBounds (0, graphOffsetY, displayWidth, displayHeight);
 
-    if(!pajIsOn && processor.dThread.isSystemReady)
-    {
-        processor.dThread.graphAnalyserMagL.prepareStaticPath();
-        processor.dThread.graphAnalyserPhaL.prepareStaticPath();
-        if(processor.getTotalNumInputChannels()>1)
-        {
-            processor.dThread.graphAnalyserMagR.prepareStaticPath();
-            processor.dThread.graphAnalyserPhaR.prepareStaticPath();
-        }
-    }
+//    if(!pajIsOn && processor.dThread.isSystemReady)
+//    {
+//        processor.dThread.graphAnalyserMagL.prepareStaticPath();
+//        processor.dThread.graphAnalyserPhaL.prepareStaticPath();
+//        if(processor.getTotalNumInputChannels()>1)
+//        {
+//            processor.dThread.graphAnalyserMagR.prepareStaticPath();
+//            processor.dThread.graphAnalyserPhaR.prepareStaticPath();
+//        }
+//    }
     
 //    int graphMargX = processor.dThread.display_magni.getDisplayMargXLeft();
 //    int graphMargY = processor.dThread.display_magni.getDisplayMargYTop();
@@ -231,7 +234,8 @@ void PajAuanalyserAudioProcessorEditor::resized()
         processor.dThread.graphAnalyserMagR.setBounds(/*graphMargX*/ 50, /*graphMargY*/ 23+topMarg, graphWidth, graphHeight);
         processor.dThread.graphAnalyserPhaR.setBounds(/*graphMargX*/ 50, /*graphMargY*/ 23+graphOffsetY, graphWidth, graphHeight);
     }
-
+    
+    processor.dThread.notify();
     repaint();
 }
 
@@ -316,6 +320,29 @@ void PajAuanalyserAudioProcessorEditor::timerCallback(int timerID)
         setBufferSize(wBufferButtonID);
         wBufferButtonID = 0;
     }
+
+    if(timerID == checkBypass)
+    {
+        if(processor.isProcBlockRun < 0)
+        {
+            if(sendBypassMessage)
+            {
+                impulseMessage.fillWith(muteImpulseID);
+                sendMessage(impulseMessage);
+                sendBypassMessage = false;
+            }
+        }
+        else
+        {
+            processor.isProcBlockRun--;
+            if(!sendBypassMessage)
+            {
+                sendBypassMessage = true;
+                impulseMessage.fillWith(rememberWhichButtonIsToggled);
+                sendMessage(impulseMessage);
+            }
+        }
+    }
 }
 
 
@@ -360,6 +387,7 @@ void PajAuanalyserAudioProcessorEditor::setBufferSize(int bufSizeID)
     if(tempBuffsize>0)
     {
         processor.wSettings(processor.wSampleRate, tempBuffsize);
+        rememberWhichButtonIsToggled = bufSizeID;
         impulseMessage.fillWith(bufSizeID);
         sendMessage(impulseMessage);
         
@@ -376,13 +404,13 @@ void PajAuanalyserAudioProcessorEditor::setBufferSize(int bufSizeID)
 void PajAuanalyserAudioProcessorEditor::drawButtons()
 {
 //    int margX = (getWidth()/2)-215.0f;
-    float margX = 49;
+    float margX = 94;
     float labX=10;
     float bufLabX=87-5;
     float bufButX=100-5;
     
     float spaceX=38.5;
-    logoSpace.setBounds(4.5, 5, 40, 40);
+    logoSpace.setBounds(margX-45, 5, 40, 40);
     buttonsSpace.setBounds(margX, 5.0f, 445.0f-3, 40.0f);
     setResolutLabel.setBounds( margX + labX,    23, 80, 15);
     setBuffSizLabel.setBounds( margX + labX,    10, 80, 15);
@@ -468,13 +496,29 @@ void PajAuanalyserAudioProcessorEditor::resetAnalGraph()
     processor.dThread.graphAnalyserMagR.fftGraphPath.clear();
     processor.dThread.graphAnalyserPhaR.fftGraphPath.clear();
     
-    processor.dThread.graphAnalyserMagL.prepareStaticPath();
-    processor.dThread.graphAnalyserPhaL.prepareStaticPath();
-    processor.dThread.graphAnalyserMagR.prepareStaticPath();
-    processor.dThread.graphAnalyserPhaR.prepareStaticPath();
+    processor.dThread.graphAnalyserMagL.drawGraphSTATIC();
+    processor.dThread.graphAnalyserPhaL.drawGraphSTATIC();
+    processor.dThread.graphAnalyserMagR.drawGraphSTATIC();
+    processor.dThread.graphAnalyserPhaR.drawGraphSTATIC();
     
     processor.dThread.graphAnalyserMagL.repaint();
     processor.dThread.graphAnalyserPhaL.repaint();
     processor.dThread.graphAnalyserMagR.repaint();
     processor.dThread.graphAnalyserPhaR.repaint();
+}
+
+void PajAuanalyserAudioProcessorEditor::mouseDown( const MouseEvent & event )
+{
+    if( event.originalComponent == resizableCorner.get() )
+    {
+        processor.dThread.isResizing = true;
+    }
+}
+
+void PajAuanalyserAudioProcessorEditor::mouseUp( const MouseEvent & event )
+{
+    if( event.originalComponent == resizableCorner.get() )
+    {
+        processor.dThread.isResizing = false;
+    }
 }

@@ -28,12 +28,13 @@ PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
     pluginWasOpen = false;
     isGlobalBuffer = true;
     wDetectLatency = false;
-    wStop=false;
+    wStop=true;
 }
 
 PajAuanalyserAudioProcessor::~PajAuanalyserAudioProcessor()
 {
     dThread.stopThread(1000);
+    isProcBlockRun=-1;
 }
 
 //==============================================================================
@@ -155,24 +156,32 @@ bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
 
 void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
-    
-    for (auto k = inputChannelsQuantity; k < totalNumOutputChannels; ++k)
-        buffer.clear (k, 0, buffer.getNumSamples());
-    
-    
-    for (int channel = 0; channel < inputChannelsQuantity; ++channel)
+    if(wStop)
     {
-        float* channelData = buffer.getWritePointer (channel);
+//        if(tempppp>=200) tempppp=0;
+//        DBG("Process Block STOPPED " << tempppp++);
+    }
+    if(!wStop)
+    {
+//        if(tempppp>=200) tempppp=0;
+//        DBG("Process Block PLAY " << tempppp++);
+        auto totalNumOutputChannels = getTotalNumOutputChannels();
         
-        for(int i=0; i<realBuffSize; ++i)
+        for (auto k = inputChannelsQuantity; k < totalNumOutputChannels; ++k)
+            buffer.clear (k, 0, buffer.getNumSamples());
+        
+        
+        for (int channel = 0; channel < inputChannelsQuantity; ++channel)
         {
-            tempInput[channel][sampleCount[channel]]  = buffer.getSample(channel, i);
+            float* channelData = buffer.getWritePointer (channel);
             
-            channelData[i] = 0.0f; // This make silence
-            
-            if(!wStop)
+            for(int i=0; i<realBuffSize; ++i)
             {
+                isProcBlockRun=4;
+                tempInput[channel][sampleCount[channel]]  = buffer.getSample(channel, i);
+                
+                channelData[i] = 0.0f; // This make silence
+                
                 if(isAnySignal[channel]==false)
                 {
                     if(tempInput[channel][sampleCount[channel]] > 0.000001f)
@@ -194,7 +203,7 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
                 if(sampleCount[channel]>=wBuffSize)
                 {
                     sampleCount[channel]=0;
-    //                    _time.wStart();
+                    
                     if(isAnySignal[channel])
                     {
                         isAnySignal[channel]=false;
@@ -202,7 +211,6 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
                         dThread.sourceIsReady[channel] = true;
                         dThread.notify();
                     }
-    //                    DBG(_time.secondsElapsed());
                 }
             }
         }
@@ -240,6 +248,7 @@ void PajAuanalyserAudioProcessor::wSettings(double sampleRate, int samplesPerBlo
     dThread.isSystemReady = false;
     dThread.sourceIsReady[left] = false;
     dThread.sourceIsReady[right] = false;
+    dThread.totalNumInputChannels = getTotalNumInputChannels();
     
     wBuffSize = (float)samplesPerBlock;
 
@@ -293,7 +302,6 @@ void PajAuanalyserAudioProcessor::wSettings(double sampleRate, int samplesPerBlo
     
     dThread.isSystemReady = true;
 }
-
 
 
 //==============================================================================

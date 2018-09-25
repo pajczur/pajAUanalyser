@@ -150,27 +150,27 @@ void GraphAnalyser::resized()
 
 
 
-void GraphAnalyser::preparePath()
+void GraphAnalyser::drawGraph()
 {
     fftGraphPath.clear();
     
     if(outType == wMag)
-        prepareMagPath();
+        drawMagPath();
     else if (outType == wPha)
-        preparePhaPath();
+        drawPhaPath();
         
     repaint();
 }
 
 
-void GraphAnalyser::prepareStaticPath()
+void GraphAnalyser::drawGraphSTATIC()
 {
     fftGraphPath.clear();
     
     if(outType == wMag)
-        prepareMagPathStat();
+        drawMagPathSTATIC();
     else if (outType == wPha)
-        preparePhaPathStat();
+        drawPhaPathSTATIC();
     
     repaint();
 }
@@ -195,7 +195,7 @@ void GraphAnalyser::clearDisplay()
 
 }
 
-void GraphAnalyser::prepareMagPath()
+void GraphAnalyser::drawMagPath()
 {
     float wMagnitude;
     
@@ -231,11 +231,11 @@ void GraphAnalyser::prepareMagPath()
     }
 }
 
-void GraphAnalyser::preparePhaPath()
+void GraphAnalyser::drawPhaPath()
 {
     float wMagnitude;
     
-    float fPIshift=0;
+    fPIshift=0;
 
     fftGraphPath.startNewSubPath(0.0f, zero_dB + dataSource->at(lowEndIndex) * zero_dB);
     
@@ -279,7 +279,7 @@ void GraphAnalyser::preparePhaPath()
 }
 
 
-void GraphAnalyser::prepareMagPathStat()
+void GraphAnalyser::drawMagPathSTATIC()
 {
     float wMagnitude;
     
@@ -309,28 +309,17 @@ void GraphAnalyser::prepareMagPathStat()
     }
 }
 
-void GraphAnalyser::preparePhaPathStat()
+void GraphAnalyser::drawPhaPathSTATIC()
 {
     float wMagnitude;
     
-    float fPIshift=0;
+//    fPIshift=0;
 
     fftGraphPath.startNewSubPath(0.0f, zero_dB + drawStaticY[lowEndIndex] * zero_dB);
     
     for(int i=lowEndIndex+1; i<dataSize; i++)
     {
-        
-        float tempp = drawStaticY[i] - drawStaticY[i-1];
-        
-        if(pajUnwrapping)
-        {
-            if(tempp > 1.0f)
-                fPIshift -= 2;
-            else if(tempp < -1.0f)
-                fPIshift += 2;
-        }
-        
-        wMagnitude = zero_dB + (drawStaticY[i]+fPIshift) * (zero_dB);
+        wMagnitude = zero_dB + drawStaticY[i] * (zero_dB);
         
         double wCurrent   = dispLogScale * (log10(drawStaticX[i]*logScaleWidth) - log10(lowEnd));
         

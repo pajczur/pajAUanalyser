@@ -26,43 +26,60 @@ void DrawingThread::run()
 {
     while(! threadShouldExit())
     {
-        wait (1000);
-        if (threadShouldExit()) return;
-        
-        makeFFT();
-        
-        const MessageManagerLock mml (Thread::getCurrentThread());
-        if (mml.lockWasGained())
-            calcAndDraw();
-        
-        
+        if(!isResizing)
+        {
+            wait (1000);
+            if (threadShouldExit()) return;
+            
+            makeFFT();
+            
+            const MessageManagerLock mml (Thread::getCurrentThread());
+            if (mml.lockWasGained())
+                drawFFTgraph();
+        }
+        else
+        {
+            wait (1000);
+            if (threadShouldExit()) return;
+            
+            const MessageManagerLock mml (Thread::getCurrentThread());
+            if (mml.lockWasGained())
+                drawSTATICgraph();
+        }
     }
 }
 
-void DrawingThread::calcAndDraw()
+void DrawingThread::drawFFTgraph()
 {
     if(isSystemReady)
     {
         if(sourceIsReady[left])
         {
-//            makeFFT(wInput[left], wOutput[left], left);
-            
-            graphAnalyserMagL.preparePath();
-            
-            graphAnalyserPhaL.preparePath();
-            
+            graphAnalyserMagL.drawGraph();
+            graphAnalyserPhaL.drawGraph();
             sourceIsReady[left]=false;
         }
         
-        if(sourceIsReady[right])
+        if(totalNumInputChannels==2)
         {
-//            makeFFT(wInput[right], wOutput[right], right);
-            
-            graphAnalyserMagR.preparePath();
-            
-            graphAnalyserPhaR.preparePath();
-            
-            sourceIsReady[right]=false;
+            if(sourceIsReady[right])
+            {
+                graphAnalyserMagR.drawGraph();
+                graphAnalyserPhaR.drawGraph();
+                sourceIsReady[right]=false;
+            }
         }
+    }
+}
+
+
+void DrawingThread::drawSTATICgraph()
+{
+    graphAnalyserMagL.drawGraphSTATIC();
+    graphAnalyserPhaL.drawGraphSTATIC();
+    if(totalNumInputChannels==2)
+    {
+        graphAnalyserMagR.drawGraphSTATIC();
+        graphAnalyserPhaR.drawGraphSTATIC();
     }
 }

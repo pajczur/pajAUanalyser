@@ -89,12 +89,15 @@ public:
     bool wDetectLatency;
     std::atomic<bool> wStop;
     
+    Thread *stopMessage = nullptr;
+    
     bool isConnectionSuccesful;
     
     DrawingThread dThread;
     
     bool settingsToApprove = true;
-
+    int tempppp=0;
+    std::atomic<int> isProcBlockRun;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessor)
 };

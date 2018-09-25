@@ -24,7 +24,8 @@ public:
     DrawingThread();
     ~DrawingThread();
     
-    void calcAndDraw();
+    void drawFFTgraph();
+    void drawSTATICgraph();
     
     void run() override;
     
@@ -57,6 +58,8 @@ public:
     GraphAnalyser graphAnalyserPhaR;
 
     PajFFT_Radix2     radix2_FFT;
+    int totalNumInputChannels=1;
+    std::atomic<bool> isResizing;
 private:
     
     enum outputType
