@@ -29,12 +29,13 @@ PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
     isGlobalBuffer = true;
     wDetectLatency = false;
     wStop=true;
+    isMute = true;
 }
 
 PajAuanalyserAudioProcessor::~PajAuanalyserAudioProcessor()
 {
     dThread.stopThread(1000);
-    isProcBlockRun=-1;
+    bypassTreshold=-1;
 }
 
 //==============================================================================
@@ -112,12 +113,13 @@ void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesP
     if(!pluginWasOpen)
     {
         pluginWasOpen = true;
-        wSettings(wSampleRate, 4096);
+        wSettings(wSampleRate, 1024);
     }
     else
     {
         wSettings(wSampleRate, (int)wBuffSize);
     }
+    
     
     settingsToApprove = true;
 }
@@ -156,15 +158,10 @@ bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
 
 void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
-    if(wStop)
+    bypassTreshold=1;
+    
+    if(!isBypassed && !isMute)
     {
-//        if(tempppp>=200) tempppp=0;
-//        DBG("Process Block STOPPED " << tempppp++);
-    }
-    if(!wStop)
-    {
-//        if(tempppp>=200) tempppp=0;
-//        DBG("Process Block PLAY " << tempppp++);
         auto totalNumOutputChannels = getTotalNumOutputChannels();
         
         for (auto k = inputChannelsQuantity; k < totalNumOutputChannels; ++k)
@@ -177,39 +174,41 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
             
             for(int i=0; i<realBuffSize; ++i)
             {
-                isProcBlockRun=4;
                 tempInput[channel][sampleCount[channel]]  = buffer.getSample(channel, i);
+                
                 
                 channelData[i] = 0.0f; // This make silence
                 
-                if(isAnySignal[channel]==false)
+                if(!wStop)
                 {
-                    if(tempInput[channel][sampleCount[channel]] > 0.000001f)
-                        isAnySignal[channel] = true;
-                }
-                
-                if(wDetectLatency)
-                {
-                    if(tempInput[channel][sampleCount[channel]] > tempInput[channel][0])
+                    if(isAnySignal[channel]==false)
                     {
-                        tempInput[channel][0] = tempInput[channel][sampleCount[channel]];
-                        sampleCount[channel] = 0;
+                        if(tempInput[channel][sampleCount[channel]] > 0.000001f)
+                            isAnySignal[channel] = true;
                     }
-                }
-                
-                
-                sampleCount[channel]++;
-                
-                if(sampleCount[channel]>=wBuffSize)
-                {
-                    sampleCount[channel]=0;
                     
-                    if(isAnySignal[channel])
+                    if(wDetectLatency)
                     {
-                        isAnySignal[channel]=false;
-                        dThread.wInput[channel] = tempInput[channel];
-                        dThread.sourceIsReady[channel] = true;
-                        dThread.notify();
+                        if(tempInput[channel][sampleCount[channel]] > tempInput[channel][0])
+                        {
+                            tempInput[channel][0] = tempInput[channel][sampleCount[channel]];
+                            sampleCount[channel] = 0;
+                        }
+                    }
+
+                    sampleCount[channel]++;
+                    
+                    if(sampleCount[channel]>=wBuffSize)
+                    {
+                        sampleCount[channel]=0;
+                        
+                        if(isAnySignal[channel])
+                        {
+                            isAnySignal[channel]=false;
+                            dThread.wInput[channel] = tempInput[channel];
+                            dThread.sourceIsReady[channel] = true;
+                            dThread.notify();
+                        }
                     }
                 }
             }
@@ -299,6 +298,7 @@ void PajAuanalyserAudioProcessor::wSettings(double sampleRate, int samplesPerBlo
     isAnySignal[left]  = false;
     isAnySignal[right] = false;
     
+    bypassTmier = round(((float)realBuffSize * 1000.0f) / wSampleRate);
     
     dThread.isSystemReady = true;
 }

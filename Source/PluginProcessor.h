@@ -12,7 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "DrawingThread.h"
-#include <complex>
+#include "Clock.h"
 
 //==============================================================================
 /**
@@ -23,7 +23,7 @@ public:
     //==============================================================================
     PajAuanalyserAudioProcessor();
     ~PajAuanalyserAudioProcessor();
-
+    
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -70,6 +70,7 @@ public:
     int sampleCount[2];
     bool isAnySignal[2];
     
+    
 private:
     enum outputType
     {
@@ -89,6 +90,9 @@ public:
     bool wDetectLatency;
     std::atomic<bool> wStop;
     
+    Clock nextBuffer;
+    Clock loopInBuff;
+    
     Thread *stopMessage = nullptr;
     
     bool isConnectionSuccesful;
@@ -97,7 +101,13 @@ public:
     
     bool settingsToApprove = true;
     int tempppp=0;
-    std::atomic<int> isProcBlockRun;
+    std::atomic<int> bypassTreshold;
+    
+    std::atomic<int> bypassTmier;
+    
+    std::atomic<bool> isBypassed;
+    std::atomic<bool> isMute;
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessor)
 };

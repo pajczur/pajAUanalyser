@@ -12,7 +12,7 @@
 #include "DrawingThread.h"
 
 //==============================================================================
-DrawingThread::DrawingThread()  : Thread("Drawing thread"), isSystemReady(false)
+DrawingThread::DrawingThread()  : Thread("Drawing thread"), isSystemReady(false), drawPhase(false)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -56,7 +56,9 @@ void DrawingThread::drawFFTgraph()
         if(sourceIsReady[left])
         {
             graphAnalyserMagL.drawGraph();
-            graphAnalyserPhaL.drawGraph();
+            if(drawPhase)
+                graphAnalyserPhaL.drawGraph();
+            
             sourceIsReady[left]=false;
         }
         
@@ -65,7 +67,9 @@ void DrawingThread::drawFFTgraph()
             if(sourceIsReady[right])
             {
                 graphAnalyserMagR.drawGraph();
-                graphAnalyserPhaR.drawGraph();
+                if(drawPhase)
+                    graphAnalyserPhaR.drawGraph();
+                
                 sourceIsReady[right]=false;
             }
         }
@@ -76,10 +80,15 @@ void DrawingThread::drawFFTgraph()
 void DrawingThread::drawSTATICgraph()
 {
     graphAnalyserMagL.drawGraphSTATIC();
-    graphAnalyserPhaL.drawGraphSTATIC();
+    
+    if(drawPhase)
+        graphAnalyserPhaL.drawGraphSTATIC();
+    
     if(totalNumInputChannels==2)
     {
         graphAnalyserMagR.drawGraphSTATIC();
-        graphAnalyserPhaR.drawGraphSTATIC();
+        
+        if(drawPhase)
+            graphAnalyserPhaR.drawGraphSTATIC();
     }
 }

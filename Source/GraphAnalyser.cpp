@@ -119,9 +119,10 @@ void GraphAnalyser::paint (Graphics& g)
     }
 
 //    g.strokePath(fftGraphL.createPathWithRoundedCorners(10.0f), PathStrokeType(2));
+//    g.strokePath(fftGraphPath.createPathWithRoundedCorners(10.0f), PathStrokeType(1.0));
     
     if(outType==wMag)
-        g.strokePath(fftGraphPath.createPathWithRoundedCorners(10.0f), PathStrokeType(1.0));
+        g.strokePath(fftGraphPath, PathStrokeType(1.0));
     else if(outType==wPha)
         g.strokePath(fftGraphPath, PathStrokeType(1.0));
 }

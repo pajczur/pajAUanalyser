@@ -44,6 +44,9 @@ public:
     
     void turnOffAnal();
     void resetAnalGraph();
+    
+    void setGraphBounds(int isShowPhase);
+    
 private:
     PajAuanalyserAudioProcessor& processor;
     
@@ -98,10 +101,12 @@ private:
     ToggleButton pajUnwrap;
     Label pajUnwrapLabel;
     
-    TextButton pajOff;
-    TextButton pajReset;
+    TextButton pajOFFButton;
+    TextButton pajResetButton;
+    TextButton pajPhaseButton;
     
     int rememberWhichButtonIsToggled;
+    std::atomic<bool> waitForSettings;
     
     enum buttonsID {
         muteImpulseID = 0,
@@ -114,10 +119,13 @@ private:
         b65536ID      = 7,
         unWrapID      = 8,
         latencyID     = 100,
-        pajOffID      = 900,
-        pajResetID    = 901,
+        pajOffButtonID      = 900,
+        pajResetButtonID    = 901,
+        pajPhaseButtonID    = 902,
         bufferButtonRadioGroup = 1000
     };
+    
+    void leaveButtonsUntouched(int onButtonID);
     
     MemoryBlock impulseMessage;
     
@@ -135,15 +143,20 @@ private:
     {
         drawingTimer = 0,
         settingsTimer = 1,
-        checkBypass = 2
+        bypassTimer = 2
     };
+    
+    int bypassTime;
     
     int wBufferButtonID;
     
     bool pajIsOn=true;
+    int showPhaseBool=0;
     
 //    DrawingThread drawingThread;
     bool sendBypassMessage;
+    
+    BubbleMessageComponent pajHint;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)
 };
