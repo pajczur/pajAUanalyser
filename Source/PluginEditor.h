@@ -157,6 +157,7 @@ private:
     
 //    DrawingThread drawingThread;
     bool sendBypassMessage;
+    int tempRememberedButton;
     
     BubbleMessageComponent pajHint;
     

@@ -263,7 +263,8 @@ void PajAuanalyserAudioProcessorEditor::updateToggleState(Button* button, int bu
                     wBufferButtonID = buttonID;
                     processor.bufferID = buttonID;
                     impulseMessage.fillWith(muteImpulseID);
-                    
+                    tempRememberedButton = buttonID;
+//                    disconnect();
                     if(connectToSocket("127.0.0.1", 52425, 1000))
                     {
                         rememberWhichButtonIsToggled = buttonID;
@@ -301,6 +302,7 @@ void PajAuanalyserAudioProcessorEditor::updateToggleState(Button* button, int bu
     if(buttonID == pajOffButtonID)
     {
         rememberWhichButtonIsToggled=0;
+        processor.bufferID = 0;
         processor.dThread.stopThread(1000);
         turnOffAnal();
         processor.isMute = true;
@@ -531,11 +533,24 @@ void PajAuanalyserAudioProcessorEditor::connectionLost()
 
 void PajAuanalyserAudioProcessorEditor::messageReceived( const MemoryBlock & message)
 {
+    DBG("OTRZYMALEM WIAD");
     if(message[0] == 10)
     {
         updateToggleState(&pajOFFButton, pajOffButtonID);
 //        turnOffAnal();
     }
+    else if (message[0] == 2)
+    {
+        updateToggleState(&pajOFFButton, pajOffButtonID);
+//        updateToggleState(&pajResetButton, pajResetButtonID);
+    }
+    else if (message[0] == 1)
+    {
+        toggleButtonByID(tempRememberedButton);
+    }
+    
+    if(!isConnected())
+        connectToSocket("127.0.0.1", 52425, 1000);
 }
 
 
@@ -554,7 +569,7 @@ void PajAuanalyserAudioProcessorEditor::turnOffAnal()
     
     impulseMessage.fillWith(muteImpulseID);
     sendMessage(impulseMessage);
-    disconnect();
+//    disconnect();
 }
 
 void PajAuanalyserAudioProcessorEditor::resetAnalGraph()
