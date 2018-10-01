@@ -12,7 +12,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "DrawingThread.h"
-#include "Clock.h"
 
 //==============================================================================
 /**
@@ -90,8 +89,7 @@ public:
     bool wDetectLatency;
     std::atomic<bool> wStop;
     
-    Clock nextBuffer;
-    Clock loopInBuff;
+    int bufferID = 0;
     
     Thread *stopMessage = nullptr;
     

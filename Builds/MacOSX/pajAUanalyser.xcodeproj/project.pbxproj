@@ -43,7 +43,6 @@
 		7B01154CB51655A7CF2750D1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 983298C6D3CD5BB1DCA15DCE /* QuartzCore.framework */; };
 		7C75937D44021E919A47093C /* include_juce_audio_basics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1361CC3E8D08F436E65423B4 /* include_juce_audio_basics.mm */; };
 		7CCA0B4FD030F418F19DD909 /* GraphAnalyser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDF44406E51209E08A67871 /* GraphAnalyser.cpp */; };
-		7DAB5CD82B78F5268F34D093 /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB26C13B9101DD8C4AEE2288 /* Clock.cpp */; };
 		8F943B9299F39641895CD355 /* include_juce_events.mm in Sources */ = {isa = PBXBuildFile; fileRef = DBFA99ED4B456F0417E6A63F /* include_juce_events.mm */; };
 		988CA7B95D4ECFC8E53C0051 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C02FDAB539F6A32B945C5207 /* OpenGL.framework */; };
 		A5FD71E2E0C0F09A791D6A8D /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F10CB421662BEE13F44241 /* CoreMedia.framework */; };
@@ -69,14 +68,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		F55202D3215BFAC4001A2016 /* PBXContainerItemProxy */ = {
+		F534FD5A2162BF980044811C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 554CBD9424D936A295F93309 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 94B982D570D8E3D66E724532;
 			remoteInfo = "pajAUanalyser - Shared Code";
 		};
-		F55202D4215BFAC6001A2016 /* PBXContainerItemProxy */ = {
+		F534FD5B2162BF990044811C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 554CBD9424D936A295F93309 /* Project object */;
 			proxyType = 1;
@@ -106,7 +105,6 @@
 		3BE28B9CB1C8563DF78950DB /* juce_audio_basics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_basics; path = ../../JuceLibraryCode/modules/juce_audio_basics; sourceTree = SOURCE_ROOT; };
 		3C90498FE31BADCF6E11F4BF /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		404553A4202B52B523F6BBDC /* PluginProcessor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PluginProcessor.cpp; path = ../../Source/PluginProcessor.cpp; sourceTree = SOURCE_ROOT; };
-		465B5C17BC5A5DDC08010BD5 /* Clock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Clock.h; path = ../../Source/Clock.h; sourceTree = SOURCE_ROOT; };
 		49CF0D5587954FE4845A89DA /* Display_Logarithmic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Display_Logarithmic.cpp; path = ../../Source/Display_Logarithmic.cpp; sourceTree = SOURCE_ROOT; };
 		4C785FE4F8A5F358C1E920B5 /* juce_core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_core; path = ../../JuceLibraryCode/modules/juce_core; sourceTree = SOURCE_ROOT; };
 		4D520850B9BE629B0A2CC27E /* include_juce_audio_plugin_client_AU_1.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_plugin_client_AU_1.mm; path = ../../JuceLibraryCode/include_juce_audio_plugin_client_AU_1.mm; sourceTree = SOURCE_ROOT; };
@@ -131,7 +129,6 @@
 		A27B407FABFD595DA341B502 /* include_juce_gui_extra.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_gui_extra.mm; path = ../../JuceLibraryCode/include_juce_gui_extra.mm; sourceTree = SOURCE_ROOT; };
 		A8F10CB421662BEE13F44241 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		A9A9D031C292995BA2A6DBF2 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
-		AB26C13B9101DD8C4AEE2288 /* Clock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Clock.cpp; path = ../../Source/Clock.cpp; sourceTree = SOURCE_ROOT; };
 		B242664A135A4F686DE77CA9 /* include_juce_video.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_video.mm; path = ../../JuceLibraryCode/include_juce_video.mm; sourceTree = SOURCE_ROOT; };
 		B2F4035BD5788D141CB9E927 /* PajFFT_Radix2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PajFFT_Radix2.cpp; path = ../../Source/PajFFT/PajFFT_Radix2.cpp; sourceTree = SOURCE_ROOT; };
 		B3C797A530AC5E1B3BBC1B49 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -256,8 +253,6 @@
 				EDCBC9D89177DF9C86273AD8 /* DrawingThread.cpp */,
 				2476D1EC4B4EDEA4BDFF3F5F /* DrawingThread.h */,
 				CF8972444B81C6356B64E159 /* pajczurLogo.png */,
-				AB26C13B9101DD8C4AEE2288 /* Clock.cpp */,
-				465B5C17BC5A5DDC08010BD5 /* Clock.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -499,7 +494,6 @@
 				F5829EFAF51B73D7609F9793 /* Display_Logarithmic.cpp in Sources */,
 				7CCA0B4FD030F418F19DD909 /* GraphAnalyser.cpp in Sources */,
 				EA13B27DE8342863E72F4C9D /* DrawingThread.cpp in Sources */,
-				7DAB5CD82B78F5268F34D093 /* Clock.cpp in Sources */,
 				2EA65C9A7C4468057130F029 /* BinaryData.cpp in Sources */,
 				7C75937D44021E919A47093C /* include_juce_audio_basics.mm in Sources */,
 				E08B776D74C8FC9C19E59E41 /* include_juce_audio_devices.mm in Sources */,
@@ -526,12 +520,12 @@
 		D1141589F6EBD27B2F53CD4A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 94B982D570D8E3D66E724532 /* pajAUanalyser - Shared Code */;
-			targetProxy = F55202D3215BFAC4001A2016 /* PBXContainerItemProxy */;
+			targetProxy = F534FD5A2162BF980044811C /* PBXContainerItemProxy */;
 		};
 		D9380E0300B7B577367AA925 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 61003AAAC31E06DF4EB438F3 /* pajAUanalyser - AU */;
-			targetProxy = F55202D4215BFAC6001A2016 /* PBXContainerItemProxy */;
+			targetProxy = F534FD5B2162BF990044811C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

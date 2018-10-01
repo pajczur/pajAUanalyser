@@ -32,8 +32,6 @@
             file="Source/DrawingThread.cpp"/>
       <FILE id="hlzO47" name="DrawingThread.h" compile="0" resource="0" file="Source/DrawingThread.h"/>
       <FILE id="NhFLdX" name="pajczurLogo.png" compile="0" resource="1" file="Source/pajczurLogo.png"/>
-      <FILE id="mQFtZU" name="Clock.cpp" compile="1" resource="0" file="Source/Clock.cpp"/>
-      <FILE id="bxmWg0" name="Clock.h" compile="0" resource="0" file="Source/Clock.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

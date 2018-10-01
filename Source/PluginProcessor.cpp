@@ -159,7 +159,6 @@ bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
 void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     bypassTreshold=1;
-    
     if(!isBypassed && !isMute)
     {
         auto totalNumOutputChannels = getTotalNumOutputChannels();

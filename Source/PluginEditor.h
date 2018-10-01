@@ -47,6 +47,8 @@ public:
     
     void setGraphBounds(int isShowPhase);
     
+    void toggleButtonByID(int buttonID);
+    
 private:
     PajAuanalyserAudioProcessor& processor;
     

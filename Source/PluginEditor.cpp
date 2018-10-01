@@ -17,7 +17,7 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
 {
     setResizable(true, true);
     setResizeLimits(565, 300, 10000, 10000);
-    setSize (565, 400);
+    setSize (565, 300);
     isResized = false; // For ensure that window is update (see in timerCallback)
     
     logoSpace.setSize(40.0f, 40.0f);
@@ -179,12 +179,27 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     pajHint.setAlpha(1.0f);
     addAndMakeVisible(&pajHint);
     pajHint.setAlwaysOnTop(true);
+    
+    if(processor.bufferID != 0)
+    {
+        toggleButtonByID(processor.bufferID);
+    }
 }
 
 
 
 PajAuanalyserAudioProcessorEditor::~PajAuanalyserAudioProcessorEditor()
 {
+    if(!isConnected())
+    {
+        connectToSocket("127.0.0.1", 52425, 1000);
+    }
+    
+    impulseMessage.fillWith(muteImpulseID);
+    sendMessage(impulseMessage);
+    sendBypassMessage = false;
+    processor.isBypassed = true;
+    
     processor.dThread.stopThread(1000);
     disconnect();
 }
@@ -246,6 +261,7 @@ void PajAuanalyserAudioProcessorEditor::updateToggleState(Button* button, int bu
                     processor.dThread.stopThread(1000);
                     processor.wStop = true;
                     wBufferButtonID = buttonID;
+                    processor.bufferID = buttonID;
                     impulseMessage.fillWith(muteImpulseID);
                     
                     if(connectToSocket("127.0.0.1", 52425, 1000))
@@ -663,5 +679,43 @@ void PajAuanalyserAudioProcessorEditor::setGraphBounds(int isShowPhase)
         {
             processor.dThread.graphAnalyserMagR.setBounds(/*graphMargX*/ 50, /*graphMargY*/ 23+topMarg, graphWidth, graphHeight);
         }
+    }
+}
+
+
+void PajAuanalyserAudioProcessorEditor::toggleButtonByID(int buttonID)
+{
+    switch (buttonID)
+    {
+        case b1024ID:
+            buff_1024.setToggleState(true, sendNotification);
+            break;
+            
+        case b2048ID:
+            buff_2048.setToggleState(true, sendNotification);
+            break;
+            
+        case b4096ID:
+            buff_4096.setToggleState(true, sendNotification);
+            break;
+            
+        case b8192ID:
+            buff_8192.setToggleState(true, sendNotification);
+            break;
+            
+        case b16384ID:
+            buff_16384.setToggleState(true, sendNotification);
+            break;
+            
+        case b32768ID:
+            buff_32768.setToggleState(true, sendNotification);
+            break;
+            
+        case b65536ID:
+            buff_65536.setToggleState(true, sendNotification);
+            break;
+            
+        default:
+            return;
     }
 }

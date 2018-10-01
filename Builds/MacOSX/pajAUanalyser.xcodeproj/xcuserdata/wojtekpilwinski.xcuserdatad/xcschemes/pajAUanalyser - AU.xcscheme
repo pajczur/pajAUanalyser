@@ -33,7 +33,7 @@
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -44,8 +44,8 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
-         BundleIdentifier = "com.roli.juce.pluginhost"
-         FilePath = "/Users/wojtekpilwinski/Development/AudioPluginHost.app">
+         BundleIdentifier = "com.apple.logic10"
+         FilePath = "/Applications/Logic Pro X.app">
       </PathRunnable>
       <MacroExpansion>
          <BuildableReference
@@ -65,6 +65,11 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <PathRunnable
+         runnableDebuggingMode = "0"
+         BundleIdentifier = "com.roli.juce.pluginhost"
+         FilePath = "/Users/wojtekpilwinski/Development/AudioPluginHost.app">
+      </PathRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
