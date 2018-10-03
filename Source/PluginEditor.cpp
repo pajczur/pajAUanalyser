@@ -247,7 +247,7 @@ void PajAuanalyserAudioProcessorEditor::updateToggleState(Button* button, int bu
 {
     if(button->getRadioGroupId() == bufferButtonRadioGroup)
     {
-        if(waitForSettings)
+        if(waitForSettings || isProcBypass)
         {
             button->setToggleState(false, dontSendNotification);
             leaveButtonsUntouched(rememberWhichButtonIsToggled);
@@ -404,6 +404,7 @@ void PajAuanalyserAudioProcessorEditor::timerCallback(int timerID)
             {
                 if(processor.bypassTreshold < 0)
                 {
+                    isProcBypass = true;
                     if(sendBypassMessage)
                     {
                         impulseMessage.fillWith(muteImpulseID);
@@ -415,7 +416,7 @@ void PajAuanalyserAudioProcessorEditor::timerCallback(int timerID)
                 else
                 {
                     processor.bypassTreshold--;
-                    
+                    isProcBypass = false;
                     if(!sendBypassMessage)
                     {
                         processor.isBypassed = false;

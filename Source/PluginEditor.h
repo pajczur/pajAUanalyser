@@ -150,6 +150,8 @@ private:
 
     bool sendBypassMessage;
     
+    std::atomic<bool> isProcBypass;
+    
     bool isGenON;
     
     bool isMessageReceived = false;
