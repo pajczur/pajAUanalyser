@@ -30,6 +30,8 @@ PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
     wDetectLatency = false;
     wStop=true;
     isMute = true;
+    isMessageReceived = false;
+    isGenON=false;
 }
 
 PajAuanalyserAudioProcessor::~PajAuanalyserAudioProcessor()
@@ -106,6 +108,8 @@ void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesP
     realBuffSize = samplesPerBlock;
     wSampleRate = sampleRate;
     
+    bypassTmier = round(((float)realBuffSize * 1000.0f) / wSampleRate);
+    
     inputChannelsQuantity  = 1;
     if(getTotalNumInputChannels()>1)
         inputChannelsQuantity=2;
@@ -159,7 +163,7 @@ bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
 void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     bypassTreshold=1;
-    if(!isBypassed && !isMute)
+    if(!isBypassed && !isMute && isGenON)
     {
         auto totalNumOutputChannels = getTotalNumOutputChannels();
         
@@ -297,10 +301,43 @@ void PajAuanalyserAudioProcessor::wSettings(double sampleRate, int samplesPerBlo
     isAnySignal[left]  = false;
     isAnySignal[right] = false;
     
-    bypassTmier = round(((float)realBuffSize * 1000.0f) / wSampleRate);
-    
     dThread.isSystemReady = true;
 }
+
+void PajAuanalyserAudioProcessor::connectionMade()
+{
+    //    DBG("CONNECTED");
+}
+
+void PajAuanalyserAudioProcessor::connectionLost()
+{
+    //    DBG("DISCONNECTED");
+}
+
+void PajAuanalyserAudioProcessor::messageReceived( const MemoryBlock & message)
+{
+    isMessageReceived = true;
+    
+    if(message[0] == 10)
+    {
+        buttonID = pajOffButtonID;
+    }
+    else if (message[0] == pajOffButtonID)
+    {
+        buttonID = pajOffButtonID;
+        isGenON = false;
+    }
+    else
+    {
+        buttonID = message[0];
+        isGenON = true;
+    }
+    
+    if(!isConnected())
+        connectToSocket("127.0.0.1", 52425, 1000);
+}
+
+
 
 
 //==============================================================================

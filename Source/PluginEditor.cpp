@@ -170,38 +170,44 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     resizableCorner->addMouseListener(this, true);
     
     drawButtons();
-    startTimer(drawingTimer, 40);
     
-    bypassTime = 0;
+    bypassTime = 50;
     
-    startTimer(bypassTimer, 1000);
+    startTimer(bypassTimer, bypassTime);
     
     pajHint.setAlpha(1.0f);
     addAndMakeVisible(&pajHint);
     pajHint.setAlwaysOnTop(true);
+    pajHintText.setText("1) pajAUanalyser - gen myst be lounched and ON\n2) Be sure to hit play\n3) Be sure there is any audio source on measured track");
+    pajHintText.setWordWrap(AttributedString::WordWrap::none);
+    pajHintText.setColour(Colours::yellow);
+    
+    isGenON = processor.isGenON;
     
     if(processor.bufferID != 0)
     {
         toggleButtonByID(processor.bufferID);
     }
+    
+    processor.connectToSocket("127.0.0.1", 52425, 1000);
 }
 
 
 
 PajAuanalyserAudioProcessorEditor::~PajAuanalyserAudioProcessorEditor()
 {
-    if(!isConnected())
+    if(!processor.isConnected())
     {
-        connectToSocket("127.0.0.1", 52425, 1000);
+        processor.connectToSocket("127.0.0.1", 52425, 1000);
     }
     
     impulseMessage.fillWith(muteImpulseID);
-    sendMessage(impulseMessage);
+    processor.sendMessage(impulseMessage);
     sendBypassMessage = false;
     processor.isBypassed = true;
     
     processor.dThread.stopThread(1000);
-    disconnect();
+    processor.disconnect();
 }
 
 //==============================================================================
@@ -257,28 +263,27 @@ void PajAuanalyserAudioProcessorEditor::updateToggleState(Button* button, int bu
             {
                 if(button->getToggleState())
                 {
+                    processor.dThread.isAnalOff = false;
                     waitForSettings = true;
                     processor.dThread.stopThread(1000);
                     processor.wStop = true;
                     wBufferButtonID = buttonID;
                     processor.bufferID = buttonID;
                     impulseMessage.fillWith(muteImpulseID);
-                    tempRememberedButton = buttonID;
-//                    disconnect();
-                    if(connectToSocket("127.0.0.1", 52425, 1000))
+
+                    if(processor.connectToSocket("127.0.0.1", 52425, 1000) && processor.isGenON)
                     {
+                        processor.isBypassed = false;
+                        isMessageReceived = false;
                         rememberWhichButtonIsToggled = buttonID;
-                        sendMessage(impulseMessage);
+                        processor.sendMessage(impulseMessage);
                         startTimer(settingsTimer, 1000);
                     }
                     else
                     {
                         button->setToggleState(false, dontSendNotification);
-                        Rectangle<int> hintPos;
-                        hintPos.setBounds(getMouseXYRelative().getX(), getMouseXYRelative().getY(), 1, 1);
-                        AttributedString pajHintText("First launch pajAUanalyser - gen");
-                        pajHintText.setColour(Colours::yellow);
-                        pajHint.showAt(hintPos, pajHintText, 3000, true, false);
+                        hintPos.setBounds((getWidth()/2)-170, (getHeight()/2)-5, 1, 1);
+                        pajHint.showAt(hintPos, pajHintText, 4500, true, false);
                         waitForSettings = false;
                         return;
                     }
@@ -303,7 +308,6 @@ void PajAuanalyserAudioProcessorEditor::updateToggleState(Button* button, int bu
     {
         rememberWhichButtonIsToggled=0;
         processor.bufferID = 0;
-        processor.dThread.stopThread(1000);
         turnOffAnal();
         processor.isMute = true;
     }
@@ -311,7 +315,10 @@ void PajAuanalyserAudioProcessorEditor::updateToggleState(Button* button, int bu
     if(buttonID == pajResetButtonID)
     {
         if(!pajIsOn)
+        {
+            processor.dThread.stopThread(1000);
             resetAnalGraph();
+        }
     }
     
     if(buttonID == unWrapID)
@@ -378,37 +385,46 @@ void PajAuanalyserAudioProcessorEditor::timerCallback(int timerID)
     
     if(timerID == bypassTimer)
     {
-        if(bypassTime != processor.bypassTmier)
+        if(processor.isMessageReceived)
         {
-            stopTimer(bypassTimer);
-            bypassTime = processor.bypassTmier;
-            startTimer(bypassTimer, bypassTime);
-            return;
+            processor.isMessageReceived = false;
+            isMessageReceived = true;
+            toggleButtonByID(processor.buttonID);
         }
         else
         {
-            if(processor.bypassTreshold < 0)
+            if(bypassTime != processor.bypassTmier)
             {
-                if(sendBypassMessage)
-                {
-                    impulseMessage.fillWith(muteImpulseID);
-                    sendMessage(impulseMessage);
-                    sendBypassMessage = false;
-                    processor.isBypassed = true;
-                }
+                stopTimer(bypassTimer);
+                bypassTime = processor.bypassTmier;
+                startTimer(bypassTimer, bypassTime);
+                return;
             }
             else
             {
-                processor.bypassTreshold--;
-                
-                if(!sendBypassMessage)
+                if(processor.bypassTreshold < 0)
                 {
-                    processor.isBypassed = false;
-                    if(!processor.isMute)
+                    if(sendBypassMessage)
                     {
-                        sendBypassMessage = true;
-                        impulseMessage.fillWith(rememberWhichButtonIsToggled);
-                        sendMessage(impulseMessage);
+                        impulseMessage.fillWith(muteImpulseID);
+                        processor.sendMessage(impulseMessage);
+                        sendBypassMessage = false;
+                        processor.isBypassed = true;
+                    }
+                }
+                else
+                {
+                    processor.bypassTreshold--;
+                    
+                    if(!sendBypassMessage)
+                    {
+                        processor.isBypassed = false;
+                        if(!processor.isMute)
+                        {
+                            sendBypassMessage = true;
+                            impulseMessage.fillWith(rememberWhichButtonIsToggled);
+                            processor.sendMessage(impulseMessage);
+                        }
                     }
                 }
             }
@@ -459,10 +475,11 @@ void PajAuanalyserAudioProcessorEditor::setBufferSize(int bufSizeID)
     {
         processor.wSettings(processor.wSampleRate, tempBuffsize);
         
+        
         if(!processor.isBypassed)
         {
             impulseMessage.fillWith(bufSizeID);
-            sendMessage(impulseMessage);
+            processor.sendMessage(impulseMessage);
         }
         
         processor.wStop = false;
@@ -521,43 +538,11 @@ void PajAuanalyserAudioProcessorEditor::drawButtons()
 }
 
 
-void PajAuanalyserAudioProcessorEditor::connectionMade()
-{
-//    DBG("POLACZYLO SIE AU");
-}
-
-void PajAuanalyserAudioProcessorEditor::connectionLost()
-{
-//    DBG("ROZLACZYLO SIE AU");
-}
-
-void PajAuanalyserAudioProcessorEditor::messageReceived( const MemoryBlock & message)
-{
-    DBG("OTRZYMALEM WIAD");
-    if(message[0] == 10)
-    {
-        updateToggleState(&pajOFFButton, pajOffButtonID);
-//        turnOffAnal();
-    }
-    else if (message[0] == 2)
-    {
-        updateToggleState(&pajOFFButton, pajOffButtonID);
-//        updateToggleState(&pajResetButton, pajResetButtonID);
-    }
-    else if (message[0] == 1)
-    {
-        toggleButtonByID(tempRememberedButton);
-    }
-    
-    if(!isConnected())
-        connectToSocket("127.0.0.1", 52425, 1000);
-}
-
-
 void PajAuanalyserAudioProcessorEditor::turnOffAnal()
 {
     pajIsOn = false;
     processor.wStop = true;
+    processor.dThread.isAnalOff = true;
     
     buff_1024.setToggleState(false, dontSendNotification);
     buff_2048.setToggleState(false, dontSendNotification);
@@ -567,8 +552,12 @@ void PajAuanalyserAudioProcessorEditor::turnOffAnal()
     buff_32768.setToggleState(false, dontSendNotification);
     buff_65536.setToggleState(false, dontSendNotification);
     
-    impulseMessage.fillWith(muteImpulseID);
-    sendMessage(impulseMessage);
+    if(!isMessageReceived)
+    {
+        impulseMessage.fillWith(muteImpulseID);
+        processor.sendMessage(impulseMessage);
+        isMessageReceived = false;
+    }
 //    disconnect();
 }
 
@@ -728,6 +717,10 @@ void PajAuanalyserAudioProcessorEditor::toggleButtonByID(int buttonID)
             
         case b65536ID:
             buff_65536.setToggleState(true, sendNotification);
+            break;
+            
+        case pajOffButtonID:
+            updateToggleState(&pajOFFButton, pajOffButtonID);
             break;
             
         default:

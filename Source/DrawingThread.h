@@ -60,6 +60,7 @@ public:
     PajFFT_Radix2     radix2_FFT;
     int totalNumInputChannels=1;
     std::atomic<bool> isResizing;
+    std::atomic<bool> isAnalOff;
     std::atomic<bool> drawPhase;
 private:
     

@@ -16,7 +16,7 @@
 //==============================================================================
 /**
 */
-class PajAuanalyserAudioProcessorEditor  : public AudioProcessorEditor, public MultiTimer, public InterprocessConnection
+class PajAuanalyserAudioProcessorEditor  : public AudioProcessorEditor, public MultiTimer
 {
 public:
     PajAuanalyserAudioProcessorEditor (PajAuanalyserAudioProcessor&);
@@ -34,11 +34,6 @@ public:
     
     void mouseDown( const MouseEvent & event ) override;
     void mouseUp( const MouseEvent & event ) override;
-    
-    
-    void connectionMade() override;
-    void connectionLost() override;
-    void messageReceived( const MemoryBlock & message) override;
     
     void setBufferSize(int bufSizeID);
     
@@ -121,7 +116,7 @@ private:
         b65536ID      = 7,
         unWrapID      = 8,
         latencyID     = 100,
-        pajOffButtonID      = 900,
+        pajOffButtonID      = 110,
         pajResetButtonID    = 901,
         pajPhaseButtonID    = 902,
         bufferButtonRadioGroup = 1000
@@ -139,11 +134,9 @@ private:
     File pajLogoFile = pathToLogo ;
     
     Image pajLogo = ImageFileFormat::loadFrom(pajLogoFile);
-//    const Image pajLogo;
     
     enum wTimersID
     {
-        drawingTimer = 0,
         settingsTimer = 1,
         bypassTimer = 2
     };
@@ -154,12 +147,16 @@ private:
     
     bool pajIsOn=true;
     int showPhaseBool=0;
-    
-//    DrawingThread drawingThread;
+
     bool sendBypassMessage;
-    int tempRememberedButton;
+    
+    bool isGenON;
+    
+    bool isMessageReceived = false;
     
     BubbleMessageComponent pajHint;
+    Rectangle<int> hintPos;
+    AttributedString pajHintText;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)
 };

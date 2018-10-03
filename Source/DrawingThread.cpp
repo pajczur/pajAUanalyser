@@ -26,9 +26,9 @@ void DrawingThread::run()
 {
     while(! threadShouldExit())
     {
-        if(!isResizing)
+        if(!isResizing || !isAnalOff)
         {
-            wait (1000);
+            wait (-1);
             if (threadShouldExit()) return;
             
             makeFFT();
@@ -39,7 +39,7 @@ void DrawingThread::run()
         }
         else
         {
-            wait (1000);
+            wait (-1);
             if (threadShouldExit()) return;
             
             const MessageManagerLock mml (Thread::getCurrentThread());
