@@ -75,9 +75,6 @@ void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
         drawStaticY.resize((int)dataSize, 1.0f);
     else if(outType == wPha)
         drawStaticY.resize((int)dataSize, 0.0f);
-    
-    drawStaticX.resize((int)dataSize, 0.001f);
-    
 }
 
 void GraphAnalyser::setWindScaleSettings(double &sampRat, double &wBuffSiz)
@@ -206,7 +203,6 @@ void GraphAnalyser::drawMagPath()
         fftGraphPath.startNewSubPath(0.0f, (zero_dB+2*zero_dB));
     
     drawStaticY[lowEndIndex] = dataSource->at(lowEndIndex);
-    drawStaticX[lowEndIndex] = 0;
     
     for(int i=lowEndIndex+1; i<dataSize; i++)
     {
@@ -228,7 +224,6 @@ void GraphAnalyser::drawMagPath()
         }
         
         drawStaticY[i] = dataSource->at(i);
-        drawStaticX[i] = xScale[i];
     }
 }
 
@@ -241,7 +236,6 @@ void GraphAnalyser::drawPhaPath()
     fftGraphPath.startNewSubPath(0.0f, zero_dB + dataSource->at(lowEndIndex) * zero_dB);
     
     drawStaticY[lowEndIndex] = dataSource->at(lowEndIndex);
-    drawStaticX[lowEndIndex] = 0;
     
     for(int i=lowEndIndex+1; i<dataSize; i++)
     {
@@ -272,7 +266,6 @@ void GraphAnalyser::drawPhaPath()
         }
         
         drawStaticY[i] = dataSource->at(i)+fPIshift;
-        drawStaticX[i] = xScale[i];
     }
     
     if(pajUnwrapping)
@@ -296,7 +289,7 @@ void GraphAnalyser::drawMagPathSTATIC()
         else
             wMagnitude = 10000.0f;
         
-        double wCurrent   = dispLogScale * (log10(drawStaticX[i]*logScaleWidth) - log10(lowEnd));
+        double wCurrent   = dispLogScale * (log10(xScale[i]*logScaleWidth) - log10(lowEnd));
         
         if(i<=512)
         {
@@ -304,7 +297,7 @@ void GraphAnalyser::drawMagPathSTATIC()
         }
         else
         {
-            double wBefore    = dispLogScale * (log10(drawStaticX[i-1]*logScaleWidth) - log10(lowEnd));
+            double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
             fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wMagnitude);
         }
     }
@@ -317,20 +310,20 @@ void GraphAnalyser::drawPhaPathSTATIC()
 //    fPIshift=0;
 
     fftGraphPath.startNewSubPath(0.0f, zero_dB + drawStaticY[lowEndIndex] * zero_dB);
-    
+
     for(int i=lowEndIndex+1; i<dataSize; i++)
     {
         wMagnitude = zero_dB + drawStaticY[i] * (zero_dB);
-        
-        double wCurrent   = dispLogScale * (log10(drawStaticX[i]*logScaleWidth) - log10(lowEnd));
-        
+
+        double wCurrent   = dispLogScale * (log10(xScale[i]*logScaleWidth) - log10(lowEnd));
+
         if(i<=512)
         {
             fftGraphPath.lineTo(wCurrent, wMagnitude);
         }
         else
         {
-            double wBefore    = dispLogScale * (log10(drawStaticX[i-1]*logScaleWidth) - log10(lowEnd));
+            double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
             fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wMagnitude);
         }
     }

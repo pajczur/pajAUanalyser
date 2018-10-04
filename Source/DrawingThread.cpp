@@ -26,7 +26,7 @@ void DrawingThread::run()
 {
     while(! threadShouldExit())
     {
-        if(!isResizing || !isAnalOff)
+        if(!isResizing && !isAnalOff)
         {
             wait (-1);
             if (threadShouldExit()) return;
@@ -35,7 +35,10 @@ void DrawingThread::run()
             
             const MessageManagerLock mml (Thread::getCurrentThread());
             if (mml.lockWasGained())
+            {
                 drawFFTgraph();
+                DBG("FFT GRAPH " << (testPaj++)%100);
+            }
         }
         else
         {
@@ -44,7 +47,10 @@ void DrawingThread::run()
             
             const MessageManagerLock mml (Thread::getCurrentThread());
             if (mml.lockWasGained())
+            {
                 drawSTATICgraph();
+                DBG("STATIC GRAPH " << (testPaj++)%100);
+            }
         }
     }
 }

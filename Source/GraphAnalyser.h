@@ -50,7 +50,6 @@ public:
     Path wavGraph;
     std::vector<Path> timeGraph;
     std::vector<float> drawStaticY;
-    std::vector<float> drawStaticX;
     float dataSize;
 private:
     std::vector<float> *dataSource;

@@ -12,6 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "SendRemote.h"
+#include "ReceiveRemote.h"
 
 //==============================================================================
 /**
@@ -26,7 +28,7 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     
-    void updateToggleState(Button* button, int buttonID);
+    void updateToggleState(Button* button, int buttonID, bool isFromSocket = false);
     
     void drawButtons();
     
@@ -42,7 +44,7 @@ public:
     
     void setGraphBounds(int isShowPhase);
     
-    void toggleButtonByID(int buttonID);
+    void toggleButtonByID(int buttonID, bool isFromSocket = false);
     
 private:
     PajAuanalyserAudioProcessor& processor;
@@ -122,6 +124,9 @@ private:
         bufferButtonRadioGroup = 1000
     };
     
+    bool isUnWrapToggled = false;
+    bool isLatencyToggled = false;
+    
     void leaveButtonsUntouched(int onButtonID);
     
     MemoryBlock impulseMessage;
@@ -159,6 +164,9 @@ private:
     BubbleMessageComponent pajHint;
     Rectangle<int> hintPos;
     AttributedString pajHintText;
+    
+    SendRemote sendRemote;
+    ReceiveRemote receiveRemote;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)
 };

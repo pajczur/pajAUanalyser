@@ -36,7 +36,6 @@ PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
 
 PajAuanalyserAudioProcessor::~PajAuanalyserAudioProcessor()
 {
-    dThread.stopThread(1000);
     bypassTreshold=-1;
 }
 

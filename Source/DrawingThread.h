@@ -75,5 +75,7 @@ private:
         right = 1
     };
     
+    int testPaj = 0;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrawingThread)
 };
