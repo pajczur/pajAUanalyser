@@ -19,6 +19,10 @@
 #include <vector>
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#define wMag 0
+#define wPha 1
+
+
 class PajFFT_Radix2
 {
 public:
@@ -75,11 +79,5 @@ private:
 
 public:
     std::vector<std::vector<float>> *wOutputData;
-    
-    enum outputType
-    {
-        wMag = 0,
-        wPha = 1
-    };
 
 };

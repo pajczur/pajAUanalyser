@@ -36,6 +36,7 @@
       <FILE id="F1Bk3t" name="DrawingThread.cpp" compile="1" resource="0"
             file="Source/DrawingThread.cpp"/>
       <FILE id="hlzO47" name="DrawingThread.h" compile="0" resource="0" file="Source/DrawingThread.h"/>
+      <FILE id="NW6yrJ" name="PublicEnums.cpp" compile="1" resource="0" file="Source/PublicEnums.cpp"/>
       <FILE id="NhFLdX" name="pajczurLogo.png" compile="0" resource="1" file="Source/pajczurLogo.png"/>
     </GROUP>
   </MAINGROUP>

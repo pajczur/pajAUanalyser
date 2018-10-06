@@ -11,37 +11,324 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
+
+//==============================================================================
+//== C O N S T R U C T O R S ===================================================
 //==============================================================================
 PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanalyserAudioProcessor& p) :
                                 AudioProcessorEditor (&p),
-                                processor (p),
-                                waitForSettings(false),
-                                wBufferButtonID(0),
-                                pajIsOn(true),
                                 showPhaseBool(0),
                                 sendRemote(p),
-                                receiveRemote(p)
+                                receiveRemote(p),
+                                processor (p),
+                                sampRate(p.wSampleRate),
+                                pajFFTsize(p.pajFFTsize),
+                                wNumChannel(p.wNumInputChannel),
+                                drawingThread(p.dThread),
+                                notifyFromDThread(p.dThread.notifyEditor),
+                                holdDThread(p.dThread.isHold),
+                                pauseProc(p.wIsPaused),
+                                bypasProc(p.isBypassed),
+                                dataIsInUse(p.dataIsInUse),
+                                bypassTime(p.bypassTime),
+                                bypassTreshold(p.bypassTreshold)
 {
     setResizable(true, true);
     setResizeLimits(565, 300, 10000, 10000);
     setSize (565, 300);
-    isResized = false; // For ensure that window is update (see in timerCallback)
+    resizableCorner->addMouseListener(this, true);
     
-    logoSpace.setSize(40.0f, 40.0f);
-    addAndMakeVisible(&setBuffSizLabel);
     
-    setBuffSizLabel.setJustificationType(Justification::centredBottom);
-    setBuffSizLabel.setText("BUFFER SIZE:", dontSendNotification);
-    setBuffSizLabel.setFont(wFontSize2);
-    setBuffSizLabel.setAlwaysOnTop(true);
+    // == H I N T == B U B B L E ==
+    pajHint.setAlpha(1.0f);
+    addAndMakeVisible(&pajHint);
+    pajHint.setAlwaysOnTop(true);
+    pajHintText.setText("1) pajAUanalyser - gen myst be lounched and ON\n2) Be sure to hit play\n3) Be sure there is any audio source on measured track");
+    pajHintText.setWordWrap(AttributedString::WordWrap::none);
+    pajHintText.setColour(Colours::yellow);
     
+    pajDrawAllComponents();
+
+
+    memoryMessage.setSize(1);
+
+    settingsTimerUnlocked = false;
+    
+    startTimer(bypassTimer, bypassTime);
+}
+
+
+
+PajAuanalyserAudioProcessorEditor::~PajAuanalyserAudioProcessorEditor()
+{
+    processor.dThread.stopThread (3000);
+    
+    if(processor.connectToSocket("127.0.0.1", 52425, 1000))
+    {
+        sendFFTsizeToGenerator(muteImpulseID);
+        
+        processor.startTimer(100);
+    }
+}
+
+
+
+//==============================================================================
+//== D R A W I N G =============================================================
+//==============================================================================
+void PajAuanalyserAudioProcessorEditor::paint (Graphics& g)
+{
+    g.fillAll(Colours::indigo);
+
+    g.setColour (Colours::lightblue);
+
+    g.drawRoundedRectangle(logoSpace, 10.f, 1.0f);
+    g.drawImage(pajLogo, logoSpace);
+    g.drawRoundedRectangle(buttonsSpace, 10.f, 1.0f);
+}
+
+void PajAuanalyserAudioProcessorEditor::resized()
+{
+    latencyDetect.setBounds      ( 75, 32+getHeight()/2, 19, 17);
+    latencyDetectLabel.setBounds ( 50, 35+getHeight()/2, 30, 12);
+    pajUnwrap.setBounds(140, 32+getHeight()/2, 19, 17);
+    pajUnwrapLabel.setBounds(100, 33+getHeight()/2, 45, 12);
+    
+    if(processor.settingsToApprove)
+    {
+        processor.settingsToApprove = false;
+    }
+ 
+    drawingThread.wSetBounds(getWidth(), getHeight(), showPhaseBool);
+    
+    if(isThreadRunning)
+    {
+        drawingThread.notify();
+    }
+}
+
+
+
+//==============================================================================
+//== R E M O T E ===============================================================
+//==============================================================================
+void PajAuanalyserAudioProcessorEditor::updateToggleState(Button* button, uint8 buttonID)
+{
+    if( button->getRadioGroupId() == bufferButtonRadioGroup )
+    {
+        if( button->getToggleState() )
+        {
+            if( processor.connectToSocket("127.0.0.1", 52425, 1) && bypassTreshold>=0)
+            {
+                fftSizeID = buttonID;
+                bypasProc = false;
+                if(!pauseProc)
+                    settingsTimerUnlocked = true;
+                
+                pauseProc = true;
+                holdDThread = true;
+                setPajFFTsize(buttonID);
+                startTimer(settingsTimer, 1);
+            }
+            else
+            {
+                
+            }
+        }
+    }
+    else
+    {
+        
+    }
+}
+
+
+void PajAuanalyserAudioProcessorEditor::timerCallback(int timerID)
+{
+    switch(timerID)
+    {
+        case settingsTimer:
+            if(settingsTimerUnlocked || !dataIsInUse.test_and_set())
+            {
+                settingsTimerUnlocked = true;
+                
+                if(notifyFromDThread)
+                {
+                    stopTimer(settingsTimer);
+                    processor.updateFFTSize();
+                    settingsTimerUnlocked = false;
+                    pauseProc = false;
+                    dataIsInUse.clear();
+                    holdDThread = false;
+                    sendFFTsizeToGenerator(fftSizeID);
+                    
+                    if(!drawingThread.isThreadRunning())
+                    {
+                        drawingThread.startThread(1);
+                        isThreadRunning = true;
+                    }
+                }
+            }
+            return;
+            
+        case bypassTimer:
+            if(bypassTreshold<0)
+            {
+                if(sendBypassMessage)
+                {
+                    sendBypassMessage = false;
+                    sendFFTsizeToGenerator(muteImpulseID);
+                    processor.startTimer(1);
+                }
+            }
+            else
+            {
+                bypassTreshold--;
+                sendBypassMessage = true;
+            }
+
+        default:
+            return;
+    }
+}
+
+
+void PajAuanalyserAudioProcessorEditor::turnOffAnal()
+{
+    buff_1024.setToggleState(false, dontSendNotification);
+    buff_2048.setToggleState(false, dontSendNotification);
+    buff_4096.setToggleState(false, dontSendNotification);
+    buff_8192.setToggleState(false, dontSendNotification);
+    buff_16384.setToggleState(false, dontSendNotification);
+    buff_32768.setToggleState(false, dontSendNotification);
+    buff_65536.setToggleState(false, dontSendNotification);
+}
+
+
+
+//==============================================================================
+//== M O U S E =================================================================
+//==============================================================================
+void PajAuanalyserAudioProcessorEditor::mouseDown( const MouseEvent & event )
+{
+    if( event.originalComponent == resizableCorner.get() )
+    {
+        processor.dThread.isResizing = true;
+    }
+}
+
+void PajAuanalyserAudioProcessorEditor::mouseUp( const MouseEvent & event )
+{
+    if( event.originalComponent == resizableCorner.get() )
+    {
+        processor.dThread.isResizing = false;
+    }
+}
+
+
+
+//==============================================================================
+//== S E T T I N G S  ==========================================================
+//==============================================================================
+void PajAuanalyserAudioProcessorEditor::setPajFFTsize(int fftSizeID)
+{
+    switch (fftSizeID) {
+        case b1024ID:
+            pajFFTsize = 1024.0f;
+            return;
+            
+        case b2048ID:
+            pajFFTsize = 2048.0f;
+            return;
+            
+        case b4096ID:
+            pajFFTsize = 4096.0f;
+            return;
+            
+        case b8192ID:
+            pajFFTsize = 8192.0f;
+            return;
+            
+        case b16384ID:
+            pajFFTsize = 16384.0f;
+            return;
+            
+        case b32768ID:
+            pajFFTsize = 32768.0f;
+            return;
+            
+        case b65536ID:
+            pajFFTsize = 65536.0f;
+            return;
+            
+        default:
+            return;
+    }
+}
+
+void PajAuanalyserAudioProcessorEditor::sendFFTsizeToGenerator(uint8 fftSizeID)
+{
+    memoryMessage.fillWith(fftSizeID);
+    processor.sendMessage(memoryMessage);
+}
+
+
+void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
+{
+    setResolutLabel.setBounds( margX + labX,    23, 80, 15);
+    setBuffSizLabel.setBounds( margX + labX,    10, 80, 15);
+    
+    pajOFFButton.setBounds        (margX + bufButX + 8*spaceX+2, 7.6f, 35, 35);
+    pajResetButton.setBounds      (margX + bufButX + 8*spaceX-37, 7.6f, 38, 17);
+    pajPhaseButton.setBounds(margX + bufButX + 8*spaceX-37, 25.6f, 38, 17);
+    
+    buff_1024_Label.setBounds ( margX + bufLabX + 0*spaceX-2, 11, 50, 12);
+    buff_1024.setBounds       ( margX + bufButX + 0*spaceX, 23, 19, 17);
+    
+    buff_2048_Label.setBounds ( margX + bufLabX + 1*spaceX-1, 11, 50, 12);
+    buff_2048.setBounds       ( margX + bufButX + 1*spaceX, 23, 19, 17);
+    
+    buff_4096_Label.setBounds ( margX + bufLabX + 2*spaceX-1, 11, 50, 12);
+    buff_4096.setBounds       ( margX + bufButX + 2*spaceX, 23, 19, 17);
+    
+    buff_8192_Label.setBounds ( margX + bufLabX + 3*spaceX-2, 11, 50, 12);
+    buff_8192.setBounds       ( margX + bufButX + 3*spaceX, 23, 19, 17);
+    
+    buff_16384_Label.setBounds( margX + bufLabX + 4*spaceX-2, 11, 50, 12);
+    buff_16384.setBounds      ( margX + bufButX + 4*spaceX, 23, 19, 17);
+    
+    buff_32768_Label.setBounds( margX + bufLabX + 5*spaceX-2, 11, 50, 12);
+    buff_32768.setBounds      ( margX + bufButX + 5*spaceX, 23, 19, 17);
+    
+    buff_65536_Label.setBounds( margX + bufLabX + 6*spaceX-1, 11, 50, 12);
+    buff_65536.setBounds      ( margX + bufButX + 6*spaceX, 23, 19, 17);
+    
+    latencyDetectLabel.setColour(Label::textColourId, Colours::yellow);
+    latencyDetect.setColour(ToggleButton::tickColourId, Colours::yellow);
+    
+    //===================
+    logoSpace.setBounds(margX-45, 5, 40, 40);
+    buttonsSpace.setBounds(margX, 5.0f, 445.0f-3, 40.0f);
+    
+    
+    
+    //===================
     addAndMakeVisible(&setResolutLabel);
     setResolutLabel.setJustificationType(Justification::centredBottom);
     setResolutLabel.setText("(resolution):", dontSendNotification);
     setResolutLabel.setFont(wFontSize);
     setResolutLabel.setAlwaysOnTop(true);
     
+    addAndMakeVisible(&setBuffSizLabel);
+    setBuffSizLabel.setJustificationType(Justification::centredBottom);
+    setBuffSizLabel.setText("BUFFER SIZE:", dontSendNotification);
+    setBuffSizLabel.setFont(wFontSize2);
+    setBuffSizLabel.setAlwaysOnTop(true);
     
+    
+    
+    //===================
     addAndMakeVisible(&buff_1024);
     buff_1024.setRadioGroupId(bufferButtonRadioGroup);
     buff_1024.onClick = [this] { updateToggleState(&buff_1024, b1024ID); };
@@ -112,6 +399,27 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     buff_65536_Label.setFont(wFontSize);
     buff_65536_Label.setAlwaysOnTop(true);
     
+    
+    
+    //===================
+    addAndMakeVisible(&pajOFFButton);
+    pajOFFButton.setButtonText("Off");
+    pajOFFButton.onClick = [this] { updateToggleState(&pajOFFButton, pajOffButtonID); };
+    pajOFFButton.setAlwaysOnTop(true);
+    
+    addAndMakeVisible(&pajResetButton);
+    pajResetButton.setButtonText("RESET");
+    pajResetButton.onClick = [this] { updateToggleState(&pajResetButton, pajResetButtonID); };
+    pajResetButton.setAlwaysOnTop(true);
+    
+    addAndMakeVisible(&pajPhaseButton);
+    pajPhaseButton.setButtonText("PHASE");
+    pajPhaseButton.onClick = [this] { updateToggleState(&pajPhaseButton, pajPhaseButtonID); };
+    pajPhaseButton.setAlwaysOnTop(true);
+    
+    
+    
+    //===================
     addAndMakeVisible(&latencyDetect);
     latencyDetect.onClick = [this] { updateToggleState(&latencyDetect, latencyID); };
     latencyDetect.setAlwaysOnTop(true);
@@ -120,16 +428,6 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     latencyDetectLabel.setText("LAT.", dontSendNotification);
     latencyDetectLabel.setFont(wFontSize);
     latencyDetectLabel.setAlwaysOnTop(true);
-    
-    pajOFFButton.setButtonText("Off");
-    pajOFFButton.onClick = [this] { updateToggleState(&pajOFFButton, pajOffButtonID); };
-    addAndMakeVisible(&pajOFFButton);
-    pajResetButton.setButtonText("RESET");
-    pajResetButton.onClick = [this] { updateToggleState(&pajResetButton, pajResetButtonID); };
-    addAndMakeVisible(&pajResetButton);
-    pajPhaseButton.setButtonText("PHASE");
-    pajPhaseButton.onClick = [this] { updateToggleState(&pajPhaseButton, pajPhaseButtonID); };
-    addAndMakeVisible(&pajPhaseButton);
     
     addAndMakeVisible(&pajUnwrap);
     pajUnwrap.setAlwaysOnTop(true);
@@ -140,644 +438,23 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     pajUnwrapLabel.setFont(wFontSize);
     pajUnwrapLabel.setAlwaysOnTop(true);
     
-    pajOFFButton.setAlwaysOnTop(true);
-    pajResetButton.setAlwaysOnTop(true);
-    pajPhaseButton.setAlwaysOnTop(true);
-    
-    processor.dThread.display_magni.graphTitle = "Magnitude";
-    processor.dThread.display_phase.graphTitle  = "Phase shift";
-    
-    addAndMakeVisible(&processor.dThread.display_magni);
-    addAndMakeVisible(&processor.dThread.display_phase);
-
-    channelQuantity = processor.getTotalNumInputChannels();
-    sampRate = processor.getSampleRate();
-    buffSize = processor.wBuffSize;
-    
-    addAndMakeVisible(&processor.dThread.graphAnalyserMagL);
-    addAndMakeVisible(&processor.dThread.graphAnalyserPhaL);
-    
-    if(channelQuantity>1)
-    {
-        addAndMakeVisible(&processor.dThread.graphAnalyserMagR);
-        addAndMakeVisible(&processor.dThread.graphAnalyserPhaR);
-    }
-    
-    processor.dThread.drawPhase = false;
-    processor.dThread.display_phase.setVisible(false);
-    processor.dThread.graphAnalyserPhaL.setVisible(false);
-    processor.dThread.graphAnalyserPhaR.setVisible(false);
     pajUnwrap.setVisible(false);
     pajUnwrapLabel.setVisible(false);
     latencyDetect.setVisible(false);
     latencyDetectLabel.setVisible(false);
     
-    impulseMessage.setSize(1);
     
-    resizableCorner->addMouseListener(this, true);
     
-    drawButtons();
+    //== P R O C E S S O R == D E F A U L T ==
+    addAndMakeVisible(&drawingThread.display_magni);
+    addAndMakeVisible(&drawingThread.display_phase);
+    drawingThread.display_phase.setVisible(false);
+    drawingThread.drawPhase = false;
     
-    bypassTime = 50;
-    
-    startTimer(bypassTimer, bypassTime);
-    
-    pajHint.setAlpha(1.0f);
-    addAndMakeVisible(&pajHint);
-    pajHint.setAlwaysOnTop(true);
-    pajHintText.setText("1) pajAUanalyser - gen myst be lounched and ON\n2) Be sure to hit play\n3) Be sure there is any audio source on measured track");
-    pajHintText.setWordWrap(AttributedString::WordWrap::none);
-    pajHintText.setColour(Colours::yellow);
-    
-    isGenON = processor.isGenON;
-    
-    if(processor.bufferID != 0)
+    for(int channel=0; channel<wNumChannel; ++channel)
     {
-        toggleButtonByID(processor.bufferID);
-    }
-    processor.dThread.startThread(0);
-    processor.connectToSocket("127.0.0.1", 52425, 1000);
-}
-
-
-
-PajAuanalyserAudioProcessorEditor::~PajAuanalyserAudioProcessorEditor()
-{
-    if(!processor.isConnected())
-    {
-        processor.connectToSocket("127.0.0.1", 52425, 1000);
-    }
-    
-    impulseMessage.fillWith(muteImpulseID);
-    processor.sendMessage(impulseMessage);
-    sendBypassMessage = false;
-    processor.isBypassed = true;
-    
-    processor.dThread.stopThread(1000);
-    processor.disconnect();
-}
-
-//==============================================================================
-void PajAuanalyserAudioProcessorEditor::paint (Graphics& g)
-{
-    g.fillAll(Colours::indigo);
-
-    g.setColour (Colours::lightblue);
-
-    g.drawRoundedRectangle(logoSpace, 10.f, 1.0f);
-    g.drawImage(pajLogo, logoSpace);
-    g.drawRoundedRectangle(buttonsSpace, 10.f, 1.0f);
-}
-
-void PajAuanalyserAudioProcessorEditor::resized()
-{
-    latencyDetect.setBounds      ( 75, 32+getHeight()/2, 19, 17);
-    latencyDetectLabel.setBounds ( 50, 35+getHeight()/2, 30, 12);
-    pajUnwrap.setBounds(140, 32+getHeight()/2, 19, 17);
-    pajUnwrapLabel.setBounds(100, 33+getHeight()/2, 45, 12);
-    
-//    pajIsOn=false; // Don't remember for what I used it, probably can be removed
-    if(processor.settingsToApprove)
-    {
-        processor.settingsToApprove = false;
-        sampRate = processor.getSampleRate();
-        buffSize = processor.wBuffSize;
-    }
- 
-    setGraphBounds(showPhaseBool);
-
-    processor.dThread.notify();
-//    repaint();
-}
-
-void PajAuanalyserAudioProcessorEditor::updateToggleState(Button* button, int buttonID, bool isFromSocket)
-{
-    if((!processor.isGenON || isProcBypass) && !isMessageReceived && buttonID != pajPhaseButtonID)
-    {
-        if((buttonID>=b1024ID && buttonID<=b65536ID))
-        {
-            button->setToggleState(false, dontSendNotification);
-        }
-        else if(buttonID==unWrapID || buttonID==latencyID)
-        {
-            pajUnwrap.setToggleState(isUnWrapToggled, dontSendNotification);
-            latencyDetect.setToggleState(isLatencyToggled, dontSendNotification);
-        }
-
-        hintPos.setBounds((getWidth()/2)-170, (getHeight()/2)-5, 1, 1);
-        pajHint.showAt(hintPos, pajHintText, 4500, true, false);
-
-        return;
-    }
-    
-    if(button->getRadioGroupId() == bufferButtonRadioGroup)
-    {
-        if(waitForSettings)
-        {
-            button->setToggleState(false, dontSendNotification);
-            leaveButtonsUntouched(rememberWhichButtonIsToggled);
-                
-        }
-        else
-        {
-            if(buttonID==rememberWhichButtonIsToggled)
-            {
-                return;
-            }
-            else
-            {
-                if(button->getToggleState())
-                {
-                    processor.dThread.isAnalOff = false;
-                    waitForSettings = true;
-//                    processor.dThread.stopThread(1000);
-                    processor.wStop = true;
-                    wBufferButtonID = buttonID;
-                    processor.bufferID = buttonID;
-                    impulseMessage.fillWith(muteImpulseID);
-
-                    if(processor.connectToSocket("127.0.0.1", 52425, 1000) && processor.isGenON && !isProcBypass)
-                    {
-                        pajIsOn=true;
-                        processor.isBypassed = false;
-                        isMessageReceived = false;
-                        rememberWhichButtonIsToggled = buttonID;
-                        processor.sendMessage(impulseMessage);
-                        startTimer(settingsTimer, 1000);
-                    }
-                    else
-                    {
-//                        button->setToggleState(false, dontSendNotification);
-                        toggleButtonByID(rememberWhichButtonIsToggled);
-                        hintPos.setBounds((getWidth()/2)-170, (getHeight()/2)-5, 1, 1);
-                        pajHint.showAt(hintPos, pajHintText, 4500, true, false);
-                        waitForSettings = false;
-                        return;
-                    }
-                }
-            }
-        }
-    }
-    
-    if(buttonID == latencyID)
-    {
-        if(latencyDetect.getToggleState())
-        {
-            isLatencyToggled = true;
-            processor.wDetectLatency = true;
-        }
-        else
-        {
-            isLatencyToggled = false;
-            processor.wDetectLatency = false;
-        }
-    }
-    
-    if(buttonID == pajOffButtonID)
-    {
-        rememberWhichButtonIsToggled=0;
-        processor.bufferID = 0;
-        turnOffAnal();
-        processor.isMute = true;
-    }
-    
-    if(buttonID == pajResetButtonID)
-    {
-        if(!pajIsOn)
-        {
-            resetAnalGraph();
-        }
-        else
-        {
-            return;
-        }
-    }
-    
-    if(buttonID == unWrapID)
-    {
-        if(pajUnwrap.getToggleState())
-        {
-            isUnWrapToggled = true;
-            processor.dThread.graphAnalyserPhaL.pajUnwrapping = true;
-            processor.dThread.graphAnalyserPhaR.pajUnwrapping = true;
-        }
-        else
-        {
-            isUnWrapToggled = false;
-            processor.dThread.graphAnalyserPhaL.pajUnwrapping = false;
-            processor.dThread.graphAnalyserPhaR.pajUnwrapping = false;
-        }
-    }
-    
-    if(buttonID == pajPhaseButtonID)
-    {
-        showPhaseBool = (++showPhaseBool) % 2;
-        
-        if(showPhaseBool==1)
-        {
-            processor.dThread.drawPhase = true;
-            pajUnwrap.setVisible(true);
-            pajUnwrapLabel.setVisible(true);
-            latencyDetect.setVisible(true);
-            latencyDetectLabel.setVisible(true);
-            processor.dThread.display_phase.setVisible(true);
-            processor.dThread.graphAnalyserPhaL.setVisible(true);
-            processor.dThread.graphAnalyserPhaR.setVisible(true);
-        }
-        else
-        {
-            processor.dThread.drawPhase = false;
-            pajUnwrap.setVisible(false);
-            pajUnwrapLabel.setVisible(false);
-            latencyDetect.setVisible(false);
-            latencyDetectLabel.setVisible(false);
-            processor.dThread.display_phase.setVisible(false);
-            processor.dThread.graphAnalyserPhaL.setVisible(false);
-            processor.dThread.graphAnalyserPhaR.setVisible(false);
-        }
-        
-        setGraphBounds(showPhaseBool);
-        
-        if(!pajIsOn || isProcBypass)
-        {
-            processor.dThread.notify();
-            repaint();
-        }
-    }
-}
-
-
-void PajAuanalyserAudioProcessorEditor::timerCallback(int timerID)
-{
-    if(!isResized)
-    {
-        resized();
-        isResized=true;
-    }
-
-    
-    if(timerID == settingsTimer)
-    {
-        stopTimer(settingsTimer);
-        setBufferSize(wBufferButtonID);
-        wBufferButtonID = 0;
-    }
-    
-    if(timerID == bypassTimer)
-    {
-        if(processor.isMessageReceived)
-        {
-            processor.isMessageReceived = false;
-            isMessageReceived = true;
-            toggleButtonByID(processor.buttonID);
-        }
-        else
-        {
-            if(bypassTime != processor.bypassTmier)
-            {
-                stopTimer(bypassTimer);
-                bypassTime = processor.bypassTmier;
-                startTimer(bypassTimer, bypassTime);
-                return;
-            }
-            else
-            {
-                if(processor.bypassTreshold < 0)
-                {
-                    isProcBypass = true;
-                    if(sendBypassMessage)
-                    {
-                        buff_1024.setToggleState(false, dontSendNotification);
-                        buff_2048.setToggleState(false, dontSendNotification);
-                        buff_4096.setToggleState(false, dontSendNotification);
-                        buff_8192.setToggleState(false, dontSendNotification);
-                        buff_16384.setToggleState(false, dontSendNotification);
-                        buff_32768.setToggleState(false, dontSendNotification);
-                        buff_65536.setToggleState(false, dontSendNotification);
-                        
-                        processor.dThread.isAnalOff = true;
-                        processor.dThread.notify();
-                        impulseMessage.fillWith(muteImpulseID);
-                        processor.sendMessage(impulseMessage);
-                        sendBypassMessage = false;
-                        processor.isBypassed = true;
-                    }
-                }
-                else
-                {
-                    processor.bypassTreshold--;
-                    isProcBypass = false;
-                    if(!sendBypassMessage)
-                    {
-                        leaveButtonsUntouched(rememberWhichButtonIsToggled);
-                        
-                        processor.dThread.isAnalOff = false;
-                        processor.dThread.notify();
-                        processor.isBypassed = false;
-                        if(!processor.isMute)
-                        {
-                            sendBypassMessage = true;
-                            impulseMessage.fillWith(rememberWhichButtonIsToggled);
-                            processor.sendMessage(impulseMessage);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-void PajAuanalyserAudioProcessorEditor::setBufferSize(int bufSizeID)
-{
-    int tempBuffsize=0;
-    
-    switch (bufSizeID)
-    {
-        case b1024ID:
-            tempBuffsize = 1024;
-            break;
-            
-        case b2048ID:
-            tempBuffsize = 2048;
-            break;
-            
-        case b4096ID:
-            tempBuffsize = 4096;
-            break;
-            
-        case b8192ID:
-            tempBuffsize = 8192;
-            break;
-            
-        case b16384ID:
-            tempBuffsize = 16384;
-            break;
-            
-        case b32768ID:
-            tempBuffsize = 32768;
-            break;
-            
-        case b65536ID:
-            tempBuffsize = 65536;
-            break;
-            
-        default:
-            break;
-    }
-    
-    if(tempBuffsize>0)
-    {
-        processor.wSettings(processor.wSampleRate, tempBuffsize);
-        
-        
-        if(!processor.isBypassed)
-        {
-            impulseMessage.fillWith(bufSizeID);
-            processor.sendMessage(impulseMessage);
-        }
-        
-        processor.wStop = false;
-        processor.dThread.isAnalOff = false;
-        processor.settingsToApprove = true;
-        waitForSettings = false;
-        processor.isMute = false;
-    }
-    
-    
-}
-
-
-void PajAuanalyserAudioProcessorEditor::drawButtons()
-{
-//    int margX = (getWidth()/2)-215.0f;
-    float margX = 94;
-    float labX=10;
-    float bufLabX=87-5;
-    float bufButX=100-5;
-    
-    float spaceX=38.5;
-    logoSpace.setBounds(margX-45, 5, 40, 40);
-    buttonsSpace.setBounds(margX, 5.0f, 445.0f-3, 40.0f);
-    setResolutLabel.setBounds( margX + labX,    23, 80, 15);
-    setBuffSizLabel.setBounds( margX + labX,    10, 80, 15);
-    
-    pajOFFButton.setBounds        (margX + bufButX + 8*spaceX+2, 7.6f, 35, 35);
-    pajResetButton.setBounds      (margX + bufButX + 8*spaceX-37, 7.6f, 38, 17);
-    pajPhaseButton.setBounds(margX + bufButX + 8*spaceX-37, 25.6f, 38, 17);
-    
-    buff_1024_Label.setBounds ( margX + bufLabX + 0*spaceX-2, 11, 50, 12);
-    buff_1024.setBounds       ( margX + bufButX + 0*spaceX, 23, 19, 17);
-    
-    buff_2048_Label.setBounds ( margX + bufLabX + 1*spaceX-1, 11, 50, 12);
-    buff_2048.setBounds       ( margX + bufButX + 1*spaceX, 23, 19, 17);
-    
-    buff_4096_Label.setBounds ( margX + bufLabX + 2*spaceX-1, 11, 50, 12);
-    buff_4096.setBounds       ( margX + bufButX + 2*spaceX, 23, 19, 17);
-    
-    buff_8192_Label.setBounds ( margX + bufLabX + 3*spaceX-2, 11, 50, 12);
-    buff_8192.setBounds       ( margX + bufButX + 3*spaceX, 23, 19, 17);
-    
-    buff_16384_Label.setBounds( margX + bufLabX + 4*spaceX-2, 11, 50, 12);
-    buff_16384.setBounds      ( margX + bufButX + 4*spaceX, 23, 19, 17);
-    
-    buff_32768_Label.setBounds( margX + bufLabX + 5*spaceX-2, 11, 50, 12);
-    buff_32768.setBounds      ( margX + bufButX + 5*spaceX, 23, 19, 17);
-    
-    buff_65536_Label.setBounds( margX + bufLabX + 6*spaceX-1, 11, 50, 12);
-    buff_65536.setBounds      ( margX + bufButX + 6*spaceX, 23, 19, 17);
-    
-    latencyDetectLabel.setColour(Label::textColourId, Colours::yellow);
-    latencyDetect.setColour(ToggleButton::tickColourId, Colours::yellow);
-}
-
-
-void PajAuanalyserAudioProcessorEditor::turnOffAnal()
-{
-    pajIsOn = false;
-    processor.wStop = true;
-    processor.dThread.isAnalOff = true;
-    
-    buff_1024.setToggleState(false, dontSendNotification);
-    buff_2048.setToggleState(false, dontSendNotification);
-    buff_4096.setToggleState(false, dontSendNotification);
-    buff_8192.setToggleState(false, dontSendNotification);
-    buff_16384.setToggleState(false, dontSendNotification);
-    buff_32768.setToggleState(false, dontSendNotification);
-    buff_65536.setToggleState(false, dontSendNotification);
-    
-    if(!isMessageReceived)
-    {
-        impulseMessage.fillWith(muteImpulseID);
-        processor.sendMessage(impulseMessage);
-        isMessageReceived = false;
-    }
-    isMessageReceived = false;
-    processor.dThread.notify();
-//    disconnect();
-}
-
-void PajAuanalyserAudioProcessorEditor::resetAnalGraph()
-{
-    int dataSize = (int)processor.dThread.graphAnalyserMagL.dataSize;
-    
-    for(int i=0; i<dataSize; i++)
-    {
-        processor.dThread.graphAnalyserMagL.drawStaticY[i] = 1.0f;
-        processor.dThread.graphAnalyserPhaL.drawStaticY[i] = 0.0f;
-        
-        if(processor.inputChannelsQuantity > 1)
-        {
-            processor.dThread.graphAnalyserMagR.drawStaticY[i] = 1.0f;
-            processor.dThread.graphAnalyserPhaR.drawStaticY[i] = 0.0f;
-        }
-    }
-    
-    processor.dThread.notify();
-}
-
-void PajAuanalyserAudioProcessorEditor::mouseDown( const MouseEvent & event )
-{
-    if( event.originalComponent == resizableCorner.get() )
-    {
-        processor.dThread.isResizing = true;
-    }
-}
-
-void PajAuanalyserAudioProcessorEditor::mouseUp( const MouseEvent & event )
-{
-    if( event.originalComponent == resizableCorner.get() )
-    {
-        processor.dThread.isResizing = false;
-    }
-}
-
-void PajAuanalyserAudioProcessorEditor::leaveButtonsUntouched(int onButtonID)
-{
-    switch (onButtonID)
-    {
-        case b1024ID:
-            buff_1024.setToggleState(true, dontSendNotification);
-            break;
-            
-        case b2048ID:
-            buff_2048.setToggleState(true, dontSendNotification);
-            break;
-            
-        case b4096ID:
-            buff_4096.setToggleState(true, dontSendNotification);
-            break;
-            
-        case b8192ID:
-            buff_8192.setToggleState(true, dontSendNotification);
-            break;
-            
-        case b16384ID:
-            buff_16384.setToggleState(true, dontSendNotification);
-            break;
-            
-        case b32768ID:
-            buff_32768.setToggleState(true, dontSendNotification);
-            break;
-            
-        case b65536ID:
-            buff_65536.setToggleState(true, dontSendNotification);
-            break;
-            
-        default:
-            return;
-    }
-}
-
-
-void PajAuanalyserAudioProcessorEditor::setGraphBounds(int isShowPhase)
-{
-    int topMarg=55;
-    int displayWidth = getWidth()-20;
-    
-    if(isShowPhase==1)
-    {
-        int graphOffsetY = (getHeight()/2.0)+(topMarg/2);
-        int displayHeight= (getHeight()/2.0)-(topMarg/2)-8;
-        
-        processor.dThread.display_magni.setBounds (0, topMarg,      displayWidth, displayHeight);
-        processor.dThread.display_phase.setBounds (0, graphOffsetY, displayWidth, displayHeight);
-        
-        int graphWidth = processor.dThread.display_magni.getDisplayWidth();
-        int graphHeight= processor.dThread.display_magni.getDisplayHeight();
-        
-        processor.dThread.graphAnalyserMagL.setBounds(50, 23+topMarg, graphWidth, graphHeight);
-        processor.dThread.graphAnalyserPhaL.setBounds(50, 23+graphOffsetY, graphWidth, graphHeight);
-        
-        if(processor.getTotalNumInputChannels()>1)
-        {
-            processor.dThread.graphAnalyserMagR.setBounds(/*graphMargX*/ 50, /*graphMargY*/ 23+topMarg, graphWidth, graphHeight);
-            processor.dThread.graphAnalyserPhaR.setBounds(/*graphMargX*/ 50, /*graphMargY*/ 23+graphOffsetY, graphWidth, graphHeight);
-        }
-    }
-    else
-    {
-        int displayHeight= 2*((getHeight()/2)-(topMarg/2))-9;
-        
-        processor.dThread.display_magni.setBounds (0, topMarg,      displayWidth, displayHeight);
-        
-        int graphWidth = processor.dThread.display_magni.getDisplayWidth();
-        int graphHeight= processor.dThread.display_magni.getDisplayHeight();
-        
-        processor.dThread.graphAnalyserMagL.setBounds(50, 23+topMarg, graphWidth, graphHeight);
-        
-        if(processor.getTotalNumInputChannels()>1)
-        {
-            processor.dThread.graphAnalyserMagR.setBounds(/*graphMargX*/ 50, /*graphMargY*/ 23+topMarg, graphWidth, graphHeight);
-        }
-    }
-}
-
-
-void PajAuanalyserAudioProcessorEditor::toggleButtonByID(int buttonID, bool isFromSocket)
-{
-    switch (buttonID)
-    {
-        case b1024ID:
-            buff_1024.setToggleState(true, dontSendNotification);
-            updateToggleState(&buff_1024, b1024ID, isFromSocket);
-            break;
-            
-        case b2048ID:
-            buff_2048.setToggleState(true, dontSendNotification);
-            updateToggleState(&buff_2048, b2048ID, isFromSocket);
-            break;
-            
-        case b4096ID:
-            buff_4096.setToggleState(true, dontSendNotification);
-            updateToggleState(&buff_4096, b4096ID, isFromSocket);
-            break;
-            
-        case b8192ID:
-            buff_8192.setToggleState(true, dontSendNotification);
-            updateToggleState(&buff_8192, b8192ID, isFromSocket);
-            break;
-            
-        case b16384ID:
-            buff_16384.setToggleState(true, dontSendNotification);
-            updateToggleState(&buff_16384, b16384ID, isFromSocket);
-            break;
-            
-        case b32768ID:
-            buff_32768.setToggleState(true, dontSendNotification);
-            updateToggleState(&buff_32768, b32768ID, isFromSocket);
-            break;
-            
-        case b65536ID:
-            buff_65536.setToggleState(true, dontSendNotification);
-            updateToggleState(&buff_65536, b65536ID, isFromSocket);
-            break;
-            
-        case pajOffButtonID:
-            updateToggleState(&pajOFFButton, pajOffButtonID);
-            break;
-            
-        default:
-            return;
+        addAndMakeVisible(&drawingThread.magAnal[channel]);
+        addAndMakeVisible(&drawingThread.phaAnal[channel]);
+        drawingThread.phaAnal[channel].setVisible(false);
     }
 }

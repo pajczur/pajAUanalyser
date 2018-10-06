@@ -252,7 +252,7 @@ int Display_Logarithmic::getDisplayMargYTop()
     return margYTop;
 }
 
-void Display_Logarithmic::setNyquist(double nyquistFreq)
+void Display_Logarithmic::setNyquist(float nyquistFreq)
 {
     wNyquist = nyquistFreq;
     topEnd = wNyquist;
@@ -308,41 +308,42 @@ void Display_Logarithmic::setNyquist(double nyquistFreq)
 //    sliderValueChanged(&wZoom);
 }
 
-//void Display_Logarithmic::sliderValueChanged (Slider *slider)
-//{
-//    if(slider == &wZoom)
-//    {
-//        aPlusMinus = (wZoom.getMaxValue() - wZoom.getMinValue()) / 2.0f;
-//
-//        if (wZoom.getThumbBeingDragged() == 1 || wZoom.getThumbBeingDragged() == 2) {
-//            wZoom.setValue(((wZoom.getMaxValue() - wZoom.getMinValue()) / 2.0) + wZoom.getMinValue(), dontSendNotification);
-//        }
-//        else
-//        {
-//            if      (wZoom.getMinValue() <= wZoom.getMinimum() && wZoom.getValue()<middlThumb) {
-//                wZoom.setValue(middlThumb, dontSendNotification);
-//                return;
-//            }
-//            else if (wZoom.getMaxValue() >= wZoom.getMaximum()-0.01 && wZoom.getValue()>middlThumb) {
-//                wZoom.setValue(middlThumb, dontSendNotification);
-//                return;
-//            }
-//            else {
-//                wZoom.setMinAndMaxValues(wZoom.getValue() - aPlusMinus, wZoom.getValue() + aPlusMinus, dontSendNotification);
-//            }
-//        }
-//
-//        middlThumb = wZoom.getValue();
-//
-//        lowEnd = pow(10.0, wZoom.getMinValue()*log10(22050.0)/22050.0);
-//        topEnd = pow(10.0, wZoom.getMaxValue()*log10(22050.0)/22050.0);
-//
-//        repaint();
-//        graphAnalyser->setZoomLogar(lowEnd, topEnd);
-//
-//    }
-//}
+/*
+void Display_Logarithmic::sliderValueChanged (Slider *slider)
+{
+    if(slider == &wZoom)
+    {
+        aPlusMinus = (wZoom.getMaxValue() - wZoom.getMinValue()) / 2.0f;
 
+        if (wZoom.getThumbBeingDragged() == 1 || wZoom.getThumbBeingDragged() == 2) {
+            wZoom.setValue(((wZoom.getMaxValue() - wZoom.getMinValue()) / 2.0) + wZoom.getMinValue(), dontSendNotification);
+        }
+        else
+        {
+            if      (wZoom.getMinValue() <= wZoom.getMinimum() && wZoom.getValue()<middlThumb) {
+                wZoom.setValue(middlThumb, dontSendNotification);
+                return;
+            }
+            else if (wZoom.getMaxValue() >= wZoom.getMaximum()-0.01 && wZoom.getValue()>middlThumb) {
+                wZoom.setValue(middlThumb, dontSendNotification);
+                return;
+            }
+            else {
+                wZoom.setMinAndMaxValues(wZoom.getValue() - aPlusMinus, wZoom.getValue() + aPlusMinus, dontSendNotification);
+            }
+        }
+
+        middlThumb = wZoom.getValue();
+
+        lowEnd = pow(10.0, wZoom.getMinValue()*log10(22050.0)/22050.0);
+        topEnd = pow(10.0, wZoom.getMaxValue()*log10(22050.0)/22050.0);
+
+        repaint();
+        graphAnalyser->setZoomLogar(lowEnd, topEnd);
+
+    }
+}
+*/
 void Display_Logarithmic::whatToDisplay(GraphAnalyser &graph)
 {
     graphAnalyser = &graph;

@@ -24,8 +24,7 @@ void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
 {
     dataSource = &fftSourceData;
     dataSize = buffSizz/2.0f;
-//    512 1024 1280 1407 1469 1497 1506
-//    512 768  896  960  992  1008 1016
+
     if(dataSize==2048)
     {
         dataSize = 1280;
@@ -77,7 +76,7 @@ void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
         drawStaticY.resize((int)dataSize, 0.0f);
 }
 
-void GraphAnalyser::setWindScaleSettings(double &sampRat, double &wBuffSiz)
+void GraphAnalyser::setWindScaleSettings(float &sampRat, float &wBuffSiz)
 {
     wNyquist = sampRat/2.0f;
     
@@ -105,12 +104,12 @@ void GraphAnalyser::setWindScaleSettings(double &sampRat, double &wBuffSiz)
 
 void GraphAnalyser::paint (Graphics& g)
 {
-    if(chan==left)
+    if(chan==wLeft)
     {
         g.setColour (Colours::white);
     }
     
-    if (chan==right)
+    if (chan==wRight)
     {
         g.setColour (Colours::red);
     }
