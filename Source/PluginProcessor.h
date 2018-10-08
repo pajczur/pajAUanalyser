@@ -16,7 +16,7 @@
 //==============================================================================
 /**
 */
-class PajAuanalyserAudioProcessor  : public AudioProcessor, public InterprocessConnection, public Timer
+class PajAuanalyserAudioProcessor  : public AudioProcessor, public Timer
 {
 public:
     //==============================================================================
@@ -59,10 +59,6 @@ public:
     void updateFFTSize();
     void resetAnalGraph();
     
-    void connectionMade() override;
-    void connectionLost() override;
-    void messageReceived( const MemoryBlock & message) override;
-    
     void timerCallback() override;
     
     
@@ -72,7 +68,7 @@ public:
     
     int wNumInputChannel;
 
-    float realBuffSize;
+    size_t realBuffSize;
 
     std::vector<float> tempInput[2];
     int sampleCount[2];
@@ -80,7 +76,7 @@ public:
     
 public:
     bool isGlobalBuffer;
-    bool wDetectLatency;
+    std::atomic<bool> wDetectLatency;
     std::atomic<bool> wIsPaused;
     std::atomic_flag dataIsInUse;
     
@@ -99,6 +95,11 @@ public:
     std::atomic<bool> isBypassed;
     
     std::atomic<int> buttonID;
+    
+    // in assist for editor
+    uint8 clickedButtonID = muteImpulseID;
+    int showPhaseBool=0;
+    std::atomic<bool> waitForSettings;
 
     
     //==============================================================================

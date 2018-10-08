@@ -23,8 +23,11 @@
 #define settingsTimer 0
 #define bypassTimer   1
 
+#define wClickButton true
+#define wDontClickButton false
+
 //==============================================================================
-class PajAuanalyserAudioProcessorEditor  : public AudioProcessorEditor, public MultiTimer
+class PajAuanalyserAudioProcessorEditor  : public AudioProcessorEditor, public MultiTimer, public InterprocessConnection
 {
 public:
     PajAuanalyserAudioProcessorEditor (PajAuanalyserAudioProcessor&);
@@ -33,6 +36,8 @@ public:
     BubbleMessageComponent pajHint;
     Rectangle<int> hintPos;
     AttributedString pajHintText;
+    bool showHint = true;
+    void showBubbleHint(bool shouldShowHint);
 
 
     
@@ -44,8 +49,18 @@ public:
     
     //==============================================================================
     void updateToggleState(Button* button, uint8 buttonID);
+    void updateButtons(uint8 buttonID, bool toggleState, bool clickOrNot);
+    void clickOFF();
+    void clickShowPhase();
+    void fftSizeClicked(uint8 buttonID);
+    void clickDetectLatency();
+    std::atomic<bool> &waitForSettings;
+    
+    
+    //==============================================================================
     void timerCallback(int timerID) override;
-    void turnOffAnal();
+    void settingsTimerCallback();
+    void bypassTimerCallback();
     
     
     //==============================================================================
@@ -56,6 +71,12 @@ public:
     //==============================================================================
     void setPajFFTsize(int fftSizeID);
     void sendFFTsizeToGenerator(uint8 fftSizeID);
+    
+    
+    //==============================================================================
+    void connectionMade() override;
+    void connectionLost() override;
+    void messageReceived( const MemoryBlock & message) override;
     
     
     //==============================================================================
@@ -75,7 +96,12 @@ private:
     Label setBuffSizLabel;
     Label setResolutLabel;
     
+    ToggleButton buffBut[7];
+    Label        buffButL[7];
+    uint8 &clickedButtonID;
+
     
+    /*
     //===================
     ToggleButton buff_1024;     Label buff_1024_Label;
     ToggleButton buff_2048;     Label buff_2048_Label;
@@ -84,14 +110,14 @@ private:
     ToggleButton buff_16384;    Label buff_16384_Label;
     ToggleButton buff_32768;    Label buff_32768_Label;
     ToggleButton buff_65536;    Label buff_65536_Label;
+     */
     uint8 fftSizeID;
-    
     
     //===================
     TextButton pajOFFButton;
     TextButton pajResetButton;
     TextButton pajPhaseButton;
-    int showPhaseBool=0;
+    int &showPhaseBool;
     
     
     //===================
@@ -120,13 +146,14 @@ private:
     std::atomic<bool> &notifyFromDThread;
     std::atomic<bool> &holdDThread;
     std::atomic<bool> &pauseProc;
-    std::atomic<bool> &bypasProc;
+    std::atomic<bool> &isBypassed;
     std::atomic_flag &dataIsInUse;
     std::atomic<bool> settingsTimerUnlocked;
     std::atomic<int> &bypassTime;
-    bool isThreadRunning = false;
     std::atomic<int> &bypassTreshold;
     bool sendBypassMessage = false;
+    bool playBack=false;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)
 };

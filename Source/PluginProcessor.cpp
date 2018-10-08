@@ -86,11 +86,11 @@ void PajAuanalyserAudioProcessor::changeProgramName (int index, const String& ne
 
 //==============================================================================
 void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock) {
-    
+    waitForSettings=false;
     realBuffSize = samplesPerBlock;
     wSampleRate = sampleRate;
     
-    bypassTime = round((realBuffSize * 1000.0f) / wSampleRate);
+    bypassTime = round(((double)samplesPerBlock * 1000.0f) / wSampleRate);
     
     wNumInputChannel  = (getTotalNumInputChannels()>1)?2:1;
     
@@ -147,7 +147,6 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
                 channelData[i] = 0.0f; // This make silence
                 
                 if(!wIsPaused && !dataIsInUse.test_and_set())
-//                if(!wIsPaused.test_and_set())
                 {
                     if(isAnySignal[channel]==false)
                     {
@@ -236,37 +235,11 @@ void PajAuanalyserAudioProcessor::resetAnalGraph() {
 
 
 
-void PajAuanalyserAudioProcessor::connectionMade() {
-    //    DBG("CONNECTED");
-}
-
-void PajAuanalyserAudioProcessor::connectionLost() {
-    //    DBG("DISCONNECTED");
-}
-
-void PajAuanalyserAudioProcessor::messageReceived( const MemoryBlock & message) {
-    if(message[0] == pajOffButtonID-1)
-    {
-        buttonID = pajOffButtonID;
-    }
-    else if (message[0] == pajOffButtonID)
-    {
-        buttonID = pajOffButtonID;
-    }
-    else
-    {
-        buttonID = message[0];
-    }
-    
-    if(!isConnected())
-        connectToSocket("127.0.0.1", 52425, 1000);
-}
-
-
 void PajAuanalyserAudioProcessor::timerCallback()
 {
     stopTimer();
     isBypassed=true;
+    waitForSettings=false;
 }
 
 

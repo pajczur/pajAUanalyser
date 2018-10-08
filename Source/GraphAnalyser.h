@@ -12,14 +12,17 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#define muteImpulseID 0
-#define b1024ID       1
-#define b2048ID       2
-#define b4096ID       3
-#define b8192ID       4
-#define b16384ID      5
-#define b32768ID      6
-#define b65536ID      7
+#define b1024ID       0
+#define b2048ID       1
+#define b4096ID       2
+#define b8192ID       3
+#define b16384ID      4
+#define b32768ID      5
+#define b65536ID      6
+
+#define muteImpulseID 7
+
+#define numOfRadioButton 7
 
 #define unWrapID      10
 #define latencyID     11

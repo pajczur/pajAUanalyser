@@ -169,7 +169,7 @@ void GraphAnalyser::drawGraphSTATIC()
     else if (outType == wPha)
         drawPhaPathSTATIC();
     
-    repaint();
+//    repaint();
 }
 
 
