@@ -27,9 +27,13 @@
 #define unWrapID      10
 #define latencyID     11
 
+#define pajPlay       19
+
 #define pajOffButtonID   20
 #define pajResetButtonID 21
 #define pajPhaseButtonID 22
+
+#define refreshMessageReceivedBool 50
 
 #define bufferButtonRadioGroup 100
 
@@ -100,6 +104,7 @@ private:
     
 public:
     std::atomic<bool> pajUnwrapping;
+    std::atomic<bool> *drawPhase;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphAnalyser)
 };

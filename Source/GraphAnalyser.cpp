@@ -106,7 +106,7 @@ void GraphAnalyser::paint (Graphics& g)
 {
     if(chan==wLeft)
     {
-        g.setColour (Colours::white);
+        g.setColour (Colours::yellow);
     }
     
     if (chan==wRight)
@@ -119,7 +119,7 @@ void GraphAnalyser::paint (Graphics& g)
     
     if(outType==wMag)
         g.strokePath(fftGraphPath, PathStrokeType(1.0));
-    else if(outType==wPha)
+    else if(outType==wPha && *drawPhase)
         g.strokePath(fftGraphPath, PathStrokeType(1.0));
 }
 
@@ -243,9 +243,9 @@ void GraphAnalyser::drawPhaPath()
         
         if(pajUnwrapping)
         {
-            if(tempp > 1.1f)
+            if(tempp > 1.0f)
                 fPIshift -= 2;
-            else if(tempp < -1.1f)
+            else if(tempp < -1.0f)
                 fPIshift += 2;
         }
             

@@ -21,7 +21,7 @@ PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       ), pajFFTsize(1024.0f), isGlobalBuffer(true), wDetectLatency(false), wIsPaused(true), isBypassed(true)
+                       ), pajFFTsize(1024.0f), isGlobalBuffer(true), wDetectLatency(true), wIsPaused(true), isBypassed(true)
 #endif
 {
     dataIsInUse.clear();
@@ -89,7 +89,7 @@ void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesP
     waitForSettings=false;
     realBuffSize = samplesPerBlock;
     wSampleRate = sampleRate;
-    
+//    DBG("Buffer SIZE " << samplesPerBlock << " AND " << realBuffSize);
     bypassTime = round(((double)samplesPerBlock * 1000.0f) / wSampleRate);
     
     wNumInputChannel  = (getTotalNumInputChannels()>1)?2:1;
@@ -102,6 +102,9 @@ void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesP
 }
 
 void PajAuanalyserAudioProcessor::releaseResources() {
+    
+    
+    
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -127,7 +130,7 @@ bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
 
 void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages) {
     bypassTreshold=1;
-    
+
     if(!isBypassed)
     {
         auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -139,10 +142,10 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
         {
             float* channelData = buffer.getWritePointer (channel);
             
-            for(int i=0; i<(size_t)realBuffSize; ++i)
+//            for(int i=0; i<realBuffSize; ++i)
+            for(int i=0; i<buffer.getNumSamples(); ++i)
             {
                 tempInput[channel][sampleCount[channel]]  = buffer.getSample(channel, i);
-                
                 
                 channelData[i] = 0.0f; // This make silence
                 
@@ -217,29 +220,18 @@ void PajAuanalyserAudioProcessor::updateFFTSize() {
 }
 
 
-void PajAuanalyserAudioProcessor::resetAnalGraph() {
-    
-    int dataSize = (int)dThread.magAnal[wLeft].dataSize; // for all graphs it's the same
-    
-    for(int channel=0; channel<wNumInputChannel; ++channel)
-    {
-        for(int i=0; i<dataSize; i++)
-        {
-            dThread.magAnal[channel].drawStaticY[i] = 1.0f;
-            dThread.phaAnal[channel].drawStaticY[i] = 0.0f;
-        }
-    }
-    
-    dThread.notify();
-}
-
-
 
 void PajAuanalyserAudioProcessor::timerCallback()
 {
     stopTimer();
     isBypassed=true;
     waitForSettings=false;
+}
+
+void PajAuanalyserAudioProcessor::setSize(int pajW, int pajH)
+{
+    wWidth = pajW;
+    wHeight = pajH;
 }
 
 

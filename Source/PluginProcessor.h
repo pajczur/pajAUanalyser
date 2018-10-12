@@ -57,9 +57,11 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     void updateFFTSize();
-    void resetAnalGraph();
     
     void timerCallback() override;
+    
+    // in assist for editor
+    void setSize(int pajW, int pajH);
     
     
     //==============================================================================
@@ -68,7 +70,7 @@ public:
     
     int wNumInputChannel;
 
-    size_t realBuffSize;
+    int realBuffSize;
 
     std::vector<float> tempInput[2];
     int sampleCount[2];
@@ -97,10 +99,14 @@ public:
     std::atomic<int> buttonID;
     
     // in assist for editor
-    uint8 clickedButtonID = muteImpulseID;
+    uint8 clickedFFTsizeID = muteImpulseID;
     int showPhaseBool=0;
     std::atomic<bool> waitForSettings;
+    int wWidth=565;
+    int wHeight=300;
+    bool blockButtons = false;
 
+    bool isUnWrapToggled = false;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessor)

@@ -10,59 +10,43 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/PluginProcessor.cpp"
-            timestampString = "560650437.420539"
+            timestampString = "560994138.909407"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "98"
-            endingLineNumber = "98"
-            landmarkName = "PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../Source/DrawingThread.cpp"
-            timestampString = "560650437.4206851"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "17"
-            endingLineNumber = "17"
-            landmarkName = "DrawingThread::DrawingThread()"
+            startingLineNumber = "226"
+            endingLineNumber = "226"
+            landmarkName = "PajAuanalyserAudioProcessor::timerCallback()"
             landmarkType = "7">
             <Locations>
                <Location
-                  shouldBeEnabled = "No"
+                  shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "DrawingThread::DrawingThread()"
+                  symbolName = "PajAuanalyserAudioProcessor::timerCallback()"
                   moduleName = "pajAUanalyser"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/wojtekpilwinski/Development/PublicRepositories/pajAUanalyser/Source/DrawingThread.cpp"
-                  timestampString = "560527400.503323"
+                  urlString = "file:///Users/wojtekpilwinski/Development/PublicRepositories/pajAUanalyser/Source/PluginProcessor.cpp"
+                  timestampString = "560888110.404529"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "226"
+                  endingLineNumber = "226"
+                  offsetFromSymbolStart = "9">
                </Location>
                <Location
-                  shouldBeEnabled = "No"
+                  shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "DrawingThread::DrawingThread()"
+                  symbolName = "non-virtual thunk to PajAuanalyserAudioProcessor::timerCallback()"
                   moduleName = "pajAUanalyser"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/wojtekpilwinski/Development/PublicRepositories/pajAUanalyser/Source/DrawingThread.cpp"
-                  timestampString = "560527400.5076261"
+                  urlString = "file:///Users/wojtekpilwinski/Development/PublicRepositories/pajAUanalyser/Source/PluginProcessor.cpp"
+                  timestampString = "560888110.4085031"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "4">
+                  startingLineNumber = "226"
+                  endingLineNumber = "226"
+                  offsetFromSymbolStart = "9">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -73,13 +57,61 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../Source/DrawingThread.cpp"
-            timestampString = "560650437.420799"
+            filePath = "../../Source/PluginProcessor.cpp"
+            timestampString = "560994138.9094959"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
-            landmarkName = "DrawingThread::run()"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
+            landmarkName = "PajAuanalyserAudioProcessor::processBlock (AudioBuffer&lt;float&gt;&amp; buffer, MidiBuffer&amp; midiMessages)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/PluginProcessor.cpp"
+            timestampString = "560994138.909597"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
+            landmarkName = "PajAuanalyserAudioProcessor::processBlock (AudioBuffer&lt;float&gt;&amp; buffer, MidiBuffer&amp; midiMessages)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/PluginProcessor.cpp"
+            timestampString = "560994138.909735"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
+            landmarkName = "PajAuanalyserAudioProcessor::processBlock (AudioBuffer&lt;float&gt;&amp; buffer, MidiBuffer&amp; midiMessages)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/PluginEditor.cpp"
+            timestampString = "560994138.9098181"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "660"
+            endingLineNumber = "660"
+            landmarkName = "PajAuanalyserAudioProcessorEditor::messageReceived( const MemoryBlock &amp; message)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

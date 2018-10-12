@@ -13,7 +13,10 @@
               file="Source/PajFFT/PajFFT_Radix2.cpp"/>
         <FILE id="I6SN4h" name="PajFFT_Radix2.h" compile="0" resource="0" file="Source/PajFFT/PajFFT_Radix2.h"/>
       </GROUP>
-      <GROUP id="{DAF587DF-E996-E9EB-4F83-451211D09C3C}" name="resources"/>
+      <GROUP id="{DAF587DF-E996-E9EB-4F83-451211D09C3C}" name="resources">
+        <FILE id="MtnuRw" name="pajLogoYellow.png" compile="0" resource="1"
+              file="Source/pajLogoYellow.png"/>
+      </GROUP>
       <FILE id="R3m3TV" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="ScojUK" name="PluginProcessor.h" compile="0" resource="0"
@@ -37,7 +40,6 @@
             file="Source/DrawingThread.cpp"/>
       <FILE id="hlzO47" name="DrawingThread.h" compile="0" resource="0" file="Source/DrawingThread.h"/>
       <FILE id="NW6yrJ" name="PublicEnums.cpp" compile="1" resource="0" file="Source/PublicEnums.cpp"/>
-      <FILE id="NhFLdX" name="pajczurLogo.png" compile="0" resource="1" file="Source/pajczurLogo.png"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

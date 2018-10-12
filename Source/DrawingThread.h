@@ -31,6 +31,7 @@ public:
     
     void drawFFTgraph();
     void drawSTATICgraph();
+    void resetAnalGraph();
     
     void run() override;
     

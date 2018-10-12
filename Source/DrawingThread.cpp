@@ -20,6 +20,9 @@ DrawingThread::DrawingThread() : Thread("Drawing thread"),
 {
     display_magni.graphTitle = "Magnitude";
     display_phase.graphTitle = "Phase shift";
+    
+    phaAnal[wLeft].drawPhase = &drawPhase;
+    phaAnal[wRight].drawPhase = &drawPhase;
 }
 
 DrawingThread::~DrawingThread()
@@ -31,11 +34,10 @@ void DrawingThread::wSetBounds(int wWidth, int wHeight, int isShowPhase)
 {
     int displayWidth = wWidth-20;
     
-    if(isShowPhase==0)
+    if(!isShowPhase)
     {
         int displayHeight= wHeight-64;
-        
-        display_magni.setBounds (0, 55,      displayWidth, displayHeight);
+        display_magni.setBounds(0, 55, displayWidth, displayHeight);
         
         int graphWidth = display_magni.getDisplayWidth();
         int graphHeight= display_magni.getDisplayHeight();
@@ -47,20 +49,33 @@ void DrawingThread::wSetBounds(int wWidth, int wHeight, int isShowPhase)
     }
     else
     {
-        int graphOffsetY = (wHeight/2.0)+27.5;
-        int displayHeight= (wHeight/2.0)-35.5;
-        
+        int displayHeight= wHeight-64;
         display_magni.setBounds (0, 55,      displayWidth, displayHeight);
-        display_phase.setBounds (0, graphOffsetY, displayWidth, displayHeight);
         
-        int graphWidth = display_magni.getDisplayWidth();
-        int graphHeight= display_magni.getDisplayHeight();
+        display_phase.setBounds(0, 55, displayWidth, displayHeight);
+        
+        int graphWidth = display_phase.getDisplayWidth();
+        int graphHeight= display_phase.getDisplayHeight();
         
         for(int channel=0; channel<numChannels; ++channel)
         {
-            magAnal[channel].setBounds(50, 78, graphWidth, graphHeight);
-            phaAnal[channel].setBounds(50, 23+graphOffsetY, graphWidth, graphHeight);
+            phaAnal[channel].setBounds(50, 78, graphWidth, graphHeight);
         }
+        
+//        int graphOffsetY = (wHeight/2.0)+27.5;
+//        int displayHeight= (wHeight/2.0)-35.5;
+        
+//        display_magni.setBounds (0, 55,      displayWidth, displayHeight);
+//        display_phase.setBounds (0, graphOffsetY, displayWidth, displayHeight);
+//
+//        int graphWidth = display_magni.getDisplayWidth();
+//        int graphHeight= display_magni.getDisplayHeight();
+//
+//        for(int channel=0; channel<numChannels; ++channel)
+//        {
+//            magAnal[channel].setBounds(50, 78, graphWidth, graphHeight);
+//            phaAnal[channel].setBounds(50, 23+graphOffsetY, graphWidth, graphHeight);
+//        }
     }
 }
 
@@ -136,7 +151,7 @@ void DrawingThread::drawFFTgraph()
         for(int channel=0; channel<numChannels; ++channel)
         {
             magAnal[channel].drawGraph();
-            if(drawPhase)
+//            if(drawPhase)
                 phaAnal[channel].drawGraph();
 
             sourceIsReady[channel] = false;
@@ -151,7 +166,24 @@ void DrawingThread::drawSTATICgraph()
     {
         magAnal[channel].drawGraphSTATIC();
 
-        if(drawPhase)
+//        if(drawPhase)
             phaAnal[channel].drawGraphSTATIC();
     }
+}
+
+
+void DrawingThread::resetAnalGraph() {
+    
+    int dataSize = (int)magAnal[wLeft].dataSize; // for all graphs it's the same
+    
+    for(int channel=0; channel<numChannels; ++channel)
+    {
+        for(int i=0; i<dataSize; i++)
+        {
+            magAnal[channel].drawStaticY[i] = 1.0f;
+            phaAnal[channel].drawStaticY[i] = 0.0f;
+        }
+    }
+    
+    notify();
 }

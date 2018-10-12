@@ -23,8 +23,10 @@
 #define settingsTimer 0
 #define bypassTimer   1
 
-#define wClickButton true
-#define wDontClickButton false
+#define wClick true
+#define wDontClick false
+#define wButtonON  true
+#define wButtonOFF false
 
 //==============================================================================
 class PajAuanalyserAudioProcessorEditor  : public AudioProcessorEditor, public MultiTimer, public InterprocessConnection
@@ -54,7 +56,9 @@ public:
     void clickShowPhase();
     void fftSizeClicked(uint8 buttonID);
     void clickDetectLatency();
+    void clickUnWrap();
     std::atomic<bool> &waitForSettings;
+    ToggleButton* getPajButton(uint8 buttonID);
     
     
     //==============================================================================
@@ -81,15 +85,14 @@ public:
     
     //==============================================================================
 private:
-    Rectangle<float> logoSpace;
     Rectangle<float> buttonsSpace;
     const Font wFontSize=12.0f;
     const Font wFontSize2=15.0f;
     
     
     //==============================================================================
-    const File pajLogoFile = String("/Users/wojtekpilwinski/Development/PublicRepositories/pajAUanalyser/Source/pajczurLogo.png");
-    const Image pajLogo = ImageFileFormat::loadFrom(pajLogoFile);
+    Rectangle<float> logoSpace;
+    Image pajLogo = ImageCache::getFromMemory(pajAUanalyser::pajLogoYellow_png, pajAUanalyser::pajLogoYellow_pngSize);
     
     
     //===================
@@ -98,19 +101,8 @@ private:
     
     ToggleButton buffBut[7];
     Label        buffButL[7];
-    uint8 &clickedButtonID;
+    uint8 &clickedFFTsizeID;
 
-    
-    /*
-    //===================
-    ToggleButton buff_1024;     Label buff_1024_Label;
-    ToggleButton buff_2048;     Label buff_2048_Label;
-    ToggleButton buff_4096;     Label buff_4096_Label;
-    ToggleButton buff_8192;     Label buff_8192_Label;
-    ToggleButton buff_16384;    Label buff_16384_Label;
-    ToggleButton buff_32768;    Label buff_32768_Label;
-    ToggleButton buff_65536;    Label buff_65536_Label;
-     */
     uint8 fftSizeID;
     
     //===================
@@ -124,8 +116,8 @@ private:
     ToggleButton latencyDetect; Label latencyDetectLabel;
     ToggleButton pajUnwrap;     Label pajUnwrapLabel;
     
-    bool isUnWrapToggled = false;
-    bool isLatencyToggled = false;
+    bool &isUnWrapToggled;
+    std::atomic<bool> &isLatencyToggled;
    
     
     //==============================================================================
@@ -152,7 +144,15 @@ private:
     std::atomic<int> &bypassTime;
     std::atomic<int> &bypassTreshold;
     bool sendBypassMessage = false;
-    bool playBack=false;
+    std::atomic<bool> playBack;
+    bool &blockButtons;
+    
+    int &wWidth;
+    int &wHeight;
+    
+    std::atomic<bool> pajMessageReceived;
+    
+    std::atomic<bool> isGenActive;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)
