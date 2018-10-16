@@ -23,6 +23,12 @@ DrawingThread::DrawingThread() : Thread("Drawing thread"),
     
     phaAnal[wLeft].drawPhase = &drawPhase;
     phaAnal[wRight].drawPhase = &drawPhase;
+    
+    sourceIsReady[wLeft] = false;
+    sourceIsReady[wRight] = false;
+    
+    isSystemReady = false;
+    isWaiting = true;
 }
 
 DrawingThread::~DrawingThread()
@@ -79,10 +85,9 @@ void DrawingThread::wSetBounds(int wWidth, int wHeight, int isShowPhase)
     }
 }
 
-void DrawingThread::pajSettings(int numberOfChannels, float fftSize, float sampRate)
+bool DrawingThread::pajSettings(int numberOfChannels, float fftSize, float sampRate)
 {
     isSystemReady = false;
-    radix2_FFT.wSettings(sampRate, fftSize);
     
     numChannels = (numberOfChannels>1)?2:1;
     
@@ -109,13 +114,20 @@ void DrawingThread::pajSettings(int numberOfChannels, float fftSize, float sampR
         phaAnal[channel].wSettings(wOutput[channel][wPha], fftSize);
         phaAnal[channel].setWindScaleSettings(sampRate, fftSize);
     }
+    
+    if(radix2_FFT.wSettings(sampRate, fftSize))
+        return SETTINGS_READY;
+    else
+        return false;
 }
 
 void DrawingThread::run()
 {
     while(! threadShouldExit())
     {
+        isWaiting = true;
         wait (-1);
+        isWaiting = false;
         if (threadShouldExit()) return;
         notifyEditor = false;
         
@@ -184,6 +196,4 @@ void DrawingThread::resetAnalGraph() {
             phaAnal[channel].drawStaticY[i] = 0.0f;
         }
     }
-    
-    notify();
 }

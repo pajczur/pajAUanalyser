@@ -56,7 +56,7 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    void updateFFTSize();
+    bool updateFFTSize();
     
     void timerCallback() override;
     
@@ -76,6 +76,9 @@ public:
     int sampleCount[2];
     bool isAnySignal[2];
     
+    std::atomic<bool> wasPluginOpened;
+    std::atomic<int> waitForLatDetect;
+    
 public:
     bool isGlobalBuffer;
     std::atomic<bool> wDetectLatency;
@@ -86,7 +89,7 @@ public:
     
     bool isConnectionSuccesful;
     
-    DrawingThread dThread;
+    DrawingThread drawingThread;
     
     bool settingsToApprove = true;
     int tempppp=0;

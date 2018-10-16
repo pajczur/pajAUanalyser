@@ -12,8 +12,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "SendRemote.h"
-#include "ReceiveRemote.h"
 
 #define margX   94
 #define labX    10
@@ -73,7 +71,7 @@ public:
     
     
     //==============================================================================
-    void setPajFFTsize(int fftSizeID);
+    bool setPajFFTsize(int fftSizeID);
     void sendFFTsizeToGenerator(uint8 fftSizeID);
     
     
@@ -102,8 +100,9 @@ private:
     ToggleButton buffBut[7];
     Label        buffButL[7];
     uint8 &clickedFFTsizeID;
-
+    
     uint8 fftSizeID;
+    bool &blockButtons;
     
     //===================
     TextButton pajOFFButton;
@@ -113,39 +112,24 @@ private:
     
     
     //===================
-    ToggleButton latencyDetect; Label latencyDetectLabel;
+    TextButton latencyDetect; Label latencyDetectLabel;
+//    ToggleButton latencyDetect; Label latencyDetectLabel;
     ToggleButton pajUnwrap;     Label pajUnwrapLabel;
     
     bool &isUnWrapToggled;
-    std::atomic<bool> &isLatencyToggled;
-   
-    
-    //==============================================================================
-    SendRemote sendRemote;
-    ReceiveRemote receiveRemote;
-    
     
     
     //==============================================================================
     PajAuanalyserAudioProcessor& processor;
-    float  &sampRate;
-    float  &pajFFTsize;
-    int    &wNumChannel;
     DrawingThread &drawingThread;
     
     MemoryBlock memoryMessage;
     bool wIsConnected;
     std::atomic<bool> &notifyFromDThread;
-    std::atomic<bool> &holdDThread;
-    std::atomic<bool> &pauseProc;
-    std::atomic<bool> &isBypassed;
     std::atomic_flag &dataIsInUse;
     std::atomic<bool> settingsTimerUnlocked;
-    std::atomic<int> &bypassTime;
-    std::atomic<int> &bypassTreshold;
     bool sendBypassMessage = false;
     std::atomic<bool> playBack;
-    bool &blockButtons;
     
     int &wWidth;
     int &wHeight;

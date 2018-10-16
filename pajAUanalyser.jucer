@@ -24,11 +24,6 @@
       <FILE id="pN3aAQ" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="fn9xIr" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="xC7RcJ" name="SendRemote.cpp" compile="1" resource="0" file="Source/SendRemote.cpp"/>
-      <FILE id="rp7AIL" name="SendRemote.h" compile="0" resource="0" file="Source/SendRemote.h"/>
-      <FILE id="ZjIfZU" name="ReceiveRemote.cpp" compile="1" resource="0"
-            file="Source/ReceiveRemote.cpp"/>
-      <FILE id="tymnKe" name="ReceiveRemote.h" compile="0" resource="0" file="Source/ReceiveRemote.h"/>
       <FILE id="vyFan1" name="Display_Logarithmic.cpp" compile="1" resource="0"
             file="Source/Display_Logarithmic.cpp"/>
       <FILE id="qQ9fBA" name="Display_Logarithmic.h" compile="0" resource="0"
@@ -39,7 +34,6 @@
       <FILE id="F1Bk3t" name="DrawingThread.cpp" compile="1" resource="0"
             file="Source/DrawingThread.cpp"/>
       <FILE id="hlzO47" name="DrawingThread.h" compile="0" resource="0" file="Source/DrawingThread.h"/>
-      <FILE id="NW6yrJ" name="PublicEnums.cpp" compile="1" resource="0" file="Source/PublicEnums.cpp"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

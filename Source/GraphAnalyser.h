@@ -43,6 +43,8 @@
 #define wLeft  0
 #define wRight 1
 
+#define SETTINGS_READY true
+
 //==============================================================================
 /*
 */

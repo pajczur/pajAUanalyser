@@ -50,22 +50,28 @@ void PajFFT_Radix2::setBufferSize                          (float bufferS)
 }
 
 
-void PajFFT_Radix2::resetData                        ()
+bool PajFFT_Radix2::resetData                        ()
 {
-    bitReversal(wBufferSize);
-    prepare_sN0_matrix();
-    prepareTwiddlesArray();
+    if(   bitReversal(wBufferSize) &&
+          prepare_sN0_matrix()     &&
+          prepareTwiddlesArray()      )
+        return SETTINGS_READY;
+    else
+        return false;
 }
 
 
 
 // ==== PUBLIC: ====
-void PajFFT_Radix2::wSettings                              (float sampleRate, float bufferSize)
+bool PajFFT_Radix2::wSettings                              (float sampleRate, float bufferSize)
 {
     setSampleRate(sampleRate);
     setBufferSize(bufferSize);
     
-    resetData();
+    if(resetData())
+        return SETTINGS_READY;
+    else
+        return false;
 }
 
 
@@ -74,7 +80,7 @@ void PajFFT_Radix2::wSettings                              (float sampleRate, fl
 // == P R E == C R E A T I O N =============================================================================================================
 // =========================================================================================================================================
 // ==== PRIVATE: ====
-void PajFFT_Radix2::bitReversal                            (float bufSize)
+bool PajFFT_Radix2::bitReversal                           (float bufSize)
 {
     bitReversed.resize(bufSize);
     
@@ -103,10 +109,12 @@ void PajFFT_Radix2::bitReversal                            (float bufSize)
         }
         j += m;
     }
+    
+    return SETTINGS_READY;
 }
 
 
-void PajFFT_Radix2::prepareTwiddlesArray                   ()
+bool PajFFT_Radix2::prepareTwiddlesArray                   ()
 {
     wnkN_forw.resize(wBufferSize);
     
@@ -114,10 +122,12 @@ void PajFFT_Radix2::prepareTwiddlesArray                   ()
     {
         wnkN_forw[i] = twiddleCalculator((float)i);
     }
+    
+    return SETTINGS_READY;
 }
 
 
-void PajFFT_Radix2::prepare_sN0_matrix                     ()
+bool PajFFT_Radix2::prepare_sN0_matrix                     ()
 {
     sN0.resize(log2(wBufferSize));
     for(int z=0; z<sN0.size(); z++)
@@ -131,6 +141,8 @@ void PajFFT_Radix2::prepare_sN0_matrix                     ()
             sN0[z][i] = temp;
         }
     }
+    
+    return SETTINGS_READY;
 }
 
 

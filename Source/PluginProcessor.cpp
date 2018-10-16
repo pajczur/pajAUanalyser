@@ -25,8 +25,10 @@ PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
 #endif
 {
     dataIsInUse.clear();
-    dThread.isSystemReady = false;
-    dThread.isHold  = true;
+    drawingThread.isSystemReady = false;
+    drawingThread.isHold  = true;
+    waitForLatDetect = 5*1024;
+    wasPluginOpened = false;
 }
 
 PajAuanalyserAudioProcessor::~PajAuanalyserAudioProcessor() {
@@ -142,7 +144,6 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
         {
             float* channelData = buffer.getWritePointer (channel);
             
-//            for(int i=0; i<realBuffSize; ++i)
             for(int i=0; i<buffer.getNumSamples(); ++i)
             {
                 tempInput[channel][sampleCount[channel]]  = buffer.getSample(channel, i);
@@ -164,6 +165,10 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
                             tempInput[channel][0] = tempInput[channel][sampleCount[channel]];
                             sampleCount[channel] = 0;
                         }
+                        waitForLatDetect--;
+                        
+                        if(waitForLatDetect<=0)
+                            wDetectLatency = false;
                     }
 
                     sampleCount[channel]++;
@@ -175,9 +180,9 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
                         if(isAnySignal[channel])
                         {
                             isAnySignal[channel]=false;
-                            dThread.wInput[channel] = tempInput[channel];
-                            dThread.sourceIsReady[channel] = true;
-                            dThread.notify();
+                            drawingThread.wInput[channel] = tempInput[channel];
+                            drawingThread.sourceIsReady[channel] = true;
+                            drawingThread.notify();
                         }
                     }
                     
@@ -195,6 +200,14 @@ bool PajAuanalyserAudioProcessor::hasEditor() const {
 }
 
 AudioProcessorEditor* PajAuanalyserAudioProcessor::createEditor() {
+    if(!wasPluginOpened)
+    {
+        wNumInputChannel = 1;
+        pajFFTsize = 1024.0;
+        wSampleRate = 44100.0;
+        updateFFTSize();
+        wasPluginOpened=true;
+    }
     return new PajAuanalyserAudioProcessorEditor (*this);
 }
 
@@ -205,9 +218,8 @@ void PajAuanalyserAudioProcessor::getStateInformation (MemoryBlock& destData) {
 void PajAuanalyserAudioProcessor::setStateInformation (const void* data, int sizeInBytes) {
 }
 
-void PajAuanalyserAudioProcessor::updateFFTSize() {
+bool PajAuanalyserAudioProcessor::updateFFTSize() {
     
-    dThread.pajSettings(wNumInputChannel, pajFFTsize, wSampleRate);
     
     for(int channel=0; channel<wNumInputChannel; ++channel)
     {
@@ -216,7 +228,10 @@ void PajAuanalyserAudioProcessor::updateFFTSize() {
         isAnySignal[channel]  = false;
     }
     
-    dThread.isSystemReady = true;
+    if( drawingThread.pajSettings(wNumInputChannel, pajFFTsize, wSampleRate) )
+        return SETTINGS_READY;
+    else
+        return false;
 }
 
 

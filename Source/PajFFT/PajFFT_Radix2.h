@@ -21,6 +21,7 @@
 
 #define wMag 0
 #define wPha 1
+#define SETTINGS_READY true
 
 
 class PajFFT_Radix2
@@ -34,16 +35,16 @@ public:
 private:
     void setSampleRate            (float sampleR);
     void setBufferSize            (float bufferS);
-    void resetData          ();
+    bool resetData          ();
 public:
-    void wSettings                (float sampleRate, float bufferSize);
+    bool wSettings                (float sampleRate, float bufferSize);
     
     
     // == PRE CREATION ==============================================================
 private:
-    void bitReversal              (float bufSize);
-    void prepareTwiddlesArray     ();
-    void prepare_sN0_matrix       ();
+    bool bitReversal              (float bufSize);
+    bool prepareTwiddlesArray     ();
+    bool prepare_sN0_matrix       ();
     
     
     

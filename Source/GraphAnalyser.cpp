@@ -28,27 +28,22 @@ void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
     if(dataSize==2048)
     {
         dataSize = 1280;
-//        dataSize = 896;
     }
     else if(dataSize==4096)
     {
         dataSize=1407;
-//        dataSize=960;
     }
     else if(dataSize==8192)
     {
         dataSize=1469;
-//        dataSize=992;
     }
     else if(dataSize==16384)
     {
         dataSize=1497;
-//        dataSize=1008;
     }
     else if (dataSize==32768)
     {
         dataSize=1506;
-//        dataSize=1016;
     }
 
     xScale.resize((int)dataSize);
@@ -218,8 +213,9 @@ void GraphAnalyser::drawMagPath()
         }
         else
         {
-            double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
-            fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wMagnitude);
+//            double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
+//            fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wMagnitude);
+            fftGraphPath.lineTo(wCurrent, wMagnitude);
         }
         
         drawStaticY[i] = dataSource->at(i);
@@ -243,9 +239,9 @@ void GraphAnalyser::drawPhaPath()
         
         if(pajUnwrapping)
         {
-            if(tempp > 1.0f)
+            if(tempp > 1.1f)
                 fPIshift -= 2;
-            else if(tempp < -1.0f)
+            else if(tempp < -1.1f)
                 fPIshift += 2;
         }
             

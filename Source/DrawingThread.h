@@ -27,7 +27,7 @@ public:
     ~DrawingThread();
     void wSetBounds(int wWidth, int wHeight, int isShowPhase);
     
-    void pajSettings(int numberOfChannels, float fftSize, float sampRate);
+    bool pajSettings(int numberOfChannels, float fftSize, float sampRate);
     
     void drawFFTgraph();
     void drawSTATICgraph();
@@ -67,6 +67,8 @@ public:
     std::atomic<bool> isHold;
     std::atomic<bool> drawPhase;
     std::atomic<bool> notifyEditor;
+    std::atomic<bool> isWaiting;
+    
 private:
     int testPaj = 0;
     
