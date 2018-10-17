@@ -33,8 +33,6 @@
 #define pajResetButtonID 21
 #define pajPhaseButtonID 22
 
-#define refreshMessageReceivedBool 50
-
 #define bufferButtonRadioGroup 100
 
 #define wMag 0

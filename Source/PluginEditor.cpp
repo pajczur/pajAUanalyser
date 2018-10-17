@@ -47,20 +47,13 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     pajHintText.setColour(Colours::yellow);
     
     pajDrawAllComponents();
-
-
+    
     memoryMessage.setSize(1);
-
+    
     settingsTimerUnlocked = false;
     
     startTimer(bypassTimer, processor.bypassTime);
-    
-    if(!drawingThread.isThreadRunning())
-        drawingThread.startThread(1);
-    
-    pajUnwrap.setToggleState(isUnWrapToggled, dontSendNotification);
 }
-
 
 
 PajAuanalyserAudioProcessorEditor::~PajAuanalyserAudioProcessorEditor()
@@ -339,9 +332,13 @@ void PajAuanalyserAudioProcessorEditor::timerCallback(int timerID)
 {
     switch(timerID)
     {
-        case bypassTimer:   bypassTimerCallback();   return;
-        case settingsTimer: settingsTimerCallback(); return;
-        case refreshMessageReceivedBool: stopTimer(refreshMessageReceivedBool); pajMessageReceived = false; return;
+        case bypassTimer:       bypassTimerCallback();            return;
+        case settingsTimer:     settingsTimerCallback();          return;
+        case waitForPrepToPlay: waitForPrepToPlayTimerCallback(); return;
+        case refreshMessageReceivedBool:
+            stopTimer(refreshMessageReceivedBool);
+            pajMessageReceived = false;
+            return;
         default: return;
     }
 }
@@ -416,6 +413,17 @@ void PajAuanalyserAudioProcessorEditor::bypassTimerCallback()
         }
     }
 }
+
+
+void PajAuanalyserAudioProcessorEditor::waitForPrepToPlayTimerCallback()
+{
+    if(processor.wasProcessorInit)
+    {
+        stopTimer(waitForPrepToPlay);
+        drawProcComponents();
+    }
+}
+
 
 
 
@@ -620,11 +628,6 @@ void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
     latencyDetect.onClick = [this] { updateToggleState(&latencyDetect, latencyID); };
     latencyDetect.setAlwaysOnTop(true);
     latencyDetect.setButtonText("LATENCY");
-//    addAndMakeVisible(&latencyDetectLabel);
-//    latencyDetectLabel.setJustificationType(Justification::centredBottom);
-//    latencyDetectLabel.setText("LAT.", dontSendNotification);
-//    latencyDetectLabel.setFont(wFontSize);
-//    latencyDetectLabel.setAlwaysOnTop(true);
     
     addAndMakeVisible(&pajUnwrap);
     pajUnwrap.setAlwaysOnTop(true);
@@ -637,27 +640,20 @@ void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
     
     
     latencyDetect.setVisible(showPhaseBool);
-//    latencyDetectLabel.setVisible(showPhaseBool);
-//    latencyDetectLabel.setColour(Label::textColourId, Colours::yellow);
-//    latencyDetect.setBounds      ( 75, 60, 19, 17);
     latencyDetect.setBounds      ( 51, 60, 55, 17);
-//    latencyDetectLabel.setBounds ( 50, 61, 30, 12);
-//    latencyDetect.setColour(ToggleButton::tickColourId, Colours::yellow);
     latencyDetect.setColour(TextButton::textColourOnId, Colours::yellow);
     latencyDetect.setColour(TextButton::textColourOffId, Colours::yellow);
     
     pajUnwrap.setVisible(showPhaseBool);
     pajUnwrapLabel.setVisible(showPhaseBool);
-//    pajUnwrap.setBounds(140, 60, 19, 17);
-//    pajUnwrapLabel.setBounds(100, 61.5, 45, 12);
+
     
-    
-    //    latencyDetect.setBounds      ( 75, 32+getHeight()/2, 19, 17);
-    //    latencyDetectLabel.setBounds ( 50, 35+getHeight()/2, 30, 12);
-    //    pajUnwrap.setBounds(140, 32+getHeight()/2, 19, 17);
-    //    pajUnwrapLabel.setBounds(100, 33+getHeight()/2, 45, 12);
-    
-    
+    startTimer(waitForPrepToPlay, 100);
+}
+
+
+void PajAuanalyserAudioProcessorEditor::drawProcComponents()
+{
     //== P R O C E S S O R == D E F A U L T ==
     addAndMakeVisible(&drawingThread.display_magni);
     addAndMakeVisible(&drawingThread.display_phase);
@@ -670,4 +666,10 @@ void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
         addAndMakeVisible(&drawingThread.phaAnal[channel]);
         drawingThread.phaAnal[channel].setVisible(showPhaseBool);
     }
+    
+    if(!drawingThread.isThreadRunning())
+        drawingThread.startThread(1);
+    
+    pajUnwrap.setToggleState(isUnWrapToggled, dontSendNotification);
+    resized();
 }

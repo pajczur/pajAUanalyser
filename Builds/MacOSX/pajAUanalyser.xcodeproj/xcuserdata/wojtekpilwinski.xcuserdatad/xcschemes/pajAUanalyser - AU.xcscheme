@@ -44,7 +44,8 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
-         FilePath = "/Applications/Logic Pro X.app">
+         BundleIdentifier = "com.roli.juce.pluginhost"
+         FilePath = "/Users/wojtekpilwinski/Development/AudioPluginHost.app">
       </PathRunnable>
       <MacroExpansion>
          <BuildableReference

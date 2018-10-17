@@ -11,6 +11,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
+
 //==============================================================================
 PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -28,7 +30,7 @@ PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
     drawingThread.isSystemReady = false;
     drawingThread.isHold  = true;
     waitForLatDetect = 5*1024;
-    wasPluginOpened = false;
+    wasProcessorInit = false;
 }
 
 PajAuanalyserAudioProcessor::~PajAuanalyserAudioProcessor() {
@@ -101,6 +103,9 @@ void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesP
 //    resetAnalGraph();
     
     settingsToApprove = true;
+    
+    if(!wasProcessorInit)
+        wasProcessorInit = true;
 }
 
 void PajAuanalyserAudioProcessor::releaseResources() {
@@ -200,14 +205,6 @@ bool PajAuanalyserAudioProcessor::hasEditor() const {
 }
 
 AudioProcessorEditor* PajAuanalyserAudioProcessor::createEditor() {
-    if(!wasPluginOpened)
-    {
-        wNumInputChannel = 1;
-        pajFFTsize = 1024.0;
-        wSampleRate = 44100.0;
-        updateFFTSize();
-        wasPluginOpened=true;
-    }
     return new PajAuanalyserAudioProcessorEditor (*this);
 }
 

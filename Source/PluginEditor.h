@@ -20,6 +20,8 @@
 #define spaceX  38.5
 #define settingsTimer 0
 #define bypassTimer   1
+#define waitForPrepToPlay 2
+#define refreshMessageReceivedBool 50
 
 #define wClick true
 #define wDontClick false
@@ -45,6 +47,7 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     void pajDrawAllComponents();
+    void drawProcComponents();
     
     
     //==============================================================================
@@ -63,6 +66,7 @@ public:
     void timerCallback(int timerID) override;
     void settingsTimerCallback();
     void bypassTimerCallback();
+    void waitForPrepToPlayTimerCallback();
     
     
     //==============================================================================
@@ -137,7 +141,6 @@ private:
     std::atomic<bool> pajMessageReceived;
     
     std::atomic<bool> isGenActive;
-
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)
 };

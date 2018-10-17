@@ -72,6 +72,8 @@ private:
     
     float wSampleRate;
     float wBufferSize;
+    int   dividerInt;
+    float dividerFloat;
     
     std::vector<std::complex<float>> wnkN_forw;      // Array of precalculated forward twiddle
     std::vector<int>                 bitReversed;  // Array of bit reversed indexes for Zero padding

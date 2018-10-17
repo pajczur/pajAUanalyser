@@ -47,6 +47,9 @@ void PajFFT_Radix2::setSampleRate                          (float sampleR)
 void PajFFT_Radix2::setBufferSize                          (float bufferS)
 {
     wBufferSize = bufferS;
+    
+    dividerInt = ((wBufferSize/2)<1024)?1:((wBufferSize/2)/1024);
+    dividerFloat = (float)dividerInt;
 }
 
 
@@ -54,7 +57,7 @@ bool PajFFT_Radix2::resetData                        ()
 {
     if(   bitReversal(wBufferSize) &&
           prepare_sN0_matrix()     &&
-          prepareTwiddlesArray()      )
+          prepareTwiddlesArray()        )
         return SETTINGS_READY;
     else
         return false;
@@ -209,8 +212,6 @@ void PajFFT_Radix2::lastStepFFT                            (int &rdx2, std::vect
 {
     float wAvarageMag=0.0f;
     float wAvaragePha=0.0f;
-    int dividerInt = ((wBufferSize/2)<1024)?1:((wBufferSize/2)/1024);
-    float dividerFloat = (float)dividerInt;
     
     for(int k=0; k<wBufferSize/pow(2, rdx2+1); k++)
     {
@@ -238,8 +239,9 @@ void PajFFT_Radix2::lastStepFFT                            (int &rdx2, std::vect
             }
             else if(n>512 && n<=32768)
             {
-                wAvarageMag += tempMag;
-                wAvaragePha += tempPha;
+                    wAvarageMag += tempMag;
+                    wAvaragePha += tempPha;
+                
                 if(n%dividerInt==0)
                 {
                     wOutputData->at(wMag)[binScale] = wAvarageMag/dividerFloat;

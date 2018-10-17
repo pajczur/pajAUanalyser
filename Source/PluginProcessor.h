@@ -76,7 +76,7 @@ public:
     int sampleCount[2];
     bool isAnySignal[2];
     
-    std::atomic<bool> wasPluginOpened;
+    std::atomic<bool> wasProcessorInit;
     std::atomic<int> waitForLatDetect;
     
 public:
