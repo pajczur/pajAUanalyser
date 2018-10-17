@@ -47,25 +47,34 @@ void PajFFT_Radix2::setSampleRate                          (float sampleR)
 void PajFFT_Radix2::setBufferSize                          (float bufferS)
 {
     wBufferSize = bufferS;
+    
+    dividerInt = ((wBufferSize/2)<1024)?1:((wBufferSize/2)/1024);
+    dividerFloat = (float)dividerInt;
 }
 
 
-void PajFFT_Radix2::resetData                        ()
+bool PajFFT_Radix2::resetData                        ()
 {
-    bitReversal(wBufferSize);
-    prepare_sN0_matrix();
-    prepareTwiddlesArray();
+    if(   bitReversal(wBufferSize) &&
+          prepare_sN0_matrix()     &&
+          prepareTwiddlesArray()        )
+        return SETTINGS_READY;
+    else
+        return false;
 }
 
 
 
 // ==== PUBLIC: ====
-void PajFFT_Radix2::wSettings                              (float sampleRate, float bufferSize)
+bool PajFFT_Radix2::wSettings                              (float sampleRate, float bufferSize)
 {
     setSampleRate(sampleRate);
     setBufferSize(bufferSize);
     
-    resetData();
+    if(resetData())
+        return SETTINGS_READY;
+    else
+        return false;
 }
 
 
@@ -74,7 +83,7 @@ void PajFFT_Radix2::wSettings                              (float sampleRate, fl
 // == P R E == C R E A T I O N =============================================================================================================
 // =========================================================================================================================================
 // ==== PRIVATE: ====
-void PajFFT_Radix2::bitReversal                            (float bufSize)
+bool PajFFT_Radix2::bitReversal                           (float bufSize)
 {
     bitReversed.resize(bufSize);
     
@@ -103,10 +112,12 @@ void PajFFT_Radix2::bitReversal                            (float bufSize)
         }
         j += m;
     }
+    
+    return SETTINGS_READY;
 }
 
 
-void PajFFT_Radix2::prepareTwiddlesArray                   ()
+bool PajFFT_Radix2::prepareTwiddlesArray                   ()
 {
     wnkN_forw.resize(wBufferSize);
     
@@ -114,10 +125,12 @@ void PajFFT_Radix2::prepareTwiddlesArray                   ()
     {
         wnkN_forw[i] = twiddleCalculator((float)i);
     }
+    
+    return SETTINGS_READY;
 }
 
 
-void PajFFT_Radix2::prepare_sN0_matrix                     ()
+bool PajFFT_Radix2::prepare_sN0_matrix                     ()
 {
     sN0.resize(log2(wBufferSize));
     for(int z=0; z<sN0.size(); z++)
@@ -131,6 +144,8 @@ void PajFFT_Radix2::prepare_sN0_matrix                     ()
             sN0[z][i] = temp;
         }
     }
+    
+    return SETTINGS_READY;
 }
 
 
@@ -197,8 +212,6 @@ void PajFFT_Radix2::lastStepFFT                            (int &rdx2, std::vect
 {
     float wAvarageMag=0.0f;
     float wAvaragePha=0.0f;
-    int dividerInt = ((wBufferSize/2)<1024)?1:((wBufferSize/2)/1024);
-    float dividerFloat = (float)dividerInt;
     
     for(int k=0; k<wBufferSize/pow(2, rdx2+1); k++)
     {
@@ -226,8 +239,9 @@ void PajFFT_Radix2::lastStepFFT                            (int &rdx2, std::vect
             }
             else if(n>512 && n<=32768)
             {
-                wAvarageMag += tempMag;
-                wAvaragePha += tempPha;
+                    wAvarageMag += tempMag;
+                    wAvaragePha += tempPha;
+                
                 if(n%dividerInt==0)
                 {
                     wOutputData->at(wMag)[binScale] = wAvarageMag/dividerFloat;

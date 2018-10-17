@@ -12,161 +12,135 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "SendRemote.h"
-#include "ReceiveRemote.h"
+
+#define margX   94
+#define labX    10
+#define bufLabX 82
+#define bufButX 95
+#define spaceX  38.5
+#define settingsTimer 0
+#define bypassTimer   1
+#define waitForPrepToPlay 2
+#define refreshMessageReceivedBool 50
+
+#define wClick true
+#define wDontClick false
+#define wButtonON  true
+#define wButtonOFF false
 
 //==============================================================================
-/**
-*/
-class PajAuanalyserAudioProcessorEditor  : public AudioProcessorEditor, public MultiTimer
+class PajAuanalyserAudioProcessorEditor  : public AudioProcessorEditor, public MultiTimer, public InterprocessConnection
 {
 public:
     PajAuanalyserAudioProcessorEditor (PajAuanalyserAudioProcessor&);
     ~PajAuanalyserAudioProcessorEditor();
 
-    //==============================================================================
-    void paint (Graphics&) override;
-    void resized() override;
-    
-    void updateToggleState(Button* button, int buttonID, bool isFromSocket = false);
-    
-    void drawButtons();
-    
-    void timerCallback(int timerID) override;
-    
-    void mouseDown( const MouseEvent & event ) override;
-    void mouseUp( const MouseEvent & event ) override;
-    
-    void setBufferSize(int bufSizeID);
-    
-    void turnOffAnal();
-    void resetAnalGraph();
-    
-    void setGraphBounds(int isShowPhase);
-    
-    void toggleButtonByID(int buttonID, bool isFromSocket = false);
-    
-private:
-    PajAuanalyserAudioProcessor& processor;
-    
-    int channelQuantity;
-
-    double sampRate = processor.getSampleRate();;
-    double buffSize = processor.wBuffSize;
-    
-    enum outputType
-    {
-        wMag = 0,
-        wPha = 1
-    };
-    enum channels
-    {
-        left  = 0,
-        right = 1
-    };
-
-    bool isResized;
-    
-    Font wFontSize=12.0f;
-    Font wFontSize2=15.0f;
-    
-    Label setBuffSizLabel;
-    Label setResolutLabel;
-    
-    ToggleButton buff_1024;
-    Label buff_1024_Label;
-    
-    ToggleButton buff_2048;
-    Label buff_2048_Label;
-    
-    ToggleButton buff_4096;
-    Label buff_4096_Label;
-    
-    ToggleButton buff_8192;
-    Label buff_8192_Label;
-    
-    ToggleButton buff_16384;
-    Label buff_16384_Label;
-    
-    ToggleButton buff_32768;
-    Label buff_32768_Label;
-    
-    ToggleButton buff_65536;
-    Label buff_65536_Label;
-    
-    ToggleButton latencyDetect;
-    Label latencyDetectLabel;
-    
-    ToggleButton pajUnwrap;
-    Label pajUnwrapLabel;
-    
-    TextButton pajOFFButton;
-    TextButton pajResetButton;
-    TextButton pajPhaseButton;
-    
-    int rememberWhichButtonIsToggled;
-    std::atomic<bool> waitForSettings;
-    
-    enum buttonsID {
-        muteImpulseID = 0,
-        b1024ID       = 1,
-        b2048ID       = 2,
-        b4096ID       = 3,
-        b8192ID       = 4,
-        b16384ID      = 5,
-        b32768ID      = 6,
-        b65536ID      = 7,
-        unWrapID      = 8,
-        latencyID     = 100,
-        pajOffButtonID      = 110,
-        pajResetButtonID    = 901,
-        pajPhaseButtonID    = 902,
-        bufferButtonRadioGroup = 1000
-    };
-    
-    bool isUnWrapToggled = false;
-    bool isLatencyToggled = false;
-    
-    void leaveButtonsUntouched(int onButtonID);
-    
-    MemoryBlock impulseMessage;
-    
-    Rectangle<float> buttonsSpace;
-    Rectangle<float> logoSpace;
-    
-    const String pathToLogo = "/Users/wojtekpilwinski/Development/PublicRepositories/pajAUanalyser/Source/pajczurLogo.png";
-
-    File pajLogoFile = pathToLogo ;
-    
-    Image pajLogo = ImageFileFormat::loadFrom(pajLogoFile);
-    
-    enum wTimersID
-    {
-        settingsTimer = 1,
-        bypassTimer = 2
-    };
-    
-    int bypassTime;
-    
-    int wBufferButtonID;
-    
-    bool pajIsOn=true;
-    int showPhaseBool=0;
-
-    bool sendBypassMessage;
-    
-    std::atomic<bool> isProcBypass;
-    
-    bool isGenON;
-    
-    bool isMessageReceived = false;
-    
     BubbleMessageComponent pajHint;
     Rectangle<int> hintPos;
     AttributedString pajHintText;
+    bool showHint = true;
+    void showBubbleHint(bool shouldShowHint);
+
+
     
-    SendRemote sendRemote;
-    ReceiveRemote receiveRemote;
+    //==============================================================================
+    void paint (Graphics&) override;
+    void resized() override;
+    void pajDrawAllComponents();
+    void drawProcComponents();
     
+    
+    //==============================================================================
+    void updateToggleState(Button* button, uint8 buttonID);
+    void updateButtons(uint8 buttonID, bool toggleState, bool clickOrNot);
+    void clickOFF();
+    void clickShowPhase();
+    void fftSizeClicked(uint8 buttonID);
+    void clickDetectLatency();
+    void clickUnWrap();
+    std::atomic<bool> &waitForSettings;
+    ToggleButton* getPajButton(uint8 buttonID);
+    
+    
+    //==============================================================================
+    void timerCallback(int timerID) override;
+    void settingsTimerCallback();
+    void bypassTimerCallback();
+    void waitForPrepToPlayTimerCallback();
+    
+    
+    //==============================================================================
+    void mouseDown( const MouseEvent & event ) override;
+    void mouseUp( const MouseEvent & event ) override;
+    
+    
+    //==============================================================================
+    bool setPajFFTsize(int fftSizeID);
+    void sendFFTsizeToGenerator(uint8 fftSizeID);
+    
+    
+    //==============================================================================
+    void connectionMade() override;
+    void connectionLost() override;
+    void messageReceived( const MemoryBlock & message) override;
+    
+    
+    //==============================================================================
+private:
+    Rectangle<float> buttonsSpace;
+    const Font wFontSize=12.0f;
+    const Font wFontSize2=15.0f;
+    
+    
+    //==============================================================================
+    Rectangle<float> logoSpace;
+    Image pajLogo = ImageCache::getFromMemory(pajAUanalyser::pajLogoYellow_png, pajAUanalyser::pajLogoYellow_pngSize);
+    
+    
+    //===================
+    Label setBuffSizLabel;
+    Label setResolutLabel;
+    
+    ToggleButton buffBut[7];
+    Label        buffButL[7];
+    uint8 &clickedFFTsizeID;
+    
+    uint8 fftSizeID;
+    bool &blockButtons;
+    
+    //===================
+    TextButton pajOFFButton;
+    TextButton pajResetButton;
+    TextButton pajPhaseButton;
+    int &showPhaseBool;
+    
+    
+    //===================
+    TextButton latencyDetect; Label latencyDetectLabel;
+//    ToggleButton latencyDetect; Label latencyDetectLabel;
+    ToggleButton pajUnwrap;     Label pajUnwrapLabel;
+    
+    bool &isUnWrapToggled;
+    
+    
+    //==============================================================================
+    PajAuanalyserAudioProcessor& processor;
+    DrawingThread &drawingThread;
+    
+    MemoryBlock memoryMessage;
+    bool wIsConnected;
+    std::atomic<bool> &notifyFromDThread;
+    std::atomic_flag &dataIsInUse;
+    std::atomic<bool> settingsTimerUnlocked;
+    bool sendBypassMessage = false;
+    std::atomic<bool> playBack;
+    
+    int &wWidth;
+    int &wHeight;
+    
+    std::atomic<bool> pajMessageReceived;
+    
+    std::atomic<bool> isGenActive;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)
 };

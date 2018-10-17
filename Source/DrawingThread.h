@@ -15,17 +15,23 @@
 #include "Display_Logarithmic.h"
 #include "PajFFT/PajFFT_Radix2.h"
 
+
+
 //==============================================================================
 /*
 */
-class DrawingThread    : public Thread
+class DrawingThread    : public Component, public Thread
 {
 public:
     DrawingThread();
     ~DrawingThread();
+    void wSetBounds(int wWidth, int wHeight, int isShowPhase);
+    
+    bool pajSettings(int numberOfChannels, float fftSize, float sampRate);
     
     void drawFFTgraph();
     void drawSTATICgraph();
+    void resetAnalGraph();
     
     void run() override;
     
@@ -40,11 +46,11 @@ public:
     {
         if(isSystemReady)
         {
-            if(sourceIsReady[left])
-                radix2_FFT.makeFFT(wInput[left], wOutput[left], left);
+            if(sourceIsReady[wLeft])
+                radix2_FFT.makeFFT(wInput[wLeft], wOutput[wLeft], wLeft);
             
-            if(sourceIsReady[right])
-                radix2_FFT.makeFFT(wInput[right], wOutput[right], right);
+            if(sourceIsReady[wRight])
+                radix2_FFT.makeFFT(wInput[wRight], wOutput[wRight], wRight);
         }
     }
     
@@ -52,29 +58,18 @@ public:
     Display_Logarithmic display_magni;
     Display_Logarithmic display_phase;
     
-    GraphAnalyser graphAnalyserMagL;
-    GraphAnalyser graphAnalyserPhaL;
-    GraphAnalyser graphAnalyserMagR;
-    GraphAnalyser graphAnalyserPhaR;
+    GraphAnalyser magAnal[2];
+    GraphAnalyser phaAnal[2];
 
     PajFFT_Radix2     radix2_FFT;
-    int totalNumInputChannels=1;
+    int numChannels=1;
     std::atomic<bool> isResizing;
-    std::atomic<bool> isAnalOff;
+    std::atomic<bool> isHold;
     std::atomic<bool> drawPhase;
+    std::atomic<bool> notifyEditor;
+    std::atomic<bool> isWaiting;
+    
 private:
-    
-    enum outputType
-    {
-        wMag = 0,
-        wPha = 1
-    };
-    enum channels
-    {
-        left  = 0,
-        right = 1
-    };
-    
     int testPaj = 0;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrawingThread)

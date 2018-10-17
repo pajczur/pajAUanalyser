@@ -12,6 +12,36 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#define b1024ID       0
+#define b2048ID       1
+#define b4096ID       2
+#define b8192ID       3
+#define b16384ID      4
+#define b32768ID      5
+#define b65536ID      6
+
+#define muteImpulseID 7
+
+#define numOfRadioButton 7
+
+#define unWrapID      10
+#define latencyID     11
+
+#define pajPlay       19
+
+#define pajOffButtonID   20
+#define pajResetButtonID 21
+#define pajPhaseButtonID 22
+
+#define bufferButtonRadioGroup 100
+
+#define wMag 0
+#define wPha 1
+
+#define wLeft  0
+#define wRight 1
+
+#define SETTINGS_READY true
 
 //==============================================================================
 /*
@@ -23,8 +53,8 @@ public:
     ~GraphAnalyser();
     
     void wSettings(std::vector<float> &fftSourceData, float buffSizz);
-    void setChannel(int channel, int outputType) {chan=channel; outType=outputType;}
-    void setWindScaleSettings(double &sampRat, double &wBuffSiz);
+    inline void setChannel(int channel, int outputType) {chan=channel; outType=outputType;}
+    void setWindScaleSettings(float &sampRat, float &wBuffSiz);
 
     
 
@@ -66,18 +96,6 @@ private:
     float lowEnd;
     float topEnd;
     
-    enum outputType
-    {
-        wMag = 0,
-        wPha = 1
-    };
-    
-    enum channels
-    {
-        left = 0,
-        right = 1
-    };
-    
     float yCordScale;
     
     std::vector<double> xScale;
@@ -86,6 +104,7 @@ private:
     
 public:
     std::atomic<bool> pajUnwrapping;
+    std::atomic<bool> *drawPhase;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphAnalyser)
 };

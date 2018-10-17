@@ -13,7 +13,10 @@
               file="Source/PajFFT/PajFFT_Radix2.cpp"/>
         <FILE id="I6SN4h" name="PajFFT_Radix2.h" compile="0" resource="0" file="Source/PajFFT/PajFFT_Radix2.h"/>
       </GROUP>
-      <GROUP id="{DAF587DF-E996-E9EB-4F83-451211D09C3C}" name="resources"/>
+      <GROUP id="{DAF587DF-E996-E9EB-4F83-451211D09C3C}" name="resources">
+        <FILE id="MtnuRw" name="pajLogoYellow.png" compile="0" resource="1"
+              file="Source/pajLogoYellow.png"/>
+      </GROUP>
       <FILE id="R3m3TV" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="ScojUK" name="PluginProcessor.h" compile="0" resource="0"
@@ -21,11 +24,6 @@
       <FILE id="pN3aAQ" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="fn9xIr" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="xC7RcJ" name="SendRemote.cpp" compile="1" resource="0" file="Source/SendRemote.cpp"/>
-      <FILE id="rp7AIL" name="SendRemote.h" compile="0" resource="0" file="Source/SendRemote.h"/>
-      <FILE id="ZjIfZU" name="ReceiveRemote.cpp" compile="1" resource="0"
-            file="Source/ReceiveRemote.cpp"/>
-      <FILE id="tymnKe" name="ReceiveRemote.h" compile="0" resource="0" file="Source/ReceiveRemote.h"/>
       <FILE id="vyFan1" name="Display_Logarithmic.cpp" compile="1" resource="0"
             file="Source/Display_Logarithmic.cpp"/>
       <FILE id="qQ9fBA" name="Display_Logarithmic.h" compile="0" resource="0"
@@ -36,7 +34,6 @@
       <FILE id="F1Bk3t" name="DrawingThread.cpp" compile="1" resource="0"
             file="Source/DrawingThread.cpp"/>
       <FILE id="hlzO47" name="DrawingThread.h" compile="0" resource="0" file="Source/DrawingThread.h"/>
-      <FILE id="NhFLdX" name="pajczurLogo.png" compile="0" resource="1" file="Source/pajczurLogo.png"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

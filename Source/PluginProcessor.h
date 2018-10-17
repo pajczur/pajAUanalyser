@@ -16,7 +16,7 @@
 //==============================================================================
 /**
 */
-class PajAuanalyserAudioProcessor  : public AudioProcessor, public InterprocessConnection
+class PajAuanalyserAudioProcessor  : public AudioProcessor, public Timer
 {
 public:
     //==============================================================================
@@ -56,81 +56,60 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    void wSettings(double sampleRate, int samplesPerBlock);
+    bool updateFFTSize();
     
-    void connectionMade() override;
-    void connectionLost() override;
-    void messageReceived( const MemoryBlock & message) override;
-    std::atomic<bool> isMessageReceived;
-
-    float wBuffSize;
+    void timerCallback() override;
     
-    int inputChannelsQuantity;
+    // in assist for editor
+    void setSize(int pajW, int pajH);
+    
+    
+    //==============================================================================
+    float pajFFTsize;
+    float wSampleRate;
+    
+    int wNumInputChannel;
 
     int realBuffSize;
-    double wSampleRate;
 
     std::vector<float> tempInput[2];
     int sampleCount[2];
     bool isAnySignal[2];
     
-    
-private:
-    enum outputType
-    {
-        wMag = 0,
-        wPha = 1
-    };
-    
-    enum channels
-    {
-        left  = 0,
-        right = 1
-    };
+    std::atomic<bool> wasProcessorInit;
+    std::atomic<int> waitForLatDetect;
     
 public:
-    bool pluginWasOpen;
     bool isGlobalBuffer;
-    bool wDetectLatency;
-    std::atomic<bool> wStop;
+    std::atomic<bool> wDetectLatency;
+    std::atomic<bool> wIsPaused;
+    std::atomic_flag dataIsInUse;
     
     int bufferID = 0;
     
-    Thread *stopMessage = nullptr;
-    
     bool isConnectionSuccesful;
     
-    DrawingThread dThread;
+    DrawingThread drawingThread;
     
     bool settingsToApprove = true;
     int tempppp=0;
     std::atomic<int> bypassTreshold;
     
-    std::atomic<int> bypassTmier;
+    std::atomic<int> bypassTime;
     
     std::atomic<bool> isBypassed;
-    std::atomic<bool> isMute;
-    
-    std::atomic<bool> isGenON;
     
     std::atomic<int> buttonID;
     
-    enum buttonsID {
-        muteImpulseID = 0,
-        b1024ID       = 1,
-        b2048ID       = 2,
-        b4096ID       = 3,
-        b8192ID       = 4,
-        b16384ID      = 5,
-        b32768ID      = 6,
-        b65536ID      = 7,
-        unWrapID      = 8,
-        latencyID     = 100,
-        pajOffButtonID      = 110,
-        pajResetButtonID    = 901,
-        pajPhaseButtonID    = 902,
-        bufferButtonRadioGroup = 1000
-    };
+    // in assist for editor
+    uint8 clickedFFTsizeID = muteImpulseID;
+    int showPhaseBool=0;
+    std::atomic<bool> waitForSettings;
+    int wWidth=565;
+    int wHeight=300;
+    bool blockButtons = false;
+
+    bool isUnWrapToggled = false;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessor)

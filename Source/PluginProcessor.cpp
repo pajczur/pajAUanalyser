@@ -11,6 +11,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
+
 //==============================================================================
 PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -21,32 +23,26 @@ PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), pajFFTsize(1024.0f), isGlobalBuffer(true), wDetectLatency(true), wIsPaused(true), isBypassed(true)
 #endif
 {
-    dThread.isSystemReady = false;
-    pluginWasOpen = false;
-    isGlobalBuffer = true;
-    wDetectLatency = false;
-    wStop=true;
-    isMute = true;
-    isMessageReceived = false;
-    isGenON=false;
+    dataIsInUse.clear();
+    drawingThread.isSystemReady = false;
+    drawingThread.isHold  = true;
+    waitForLatDetect = 5*1024;
+    wasProcessorInit = false;
 }
 
-PajAuanalyserAudioProcessor::~PajAuanalyserAudioProcessor()
-{
+PajAuanalyserAudioProcessor::~PajAuanalyserAudioProcessor() {
     bypassTreshold=-1;
 }
 
 //==============================================================================
-const String PajAuanalyserAudioProcessor::getName() const
-{
+const String PajAuanalyserAudioProcessor::getName() const {
     return JucePlugin_Name;
 }
 
-bool PajAuanalyserAudioProcessor::acceptsMidi() const
-{
+bool PajAuanalyserAudioProcessor::acceptsMidi() const {
    #if JucePlugin_WantsMidiInput
     return true;
    #else
@@ -54,8 +50,7 @@ bool PajAuanalyserAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool PajAuanalyserAudioProcessor::producesMidi() const
-{
+bool PajAuanalyserAudioProcessor::producesMidi() const {
    #if JucePlugin_ProducesMidiOutput
     return true;
    #else
@@ -63,8 +58,7 @@ bool PajAuanalyserAudioProcessor::producesMidi() const
    #endif
 }
 
-bool PajAuanalyserAudioProcessor::isMidiEffect() const
-{
+bool PajAuanalyserAudioProcessor::isMidiEffect() const {
    #if JucePlugin_IsMidiEffect
     return true;
    #else
@@ -72,82 +66,64 @@ bool PajAuanalyserAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double PajAuanalyserAudioProcessor::getTailLengthSeconds() const
-{
+double PajAuanalyserAudioProcessor::getTailLengthSeconds() const {
     return 0.0;
 }
 
-int PajAuanalyserAudioProcessor::getNumPrograms()
-{
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+int PajAuanalyserAudioProcessor::getNumPrograms() {
+    return 1;
 }
 
-int PajAuanalyserAudioProcessor::getCurrentProgram()
-{
+int PajAuanalyserAudioProcessor::getCurrentProgram() {
     return 0;
 }
 
-void PajAuanalyserAudioProcessor::setCurrentProgram (int index)
-{
+void PajAuanalyserAudioProcessor::setCurrentProgram (int index) {
 }
 
-const String PajAuanalyserAudioProcessor::getProgramName (int index)
-{
+const String PajAuanalyserAudioProcessor::getProgramName (int index) {
     return {};
 }
 
-void PajAuanalyserAudioProcessor::changeProgramName (int index, const String& newName)
-{
+void PajAuanalyserAudioProcessor::changeProgramName (int index, const String& newName) {
 }
 
 //==============================================================================
-void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
-{
+void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock) {
+    waitForSettings=false;
     realBuffSize = samplesPerBlock;
     wSampleRate = sampleRate;
+//    DBG("Buffer SIZE " << samplesPerBlock << " AND " << realBuffSize);
+    bypassTime = round(((double)samplesPerBlock * 1000.0f) / wSampleRate);
     
-    bypassTmier = round(((float)realBuffSize * 1000.0f) / wSampleRate);
+    wNumInputChannel  = (getTotalNumInputChannels()>1)?2:1;
     
-    inputChannelsQuantity  = 1;
-    if(getTotalNumInputChannels()>1)
-        inputChannelsQuantity=2;
     
-    if(!pluginWasOpen)
-    {
-        pluginWasOpen = true;
-        wSettings(wSampleRate, 1024);
-    }
-    else
-    {
-        wSettings(wSampleRate, (int)wBuffSize);
-    }
-    
+    updateFFTSize();
+//    resetAnalGraph();
     
     settingsToApprove = true;
+    
+    if(!wasProcessorInit)
+        wasProcessorInit = true;
 }
 
-void PajAuanalyserAudioProcessor::releaseResources()
-{
+void PajAuanalyserAudioProcessor::releaseResources() {
     
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+    
+    
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
-{
+bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const {
   #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
     return true;
   #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
     if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
    #if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
@@ -159,29 +135,27 @@ bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
 #endif
 
 
-void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
-{
+void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages) {
     bypassTreshold=1;
-    if(!isBypassed && !isMute && isGenON)
+
+    if(!isBypassed)
     {
         auto totalNumOutputChannels = getTotalNumOutputChannels();
         
-        for (auto k = inputChannelsQuantity; k < totalNumOutputChannels; ++k)
+        for (auto k = wNumInputChannel; k < totalNumOutputChannels; ++k)
             buffer.clear (k, 0, buffer.getNumSamples());
         
-        
-        for (int channel = 0; channel < inputChannelsQuantity; ++channel)
+        for (int channel = 0; channel < wNumInputChannel; ++channel)
         {
             float* channelData = buffer.getWritePointer (channel);
             
-            for(int i=0; i<realBuffSize; ++i)
+            for(int i=0; i<buffer.getNumSamples(); ++i)
             {
                 tempInput[channel][sampleCount[channel]]  = buffer.getSample(channel, i);
                 
-                
                 channelData[i] = 0.0f; // This make silence
                 
-                if(!wStop)
+                if(!wIsPaused && !dataIsInUse.test_and_set())
                 {
                     if(isAnySignal[channel]==false)
                     {
@@ -196,22 +170,28 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
                             tempInput[channel][0] = tempInput[channel][sampleCount[channel]];
                             sampleCount[channel] = 0;
                         }
+                        waitForLatDetect--;
+                        
+                        if(waitForLatDetect<=0)
+                            wDetectLatency = false;
                     }
 
                     sampleCount[channel]++;
                     
-                    if(sampleCount[channel]>=wBuffSize)
+                    if(sampleCount[channel]>=pajFFTsize)
                     {
                         sampleCount[channel]=0;
                         
                         if(isAnySignal[channel])
                         {
                             isAnySignal[channel]=false;
-                            dThread.wInput[channel] = tempInput[channel];
-                            dThread.sourceIsReady[channel] = true;
-                            dThread.notify();
+                            drawingThread.wInput[channel] = tempInput[channel];
+                            drawingThread.sourceIsReady[channel] = true;
+                            drawingThread.notify();
                         }
                     }
+                    
+                    dataIsInUse.clear();
                 }
             }
         }
@@ -220,123 +200,51 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 
  
 //==============================================================================
-bool PajAuanalyserAudioProcessor::hasEditor() const
-{
-    return true; // (change this to false if you choose to not supply an editor)
+bool PajAuanalyserAudioProcessor::hasEditor() const {
+    return true;
 }
 
-AudioProcessorEditor* PajAuanalyserAudioProcessor::createEditor()
-{
+AudioProcessorEditor* PajAuanalyserAudioProcessor::createEditor() {
     return new PajAuanalyserAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void PajAuanalyserAudioProcessor::getStateInformation (MemoryBlock& destData)
-{
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+void PajAuanalyserAudioProcessor::getStateInformation (MemoryBlock& destData) {
 }
 
-void PajAuanalyserAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
-{
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+void PajAuanalyserAudioProcessor::setStateInformation (const void* data, int sizeInBytes) {
 }
 
-void PajAuanalyserAudioProcessor::wSettings(double sampleRate, int samplesPerBlock)
-{
-    dThread.isSystemReady = false;
-    dThread.sourceIsReady[left] = false;
-    dThread.sourceIsReady[right] = false;
-    dThread.totalNumInputChannels = getTotalNumInputChannels();
-    
-    wBuffSize = (float)samplesPerBlock;
-
-    dThread.radix2_FFT.wSettings((float)wSampleRate, wBuffSize);
+bool PajAuanalyserAudioProcessor::updateFFTSize() {
     
     
-    dThread.wOutput.resize(inputChannelsQuantity);
-    
-    for(int channel=0; channel<inputChannelsQuantity; ++channel)
+    for(int channel=0; channel<wNumInputChannel; ++channel)
     {
-        dThread.wOutput[channel].resize(2);
-        dThread.wOutput[channel][wMag].resize((int)wBuffSize, 1.0f);
-        dThread.wOutput[channel][wPha].resize((int)wBuffSize, 0.0f);
+        tempInput[channel].resize(pajFFTsize, 0.0f);
+        sampleCount[channel]  = 0;
+        isAnySignal[channel]  = false;
     }
     
-    double buuuSiii = wBuffSize;
-    
-    dThread.display_magni.channelQuantity = getTotalNumInputChannels();
-    dThread.display_phase.channelQuantity = getTotalNumInputChannels();
-    dThread.display_magni.setNyquist(getSampleRate()/2.0);
-    dThread.display_phase.setNyquist(getSampleRate()/2.0);
-    
-    dThread.graphAnalyserMagL.setChannel(left, wMag);
-    dThread.graphAnalyserPhaL.setChannel(left, wPha);
-    dThread.graphAnalyserMagL.wSettings(dThread.wOutput[left][wMag], wBuffSize);
-    dThread.graphAnalyserPhaL.wSettings(dThread.wOutput[left][wPha], wBuffSize);
-    dThread.graphAnalyserMagL.setWindScaleSettings(sampleRate, buuuSiii);
-    dThread.graphAnalyserPhaL.setWindScaleSettings(sampleRate, buuuSiii);
-    
-    if(inputChannelsQuantity>1)
-    {
-        dThread.graphAnalyserMagR.setChannel(right, wMag);
-        dThread.graphAnalyserPhaR.setChannel(right, wPha);
-        dThread.graphAnalyserMagR.wSettings(dThread.wOutput[right][wMag], wBuffSize);
-        dThread.graphAnalyserPhaR.wSettings(dThread.wOutput[right][wPha], wBuffSize);
-        dThread.graphAnalyserMagR.setWindScaleSettings(sampleRate, buuuSiii);
-        dThread.graphAnalyserPhaR.setWindScaleSettings(sampleRate, buuuSiii);
-    }
-
-    dThread.wInput[left].resize(wBuffSize, 0.0f);
-    dThread.wInput[right].resize(wBuffSize, 0.0f);
-    tempInput[left].resize(wBuffSize, 0.0f);
-    tempInput[right].resize(wBuffSize, 0.0f);
-    
-    sampleCount[left]  = 0;
-    sampleCount[right] = 0;
-    
-    isAnySignal[left]  = false;
-    isAnySignal[right] = false;
-    
-    dThread.isSystemReady = true;
-}
-
-void PajAuanalyserAudioProcessor::connectionMade()
-{
-    //    DBG("CONNECTED");
-}
-
-void PajAuanalyserAudioProcessor::connectionLost()
-{
-    //    DBG("DISCONNECTED");
-}
-
-void PajAuanalyserAudioProcessor::messageReceived( const MemoryBlock & message)
-{
-    isMessageReceived = true;
-    
-    if(message[0] == 10)
-    {
-        buttonID = pajOffButtonID;
-    }
-    else if (message[0] == pajOffButtonID)
-    {
-        buttonID = pajOffButtonID;
-        isGenON = false;
-    }
+    if( drawingThread.pajSettings(wNumInputChannel, pajFFTsize, wSampleRate) )
+        return SETTINGS_READY;
     else
-    {
-        buttonID = message[0];
-        isGenON = true;
-    }
-    
-    if(!isConnected())
-        connectToSocket("127.0.0.1", 52425, 1000);
+        return false;
 }
 
 
+
+void PajAuanalyserAudioProcessor::timerCallback()
+{
+    stopTimer();
+    isBypassed=true;
+    waitForSettings=false;
+}
+
+void PajAuanalyserAudioProcessor::setSize(int pajW, int pajH)
+{
+    wWidth = pajW;
+    wHeight = pajH;
+}
 
 
 //==============================================================================

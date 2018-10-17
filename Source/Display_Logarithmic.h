@@ -29,7 +29,7 @@ public:
     int getDisplayWidth();
     int getDisplayMargXLeft();
     int getDisplayMargYTop();
-    void setNyquist(double nyquistFreq);
+    void setNyquist(float nyquistFreq);
     void whatToDisplay(GraphAnalyser &graph);
     
     String graphTitle;

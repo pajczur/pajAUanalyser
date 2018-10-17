@@ -24,32 +24,33 @@ void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
 {
     dataSource = &fftSourceData;
     dataSize = buffSizz/2.0f;
+    
 //    512 1024 1280 1407 1469 1497 1506
 //    512 768  896  960  992  1008 1016
     if(dataSize==2048)
     {
         dataSize = 1280;
-//        dataSize = 896;
+        //        dataSize = 896;
     }
     else if(dataSize==4096)
     {
         dataSize=1407;
-//        dataSize=960;
+        //        dataSize=960;
     }
     else if(dataSize==8192)
     {
         dataSize=1469;
-//        dataSize=992;
+        //        dataSize=992;
     }
     else if(dataSize==16384)
     {
         dataSize=1497;
-//        dataSize=1008;
+        //        dataSize=1008;
     }
     else if (dataSize==32768)
     {
         dataSize=1506;
-//        dataSize=1016;
+        //        dataSize=1016;
     }
 
     xScale.resize((int)dataSize);
@@ -77,7 +78,7 @@ void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
         drawStaticY.resize((int)dataSize, 0.0f);
 }
 
-void GraphAnalyser::setWindScaleSettings(double &sampRat, double &wBuffSiz)
+void GraphAnalyser::setWindScaleSettings(float &sampRat, float &wBuffSiz)
 {
     wNyquist = sampRat/2.0f;
     
@@ -105,12 +106,12 @@ void GraphAnalyser::setWindScaleSettings(double &sampRat, double &wBuffSiz)
 
 void GraphAnalyser::paint (Graphics& g)
 {
-    if(chan==left)
+    if(chan==wLeft)
     {
-        g.setColour (Colours::white);
+        g.setColour (Colours::yellow);
     }
     
-    if (chan==right)
+    if (chan==wRight)
     {
         g.setColour (Colours::red);
     }
@@ -120,7 +121,7 @@ void GraphAnalyser::paint (Graphics& g)
     
     if(outType==wMag)
         g.strokePath(fftGraphPath, PathStrokeType(1.0));
-    else if(outType==wPha)
+    else if(outType==wPha && *drawPhase)
         g.strokePath(fftGraphPath, PathStrokeType(1.0));
 }
 
@@ -170,7 +171,7 @@ void GraphAnalyser::drawGraphSTATIC()
     else if (outType == wPha)
         drawPhaPathSTATIC();
     
-    repaint();
+//    repaint();
 }
 
 
@@ -221,6 +222,7 @@ void GraphAnalyser::drawMagPath()
         {
             double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
             fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wMagnitude);
+//            fftGraphPath.lineTo(wCurrent, wMagnitude);
         }
         
         drawStaticY[i] = dataSource->at(i);
@@ -229,7 +231,8 @@ void GraphAnalyser::drawMagPath()
 
 void GraphAnalyser::drawPhaPath()
 {
-    float wMagnitude;
+    float wPhaShift;
+    float tempp;
     
     fPIshift=0;
 
@@ -240,7 +243,7 @@ void GraphAnalyser::drawPhaPath()
     for(int i=lowEndIndex+1; i<dataSize; i++)
     {
         
-        float tempp = dataSource->at(i) - dataSource->at(i-1);
+        tempp = dataSource->at(i) - dataSource->at(i-1);
         
         if(pajUnwrapping)
         {
@@ -249,20 +252,19 @@ void GraphAnalyser::drawPhaPath()
             else if(tempp < -1.1f)
                 fPIshift += 2;
         }
-            
         
-        wMagnitude = zero_dB + (dataSource->at(i)+fPIshift) * (zero_dB);
+        wPhaShift = zero_dB + (dataSource->at(i)+fPIshift) * (zero_dB);
         
         double wCurrent   = dispLogScale * (log10(xScale[i]*logScaleWidth) - log10(lowEnd));
         
         if(i<=512)
         {
-            fftGraphPath.lineTo(wCurrent, wMagnitude);
+            fftGraphPath.lineTo(wCurrent, wPhaShift);
         }
         else
         {
             double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
-            fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wMagnitude);
+            fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wPhaShift);
         }
         
         drawStaticY[i] = dataSource->at(i)+fPIshift;
