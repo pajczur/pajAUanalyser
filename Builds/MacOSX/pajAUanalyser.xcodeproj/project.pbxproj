@@ -85,6 +85,7 @@
 		6D6BCFB7DB0FF936659FB0B0 = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		7D1CE8A5633864BEABBE52B3 = {isa = PBXFileReference; lastKnownFileType = file; name = "juce_audio_processors"; path = "../../JuceLibraryCode/modules/juce_audio_processors"; sourceTree = "SOURCE_ROOT"; };
 		7FF9E1BBE17F12B908C5A0D6 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-AU.plist"; path = "Info-AU.plist"; sourceTree = "SOURCE_ROOT"; };
+		8AD09710E72C54B44242F848 = {isa = PBXFileReference; lastKnownFileType = image.png; name = pajLogoYellow.png; path = ../../Source/resources/pajLogoYellow.png; sourceTree = "SOURCE_ROOT"; };
 		8B67253C25E634F809505700 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = pajAUanalyser.entitlements; path = pajAUanalyser.entitlements; sourceTree = "SOURCE_ROOT"; };
 		8BFCD8A686A4C8B0820B7DDA = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		8E17C8AC213684EFDD9A98ED = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -113,7 +114,6 @@
 		E75F321C78B219379FEF21C3 = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		E8512AA9CF6E047451646541 = {isa = PBXFileReference; lastKnownFileType = file; name = "juce_audio_formats"; path = "../../JuceLibraryCode/modules/juce_audio_formats"; sourceTree = "SOURCE_ROOT"; };
 		E91C5D4A1C4A1127B122A040 = {isa = PBXFileReference; lastKnownFileType = file; name = "juce_gui_extra"; path = "../../JuceLibraryCode/modules/juce_gui_extra"; sourceTree = "SOURCE_ROOT"; };
-		E9A370983A62ABBEE1C31566 = {isa = PBXFileReference; lastKnownFileType = image.png; name = pajLogoYellow.png; path = ../../Source/pajLogoYellow.png; sourceTree = "SOURCE_ROOT"; };
 		EDCBC9D89177DF9C86273AD8 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DrawingThread.cpp; path = ../../Source/DrawingThread.cpp; sourceTree = "SOURCE_ROOT"; };
 		EDF9148BA1F35118C1C64A1D = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_cryptography.mm"; path = "../../JuceLibraryCode/include_juce_cryptography.mm"; sourceTree = "SOURCE_ROOT"; };
 		EF3A3488000F0603248C098E = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiscRecording.framework; path = System/Library/Frameworks/DiscRecording.framework; sourceTree = SDKROOT; };
@@ -127,7 +127,7 @@
 					B2F4035BD5788D141CB9E927,
 					148996702A0332FD217D1568, ); name = PajFFT; sourceTree = "<group>"; };
 		20CE93F2C855700BC5C0B23D = {isa = PBXGroup; children = (
-					E9A370983A62ABBEE1C31566, ); name = resources; sourceTree = "<group>"; };
+					8AD09710E72C54B44242F848, ); name = resources; sourceTree = "<group>"; };
 		5D50C3546CCEC1210764B0CC = {isa = PBXGroup; children = (
 					D5330B0C0FA37F0F19FA6A84,
 					20CE93F2C855700BC5C0B23D,

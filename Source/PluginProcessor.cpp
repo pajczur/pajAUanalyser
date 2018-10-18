@@ -100,7 +100,6 @@ void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesP
     
     
     updateFFTSize();
-//    resetAnalGraph();
     
     settingsToApprove = true;
     
