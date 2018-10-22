@@ -21,7 +21,6 @@
 #include "../DefinitionMacros.cpp"
 
 
-
 class PajFFT_Radix2
 {
 public:

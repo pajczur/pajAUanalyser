@@ -14,9 +14,8 @@
 #include "GraphAnalyser.h"
 
 //==============================================================================
-/*
-*/
-class Display_Logarithmic    : public Component /*, public Slider::Listener */
+
+class Display_Logarithmic    : public Component
 {
 public:
     Display_Logarithmic();

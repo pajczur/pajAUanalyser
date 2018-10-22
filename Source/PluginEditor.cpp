@@ -20,7 +20,6 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
                                 AudioProcessorEditor (&p),
                                 waitForSettings(p.waitForSettings),
                                 clickedFFTsizeID(p.clickedFFTsizeID),
-//                                blockButtons(p.blockButtons),
                                 showPhaseBool(p.showPhaseBool),
                                 isUnWrapToggled(p.isUnWrapToggled),
                                 processor (p),

@@ -14,7 +14,6 @@
 //==============================================================================
 Display_Logarithmic::Display_Logarithmic()
 {
-
 //    wZoom.setSliderStyle(Slider::SliderStyle::ThreeValueHorizontal);
 //    addAndMakeVisible(&wZoom);
 //    wZoom.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);

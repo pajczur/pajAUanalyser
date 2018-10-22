@@ -22,13 +22,6 @@ public:
     PajAuanalyserAudioProcessorEditor (PajAuanalyserAudioProcessor&);
     ~PajAuanalyserAudioProcessorEditor();
 
-//    BubbleMessageComponent pajHint;
-//    Rectangle<int> hintPos;
-//    AttributedString pajHintText;
-//    bool showHint = true;
-//    void showBubbleHint(bool shouldShowHint);
-
-
     
     //==============================================================================
     void paint (Graphics&) override;
