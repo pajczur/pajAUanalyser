@@ -26,6 +26,7 @@ PajAuanalyserAudioProcessor::PajAuanalyserAudioProcessor()
                        ), pajFFTsize(1024.0f), isGlobalBuffer(true), wDetectLatency(true), wIsPaused(true), isBypassed(true)
 #endif
 {
+    bypassTreshold=-1;
     dataIsInUse.clear();
     drawingThread.isSystemReady = false;
     drawingThread.isHold  = true;
@@ -135,7 +136,7 @@ bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
 
 
 void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages) {
-    bypassTreshold=1;
+    bypassTreshold=2;
 
     if(!isBypassed)
     {
@@ -223,6 +224,9 @@ bool PajAuanalyserAudioProcessor::updateFFTSize() {
         sampleCount[channel]  = 0;
         isAnySignal[channel]  = false;
     }
+    
+    drawingThread.wSetBounds(wWidth, wHeight, 1);
+    drawingThread.wSetBounds(wWidth, wHeight, 0);
     
     if( drawingThread.pajSettings(wNumInputChannel, pajFFTsize, wSampleRate) )
         return SETTINGS_READY;

@@ -102,12 +102,12 @@ public:
     std::atomic<int> buttonID;
     
     // in assist for editor
-    uint8 clickedFFTsizeID = muteImpulseID;
+    uint8 clickedFFTsizeID = MUTE_IMPULSE_ID;
     int showPhaseBool=0;
     std::atomic<bool> waitForSettings;
-    int wWidth=565;
+    int wWidth=520;
     int wHeight=300;
-    bool blockButtons = false;
+//    bool blockButtons = false;
 
     bool isUnWrapToggled = false;
     

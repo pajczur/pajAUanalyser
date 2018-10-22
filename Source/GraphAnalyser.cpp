@@ -14,6 +14,7 @@
 //==============================================================================
 GraphAnalyser::GraphAnalyser() : pajUnwrapping(false)
 {
+    staticPath.resize(10000);
 }
 
 GraphAnalyser::~GraphAnalyser()
@@ -25,57 +26,10 @@ void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
     dataSource = &fftSourceData;
     dataSize = buffSizz/2.0f;
     
-//    512 1024 1280 1407 1469 1497 1506
-//    512 768  896  960  992  1008 1016
-    if(dataSize==2048)
-    {
-        dataSize = 1280;
-        //        dataSize = 896;
-    }
-    else if(dataSize==4096)
-    {
-        dataSize=1407;
-        //        dataSize=960;
-    }
-    else if(dataSize==8192)
-    {
-        dataSize=1469;
-        //        dataSize=992;
-    }
-    else if(dataSize==16384)
-    {
-        dataSize=1497;
-        //        dataSize=1008;
-    }
-    else if (dataSize==32768)
-    {
-        dataSize=1506;
-        //        dataSize=1016;
-    }
-
-    xScale.resize((int)dataSize);
-    int tempIndex=0;
-    for(int i=0; i<buffSizz/2.0f; i++)
-    {
-        if(i<=512)
-        {
-            xScale[i] = (double)i;
-            tempIndex++;
-        }
-        else if(i>512 && i<=32768)
-        {
-            if(i%((((int)buffSizz)/2)/1024) == 0)
-            {
-                xScale[tempIndex] = (double)i;
-                tempIndex++;
-            }
-        }
-    }
-    
-    if(outType == wMag)
-        drawStaticY.resize((int)dataSize, 1.0f);
-    else if(outType == wPha)
-        drawStaticY.resize((int)dataSize, 0.0f);
+//    if(xResize > 400)
+//    {
+//        resetPath();
+//    }
 }
 
 void GraphAnalyser::setWindScaleSettings(float &sampRat, float &wBuffSiz)
@@ -95,7 +49,8 @@ void GraphAnalyser::setWindScaleSettings(float &sampRat, float &wBuffSiz)
     else
         dispLogScale = 0.0f;
     
-    lowEndIndex = ceil((20.0f/sampRat) * wBuffSiz);
+    lowEndIndex  = ceil((20.0f/sampRat) * wBuffSiz);
+    fLowEndIndex =      (20.0f/sampRat) * wBuffSiz ;
     
     yCordScale = 20.0f*((zero_dB/2.0)/(20.0*log10(4)));
 }
@@ -106,23 +61,22 @@ void GraphAnalyser::setWindScaleSettings(float &sampRat, float &wBuffSiz)
 
 void GraphAnalyser::paint (Graphics& g)
 {
-    if(chan==wLeft)
+    if(chan==W_LEFT)
     {
-        g.setColour (Colours::yellow);
+        g.setColour (PAJ_YELLOW);
     }
     
-    if (chan==wRight)
+    if (chan==W_RIGHT)
     {
-        g.setColour (Colours::red);
+        g.setColour(PAJ_RED);
     }
+    
 
-//    g.strokePath(fftGraphL.createPathWithRoundedCorners(10.0f), PathStrokeType(2));
-//    g.strokePath(fftGraphPath.createPathWithRoundedCorners(10.0f), PathStrokeType(1.0));
-    
-    if(outType==wMag)
-        g.strokePath(fftGraphPath, PathStrokeType(1.0));
-    else if(outType==wPha && *drawPhase)
-        g.strokePath(fftGraphPath, PathStrokeType(1.0));
+    if(isStaticGraph)
+        g.strokePath(fftStaticPath.createPathWithRoundedCorners(16), PathStrokeType(1.2));
+    else
+        g.strokePath(fftGraphPath.createPathWithRoundedCorners(16), PathStrokeType(1.2));
+
 }
 
 
@@ -151,11 +105,14 @@ void GraphAnalyser::resized()
 
 void GraphAnalyser::drawGraph()
 {
+    isStaticGraph = false;
+    xResize = getWidth();
+    yResize = getHeight();
     fftGraphPath.clear();
     
-    if(outType == wMag)
+    if(outType == W_MAGN)
         drawMagPath();
-    else if (outType == wPha)
+    else if (outType == W_PHAS)
         drawPhaPath();
         
     repaint();
@@ -164,172 +121,281 @@ void GraphAnalyser::drawGraph()
 
 void GraphAnalyser::drawGraphSTATIC()
 {
+    if(xResize > 400 && yResize > 150)
+    {
+        isStaticGraph = true;
+        fftStaticPath = fftGraphPath;
+
+        fftStaticPath.applyTransform(AffineTransform::scale((float)getWidth()/xResize, (float)getHeight()/yResize));
+    }
+}
+
+
+void GraphAnalyser::resetPath()
+{
+    fftStaticPath.clear();
+    fftStaticPath.startNewSubPath(0, (float)getHeight()/2.0f);
+    fftStaticPath.lineTo(getWidth(), (float)getHeight()/2.0f);
     fftGraphPath.clear();
+    fftGraphPath.startNewSubPath(0, (float)getHeight()/2.0f);
+    fftGraphPath.lineTo(getWidth(), (float)getHeight()/2.0f);
     
-    if(outType == wMag)
-        drawMagPathSTATIC();
-    else if (outType == wPha)
-        drawPhaPathSTATIC();
-    
-//    repaint();
+    repaint();
 }
 
 
-
-void GraphAnalyser::setZoomLogar(double lowE, double topE)
-{
-
-}
-
-void GraphAnalyser::setZoomLinear(/*double startTime,*/ double endTime)
-{
-
-}
-
-
-
-
-void GraphAnalyser::clearDisplay()
-{
-
-}
 
 void GraphAnalyser::drawMagPath()
 {
-    float wMagnitude;
+    float beffPointX = 0.0f;
+    float currPointX = dispLogScale * (log10(fLowEndIndex*logScaleWidth) - log10(lowEnd));
     
-    if(abs(dataSource->at(lowEndIndex)) != 0)
-        fftGraphPath.startNewSubPath(0.0f, (zero_dB - ( log10(abs(dataSource->at(lowEndIndex))) * yCordScale)));
-    else
-        fftGraphPath.startNewSubPath(0.0f, (zero_dB+2*zero_dB));
+    float beffAVDataSrc = dataSource->at(lowEndIndex-1) != 0.0f ? dataSource->at(lowEndIndex) : 0.00001f;
+    float currAVDataSrc = dataSource->at(lowEndIndex  ) != 0.0f ? dataSource->at(lowEndIndex) : 0.00001f;
+    float beffPointY = zero_dB - ( log10(abs(beffAVDataSrc)) * yCordScale );
+    float currPointY = zero_dB - ( log10(abs(currAVDataSrc)) * yCordScale );
     
-    drawStaticY[lowEndIndex] = dataSource->at(lowEndIndex);
+    fftGraphPath.startNewSubPath(beffPointX, beffPointY);
+    
+    float wDivider=0.0f;
+    
+    currAVDataSrc = 0.0f;
+    beffPointX = currPointX;
     
     for(int i=lowEndIndex+1; i<dataSize; i++)
     {
-        if(abs(dataSource->at(i)) != 0)
-            wMagnitude = zero_dB - ( log10(dataSource->at(i)) * yCordScale );
-        else
-            wMagnitude = 10000.0f;
+        currAVDataSrc += dataSource->at(i);
+        wDivider += 1.0f;
+
+//        currAVDataSrc = dataSource->at(i) > currAVDataSrc ? dataSource->at(i) : currAVDataSrc;
         
-        double wCurrent   = dispLogScale * (log10(xScale[i]*logScaleWidth) - log10(lowEnd));
+        currPointX = dispLogScale * (log10((float)i*logScaleWidth) - log10(lowEnd));
         
-        if(i<=512)
+        if(currPointX-beffPointX >= 2.0f)
         {
-            fftGraphPath.lineTo(wCurrent, wMagnitude);
-        }
-        else
-        {
-            double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
-            fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wMagnitude);
-//            fftGraphPath.lineTo(wCurrent, wMagnitude);
-        }
+            currPointY = zero_dB - ( log10(abs(currAVDataSrc/wDivider)) * yCordScale );
+            
+            fftGraphPath.lineTo(currPointX, currPointY);
         
-        drawStaticY[i] = dataSource->at(i);
+            beffAVDataSrc = currAVDataSrc;
+            currAVDataSrc = 0.0f;
+            wDivider = 0.0f;
+            beffPointX = currPointX;
+        }
     }
 }
 
 void GraphAnalyser::drawPhaPath()
 {
-    float wPhaShift;
-    float tempp;
-    
-    fPIshift=0;
+    stPathIndex = 0;
+    float staticPathY=0.0f;
+    float beffPointX = 0.0f;
+    float currPointX = dispLogScale * (log10(fLowEndIndex*logScaleWidth) - log10(lowEnd));
 
-    fftGraphPath.startNewSubPath(0.0f, zero_dB + dataSource->at(lowEndIndex) * zero_dB);
-    
-    drawStaticY[lowEndIndex] = dataSource->at(lowEndIndex);
-    
+    float beffAVDataSrc = dataSource->at(lowEndIndex-1);
+    float currAVDataSrc = dataSource->at(lowEndIndex);
+    float beffPointY = zero_dB + beffAVDataSrc * zero_dB;
+    float currPointY = zero_dB + currAVDataSrc * zero_dB;
+
+    fftGraphPath.startNewSubPath(beffPointX, beffPointY);
+    staticPath[0].setXY(beffPointX, beffPointY);
+
+    float wDivider=0.0f;
+    float fPIshift=0.0f;
+
+    currAVDataSrc = 0.0f;
+
     for(int i=lowEndIndex+1; i<dataSize; i++)
     {
-        
-        tempp = dataSource->at(i) - dataSource->at(i-1);
-        
         if(pajUnwrapping)
         {
-            if(tempp > 1.1f)
+            float tempp = dataSource->at(i) - dataSource->at(i-1);
+
+            if(tempp >= 1.0f)
                 fPIshift -= 2;
-            else if(tempp < -1.1f)
+            else if(tempp <= -1.0f)
                 fPIshift += 2;
         }
-        
-        wPhaShift = zero_dB + (dataSource->at(i)+fPIshift) * (zero_dB);
-        
-        double wCurrent   = dispLogScale * (log10(xScale[i]*logScaleWidth) - log10(lowEnd));
-        
-        if(i<=512)
+        currAVDataSrc += dataSource->at(i) + fPIshift;
+        staticPathY += dataSource->at(i);
+
+        wDivider += 1.0f;
+        currPointX = dispLogScale * (log10((float)i*logScaleWidth) - log10(lowEnd));
+
+        if(currPointX-beffPointX >= 2.0f)
         {
-            fftGraphPath.lineTo(wCurrent, wPhaShift);
+            currPointY = zero_dB + (zero_dB * currAVDataSrc/wDivider);
+
+            fftGraphPath.lineTo(currPointX, currPointY);
+            staticPath[++stPathIndex].setXY(currPointX, zero_dB + (zero_dB * staticPathY /wDivider ));
+
+            staticPathY = 0.0f;
+            currAVDataSrc = 0.0f;
+            wDivider = 0.0f;
+            beffPointX = currPointX;
         }
-        else
-        {
-            double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
-            fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wPhaShift);
-        }
-        
-        drawStaticY[i] = dataSource->at(i)+fPIshift;
     }
-    
+
     if(pajUnwrapping)
-        fftGraphPath.applyTransform(AffineTransform::translation(0, -fPIshift * zero_dB));
+        fftGraphPath.applyTransform(AffineTransform::translation(0, -fPIshift*zero_dB));
 }
 
 
-void GraphAnalyser::drawMagPathSTATIC()
+
+
+
+/*
+void GraphAnalyser::drawMagPath2()
 {
-    float wMagnitude;
+    float beffCTRLPointX = dispLogScale * (log10((fLowEndIndex>1.001f?(fLowEndIndex-1):0.001f)*logScaleWidth) - log10(lowEnd));
+    float currCTRLPointX = dispLogScale * (log10(fLowEndIndex*logScaleWidth) - log10(lowEnd));
     
-    if(abs(drawStaticY[lowEndIndex]) != 0)
-        fftGraphPath.startNewSubPath(0.0f, (zero_dB - ( log10(abs(drawStaticY[lowEndIndex])) * yCordScale)));
-    else
-        fftGraphPath.startNewSubPath(0.0f, (zero_dB+2*zero_dB));
+    float beffAVDataSrc = abs(dataSource->at(lowEndIndex-1)) > 0.0001f ? dataSource->at(lowEndIndex) : 0.0001f;
+    float currAVDataSrc = abs(dataSource->at(lowEndIndex  )) > 0.0001f ? dataSource->at(lowEndIndex) : 0.0001f;
+    float beffCTRLPointY = zero_dB - ( log10(abs(beffAVDataSrc)) * yCordScale );
+    float currCTRLPointY = zero_dB - ( log10(abs(currAVDataSrc)) * yCordScale );
+    
+    float currPointX = beffCTRLPointX + ((currCTRLPointX - beffCTRLPointX) / 2.0f);
+    float currPointY = beffCTRLPointY + ((currCTRLPointY - beffCTRLPointY) / 2.0f);
+    
+    fftGraphPath.startNewSubPath(beffCTRLPointX, beffCTRLPointY);
+    fftGraphPath.lineTo(currPointX, currPointY);
+    
+    float wDivider=0.0f;
+    
+    currAVDataSrc = 0.0f;
+    beffCTRLPointY = currCTRLPointY;
+    beffCTRLPointX = currCTRLPointX;
     
     for(int i=lowEndIndex+1; i<dataSize; i++)
     {
-        if(abs(drawStaticY[i]) != 0)
-            wMagnitude = zero_dB - ( log10(drawStaticY[i]) * yCordScale );
-        else
-            wMagnitude = 10000.0f;
+        currAVDataSrc += dataSource->at(i);
+        wDivider += 1.0f;
+        currCTRLPointX = dispLogScale * (log10((float)i*logScaleWidth) - log10(lowEnd));
         
-        double wCurrent   = dispLogScale * (log10(xScale[i]*logScaleWidth) - log10(lowEnd));
-        
-        if(i<=512)
+        if(currCTRLPointX-beffCTRLPointX >= 3.0f)
         {
-            fftGraphPath.lineTo(wCurrent, wMagnitude);
-        }
-        else
-        {
-            double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
-            fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wMagnitude);
+            currAVDataSrc = (currAVDataSrc/wDivider) > 0.0001f ? currAVDataSrc/wDivider : 0.0001f;
+            currCTRLPointY = zero_dB - ( log10(abs(currAVDataSrc)) * yCordScale );
+            
+            currPointX = beffCTRLPointX + ((currCTRLPointX - beffCTRLPointX) / 2.0f);
+            currPointY = beffCTRLPointY + ((currCTRLPointY - beffCTRLPointY) / 2.0f);
+            
+            float xCorrection = (wDivider >= 2.0f) ? 1.5f : 0.0f;
+            
+            fftGraphPath.quadraticTo(beffCTRLPointX-xCorrection, beffCTRLPointY, currPointX-xCorrection, currPointY);
+            
+            beffAVDataSrc = currAVDataSrc;
+            currAVDataSrc = 0.0f;
+            wDivider = 0.0f;
+            beffCTRLPointY = currCTRLPointY;
+            beffCTRLPointX = currCTRLPointX;
         }
     }
 }
 
-void GraphAnalyser::drawPhaPathSTATIC()
-{
-    float wMagnitude;
-    
-//    fPIshift=0;
 
-    fftGraphPath.startNewSubPath(0.0f, zero_dB + drawStaticY[lowEndIndex] * zero_dB);
+
+void GraphAnalyser::drawPhaPath()
+{
+    float beffCTRLPointX = dispLogScale * (log10((fLowEndIndex>1.001f?(fLowEndIndex-1):0.001f)*logScaleWidth) - log10(lowEnd));
+    float currCTRLPointX = dispLogScale * (log10(fLowEndIndex*logScaleWidth) - log10(lowEnd));
+ 
+    float beffAVDataSrc = dataSource->at(lowEndIndex-1);
+    float currAVDataSrc = dataSource->at(lowEndIndex);
+    float beffCTRLPointY = zero_dB + beffAVDataSrc * zero_dB;
+    float currCTRLPointY = zero_dB + currAVDataSrc * zero_dB;
+    
+    float currPointX = beffCTRLPointX + ((currCTRLPointX - beffCTRLPointX) / 2.0f);
+    float currPointY = beffCTRLPointY + ((currCTRLPointY - beffCTRLPointY) / 2.0f);
+
+    fftGraphPath.startNewSubPath(beffCTRLPointX, beffCTRLPointY);
+    fftGraphPath.lineTo(currPointX, currPointY);
+
+    float wDivider=0.0f;
+    float fPIshift=0;
+ 
+    currAVDataSrc = 0.0f;
+    beffCTRLPointY = currCTRLPointY;
+    beffCTRLPointX = currCTRLPointX;
 
     for(int i=lowEndIndex+1; i<dataSize; i++)
     {
-        wMagnitude = zero_dB + drawStaticY[i] * (zero_dB);
-
-        double wCurrent   = dispLogScale * (log10(xScale[i]*logScaleWidth) - log10(lowEnd));
-
-        if(i<=512)
+        if(pajUnwrapping)
         {
-            fftGraphPath.lineTo(wCurrent, wMagnitude);
+            float tempp = dataSource->at(i) - dataSource->at(i-1);
+
+            if(tempp >= 1.0f)
+                fPIshift -= 2;
+            else if(tempp <= -1.0f)
+                fPIshift += 2;
         }
-        else
+        currAVDataSrc += dataSource->at(i) + fPIshift;
+        
+        wDivider += 1.0f;
+        currCTRLPointX = dispLogScale * (log10((float)i*logScaleWidth) - log10(lowEnd));
+        
+
+        if(currCTRLPointX-beffCTRLPointX >= 3.0f)
         {
-            double wBefore    = dispLogScale * (log10(xScale[i-1]*logScaleWidth) - log10(lowEnd));
-            fftGraphPath.lineTo((wBefore+((wCurrent-wBefore)/2)), wMagnitude);
+            currAVDataSrc = (currAVDataSrc/wDivider);
+            
+            currCTRLPointY = zero_dB + (currAVDataSrc * zero_dB);
+            
+            currPointX = beffCTRLPointX + ((currCTRLPointX - beffCTRLPointX) / 2.0f);
+            currPointY = beffCTRLPointY + ((currCTRLPointY - beffCTRLPointY) / 2.0f);
+ 
+            float xCorrection = (wDivider >= 2.0f) ? 1.5f : 0.0f;
+
+            fftGraphPath.quadraticTo(beffCTRLPointX-xCorrection, beffCTRLPointY, currPointX-xCorrection, currPointY);
+ 
+            beffAVDataSrc = currAVDataSrc;
+            currAVDataSrc = 0.0f;
+            wDivider = 0.0f;
+            beffCTRLPointY = currCTRLPointY;
+            beffCTRLPointX = currCTRLPointX;
         }
+    }
+
+    if(pajUnwrapping)
+        fftGraphPath.applyTransform(AffineTransform::translation(0, -fPIshift*zero_dB));
+}
+*/
+
+
+void GraphAnalyser::rememberBounds()
+{
+    xResize = (float)getWidth();
+    yResize = (float)getHeight();
+}
+
+
+void GraphAnalyser::staticWrapToggle()
+{
+    fftStaticPath.clear();
+    fftStaticPath.startNewSubPath(staticPath[0]);
+    
+    float fPIshift=0;
+    
+    for(int i=1; i<stPathIndex; i++)
+    {
+        if(pajUnwrapping)
+        {
+            float tempp = (staticPath[i].getY()-zero_dB) - (staticPath[i-1].getY()-zero_dB);
+            
+            if(tempp >= zero_dB)
+                fPIshift -= 2 * zero_dB;
+            else if(tempp <= -zero_dB)
+                fPIshift += 2 * zero_dB;
+        }
+
+        fftStaticPath.lineTo(staticPath[i].getX(), staticPath[i].getY() + fPIshift);
+        
     }
     
     if(pajUnwrapping)
-        fftGraphPath.applyTransform(AffineTransform::translation(0, -fPIshift * zero_dB));
+        fftStaticPath.applyTransform(AffineTransform::translation(0, -fPIshift));
+    
+    isStaticGraph = true;
+    repaint();
 }

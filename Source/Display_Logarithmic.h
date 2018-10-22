@@ -42,11 +42,6 @@ private:
     float sampRat;
     float sampRatMark;
     
-    float margXLeft = 50.0f;
-    float margXRight = 10.0f;
-    float margYBot = 20.0f;
-    float margYTop = 23.0f;
-    
     
     float scale1Hz    ;
     float scale2Hz    ;

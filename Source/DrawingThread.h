@@ -20,7 +20,7 @@
 //==============================================================================
 /*
 */
-class DrawingThread    : public Component, public Thread
+class DrawingThread    : public Thread
 {
 public:
     DrawingThread();
@@ -32,6 +32,9 @@ public:
     void drawFFTgraph();
     void drawSTATICgraph();
     void resetAnalGraph();
+    void rememberGraphBounds();
+    
+    void setVisibleGraph(int showPhase, int showMagn);
     
     void run() override;
     
@@ -46,11 +49,11 @@ public:
     {
         if(isSystemReady)
         {
-            if(sourceIsReady[wLeft])
-                radix2_FFT.makeFFT(wInput[wLeft], wOutput[wLeft], wLeft);
+            if(sourceIsReady[W_LEFT])
+                radix2_FFT.makeFFT(wInput[W_LEFT],  wOutput[W_LEFT],  W_LEFT);
             
-            if(sourceIsReady[wRight])
-                radix2_FFT.makeFFT(wInput[wRight], wOutput[wRight], wRight);
+            if(sourceIsReady[W_RIGHT])
+                radix2_FFT.makeFFT(wInput[W_RIGHT], wOutput[W_RIGHT], W_RIGHT);
         }
     }
     
@@ -65,9 +68,7 @@ public:
     int numChannels=1;
     std::atomic<bool> isResizing;
     std::atomic<bool> isHold;
-    std::atomic<bool> drawPhase;
     std::atomic<bool> notifyEditor;
-    std::atomic<bool> isWaiting;
     
 private:
     int testPaj = 0;

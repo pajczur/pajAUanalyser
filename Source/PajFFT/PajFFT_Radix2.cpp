@@ -28,7 +28,6 @@ PajFFT_Radix2::PajFFT_Radix2() : fPi(4.0 * atan(1.0)),
 
 PajFFT_Radix2::~PajFFT_Radix2()
 {
-    
 }
 
 
@@ -38,13 +37,13 @@ PajFFT_Radix2::~PajFFT_Radix2()
 // == S E T T I N G S ======================================================================================================================
 // =========================================================================================================================================
 // ==== PRIVATE: ====
-void PajFFT_Radix2::setSampleRate                          (float sampleR)
+void PajFFT_Radix2::setSampleRate (float sampleR)
 {
     wSampleRate = sampleR;
 }
 
 
-void PajFFT_Radix2::setBufferSize                          (float bufferS)
+void PajFFT_Radix2::setBufferSize (float bufferS)
 {
     wBufferSize = bufferS;
     
@@ -53,7 +52,7 @@ void PajFFT_Radix2::setBufferSize                          (float bufferS)
 }
 
 
-bool PajFFT_Radix2::resetData                        ()
+bool PajFFT_Radix2::resetData ()
 {
     if(   bitReversal(wBufferSize) &&
           prepare_sN0_matrix()     &&
@@ -66,7 +65,7 @@ bool PajFFT_Radix2::resetData                        ()
 
 
 // ==== PUBLIC: ====
-bool PajFFT_Radix2::wSettings                              (float sampleRate, float bufferSize)
+bool PajFFT_Radix2::wSettings (float sampleRate, float bufferSize)
 {
     setSampleRate(sampleRate);
     setBufferSize(bufferSize);
@@ -83,7 +82,7 @@ bool PajFFT_Radix2::wSettings                              (float sampleRate, fl
 // == P R E == C R E A T I O N =============================================================================================================
 // =========================================================================================================================================
 // ==== PRIVATE: ====
-bool PajFFT_Radix2::bitReversal                           (float bufSize)
+bool PajFFT_Radix2::bitReversal (float bufSize)
 {
     bitReversed.resize(bufSize);
     
@@ -117,7 +116,7 @@ bool PajFFT_Radix2::bitReversal                           (float bufSize)
 }
 
 
-bool PajFFT_Radix2::prepareTwiddlesArray                   ()
+bool PajFFT_Radix2::prepareTwiddlesArray ()
 {
     wnkN_forw.resize(wBufferSize);
     
@@ -130,7 +129,7 @@ bool PajFFT_Radix2::prepareTwiddlesArray                   ()
 }
 
 
-bool PajFFT_Radix2::prepare_sN0_matrix                     ()
+bool PajFFT_Radix2::prepare_sN0_matrix ()
 {
     sN0.resize(log2(wBufferSize));
     for(int z=0; z<sN0.size(); z++)
@@ -155,7 +154,7 @@ bool PajFFT_Radix2::prepare_sN0_matrix                     ()
 // == F F T == A L G O R I T H M ===========================================================================================================
 // =========================================================================================================================================
 // ==== PUBLIC: ====
-void PajFFT_Radix2::makeFFT                                (std::vector<float> &inputSignal, std::vector<std::vector<float>> &wOutputC, int channel)
+void PajFFT_Radix2::makeFFT (std::vector<float> &inputSignal, std::vector<std::vector<float>> &wOutputC, int channel)
 {
     wOutputData = &wOutputC;
 
@@ -174,7 +173,7 @@ void PajFFT_Radix2::makeFFT                                (std::vector<float> &
 
 
 // PRIVATE:
-void PajFFT_Radix2::firstStepFFT                           (std::vector<float> &inputSignal, int &rdx2)
+void PajFFT_Radix2::firstStepFFT (std::vector<float> &inputSignal, int &rdx2)
 {
     for(int k=0; k<wBufferSize/pow(2, rdx2+1); k++)
     {
@@ -189,7 +188,7 @@ void PajFFT_Radix2::firstStepFFT                           (std::vector<float> &
 }
 
 
-void PajFFT_Radix2::divideAndConquereFFT                   (int &rdx2, std::vector<std::complex<float>> &twiddle)
+void PajFFT_Radix2::divideAndConquereFFT (int &rdx2, std::vector<std::complex<float>> &twiddle)
 {
     for(int k=0; k<wBufferSize/pow(2, rdx2+1); k++)
     {
@@ -208,16 +207,16 @@ void PajFFT_Radix2::divideAndConquereFFT                   (int &rdx2, std::vect
 }
 
 
-void PajFFT_Radix2::lastStepFFT                            (int &rdx2, std::vector<std::complex<float>> &twiddle)
+void PajFFT_Radix2::lastStepFFT (int &rdx2, std::vector<std::complex<float>> &twiddle)
 {
-    float wAvarageMag=0.0f;
-    float wAvaragePha=0.0f;
+//    float wAvarageMag=0.0f;
+//    float wAvaragePha=0.0f;
     
     for(int k=0; k<wBufferSize/pow(2, rdx2+1); k++)
     {
-        int binScale=0;
+//        int binScale=0;
         
-        for(int n=0; n<wBufferSize/2; n++)
+        for(int n=0; n<(wBufferSize/2)+1; n++)
         {
             sN0[rdx2][k][n] = sN0[rdx2-1] [2*k][n%(int)pow(2, rdx2)]
                             +
@@ -231,26 +230,8 @@ void PajFFT_Radix2::lastStepFFT                            (int &rdx2, std::vect
             float tempMag = freqMagnitudeCalc(sN0[rdx2][k][n], n);
             float tempPha = phaseCalculator(sN0[rdx2][k][n], n);
             
-            if(n<=512)
-            {
-                wOutputData->at(wMag)[binScale] = tempMag;
-                wOutputData->at(wPha)[binScale] = tempPha;
-                binScale++;
-            }
-            else if(n>512 && n<=32768)
-            {
-                    wAvarageMag += tempMag;
-                    wAvaragePha += tempPha;
-                
-                if(n%dividerInt==0)
-                {
-                    wOutputData->at(wMag)[binScale] = wAvarageMag/dividerFloat;
-                    wOutputData->at(wPha)[binScale] = wAvaragePha/dividerFloat;
-                    wAvarageMag=0.0f;
-                    wAvaragePha=0.0f;
-                    binScale++;
-                }
-            }
+            wOutputData->at(W_MAGN)[n] = tempMag;
+            wOutputData->at(W_PHAS)[n] = tempPha;
         }
     }
 }
@@ -263,7 +244,7 @@ void PajFFT_Radix2::lastStepFFT                            (int &rdx2, std::vect
 // == C A L C U L A T O R S ================================================================================================================
 // =========================================================================================================================================
 // ==== PRIVATE: ====
-std::complex<float> PajFFT_Radix2::twiddleCalculator       (float nXk)
+std::complex<float> PajFFT_Radix2::twiddleCalculator (float nXk)
 {
     std::complex<float> wnk_N_temp;
     if((int)nXk % (int)wBufferSize == 0)
@@ -285,7 +266,7 @@ std::complex<float> PajFFT_Radix2::twiddleCalculator       (float nXk)
 }
 
 
-float PajFFT_Radix2::freqMagnitudeCalc               (std::complex<float> &fftOutput, long freqBin)
+float PajFFT_Radix2::freqMagnitudeCalc (std::complex<float> &fftOutput, long freqBin)
 {
         float _Re_2;
         float _Im_2;
@@ -296,7 +277,7 @@ float PajFFT_Radix2::freqMagnitudeCalc               (std::complex<float> &fftOu
 }
 
 
-float PajFFT_Radix2::phaseCalculator          (std::complex<float> &fftOutput, long freqBin)
+float PajFFT_Radix2::phaseCalculator (std::complex<float> &fftOutput, long freqBin)
 {
     return atan2(fftOutput.imag(),fftOutput.real())/fPi;
 //    return atan( (fftOutput.imag() / fftOutput.real()) )/fPi;

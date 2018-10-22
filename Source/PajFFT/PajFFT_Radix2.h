@@ -18,10 +18,8 @@
 #include <complex>
 #include <vector>
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "../DefinitionMacros.cpp"
 
-#define wMag 0
-#define wPha 1
-#define SETTINGS_READY true
 
 
 class PajFFT_Radix2

@@ -12,21 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "DefinitionMacros.cpp"
 
-#define margX   94
-#define labX    10
-#define bufLabX 82
-#define bufButX 95
-#define spaceX  38.5
-#define settingsTimer 0
-#define bypassTimer   1
-#define waitForPrepToPlay 2
-#define refreshMessageReceivedBool 50
-
-#define wClick true
-#define wDontClick false
-#define wButtonON  true
-#define wButtonOFF false
 
 //==============================================================================
 class PajAuanalyserAudioProcessorEditor  : public AudioProcessorEditor, public MultiTimer, public InterprocessConnection
@@ -35,11 +22,11 @@ public:
     PajAuanalyserAudioProcessorEditor (PajAuanalyserAudioProcessor&);
     ~PajAuanalyserAudioProcessorEditor();
 
-    BubbleMessageComponent pajHint;
-    Rectangle<int> hintPos;
-    AttributedString pajHintText;
-    bool showHint = true;
-    void showBubbleHint(bool shouldShowHint);
+//    BubbleMessageComponent pajHint;
+//    Rectangle<int> hintPos;
+//    AttributedString pajHintText;
+//    bool showHint = true;
+//    void showBubbleHint(bool shouldShowHint);
 
 
     
@@ -55,10 +42,13 @@ public:
     void updateButtons(uint8 buttonID, bool toggleState, bool clickOrNot);
     void clickOFF();
     void clickShowPhase();
+    void clickReset();
     void fftSizeClicked(uint8 buttonID);
     void clickDetectLatency();
     void clickUnWrap();
     std::atomic<bool> &waitForSettings;
+    std::atomic<bool> waitForGenerator;
+    std::atomic<bool> buttonWasClicked;
     ToggleButton* getPajButton(uint8 buttonID);
     
     
@@ -67,6 +57,8 @@ public:
     void settingsTimerCallback();
     void bypassTimerCallback();
     void waitForPrepToPlayTimerCallback();
+    void hintTimerCallback();
+    void msgReceivedTimerCallback();
     
     
     //==============================================================================
@@ -96,28 +88,39 @@ private:
     Rectangle<float> logoSpace;
     Image pajLogo = ImageCache::getFromMemory(pajAUanalyser::pajLogoYellow_png, pajAUanalyser::pajLogoYellow_pngSize);
     
+    Rectangle<float> buffIconSpace[7];
+    
+    Image icon1024  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_1024_png,  pajAUanalyser::buff_Icon_alt1_1024_pngSize);
+    Image icon2048  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_2048_png,  pajAUanalyser::buff_Icon_alt1_2048_pngSize);
+    Image icon4096  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_4096_png,  pajAUanalyser::buff_Icon_alt1_4096_pngSize);
+    Image icon8192  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_8192_png,  pajAUanalyser::buff_Icon_alt1_8192_pngSize);
+    Image icon16384 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_16384_png, pajAUanalyser::buff_Icon_alt1_16384_pngSize);
+    Image icon32768 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_32768_png, pajAUanalyser::buff_Icon_alt1_32768_pngSize);
+    Image icon65536 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_65536_png, pajAUanalyser::buff_Icon_alt1_65536_pngSize);
+    
+
+    
     
     //===================
     Label setBuffSizLabel;
     Label setResolutLabel;
     
     ToggleButton buffBut[7];
-    Label        buffButL[7];
     uint8 &clickedFFTsizeID;
     
-    uint8 fftSizeID;
-    bool &blockButtons;
+    uint8 fftSizeID = MUTE_IMPULSE_ID;
     
     //===================
     TextButton pajOFFButton;
     TextButton pajResetButton;
     TextButton pajPhaseButton;
+    int  showMagniBool=1;
     int &showPhaseBool;
+    std::atomic<bool> offWasClicked;
     
     
     //===================
     TextButton latencyDetect; Label latencyDetectLabel;
-//    ToggleButton latencyDetect; Label latencyDetectLabel;
     ToggleButton pajUnwrap;     Label pajUnwrapLabel;
     
     bool &isUnWrapToggled;
@@ -141,6 +144,11 @@ private:
     std::atomic<bool> pajMessageReceived;
     
     std::atomic<bool> isGenActive;
+    
+    bool shouldSaveGraphBounds = true;
+    
+    Label hintWall;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)
 };

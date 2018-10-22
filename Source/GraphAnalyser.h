@@ -11,41 +11,13 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "DefinitionMacros.cpp"
 
-#define b1024ID       0
-#define b2048ID       1
-#define b4096ID       2
-#define b8192ID       3
-#define b16384ID      4
-#define b32768ID      5
-#define b65536ID      6
-
-#define muteImpulseID 7
-
-#define numOfRadioButton 7
-
-#define unWrapID      10
-#define latencyID     11
-
-#define pajPlay       19
-
-#define pajOffButtonID   20
-#define pajResetButtonID 21
-#define pajPhaseButtonID 22
-
-#define bufferButtonRadioGroup 100
-
-#define wMag 0
-#define wPha 1
-
-#define wLeft  0
-#define wRight 1
-
-#define SETTINGS_READY true
 
 //==============================================================================
 /*
 */
+
 class GraphAnalyser    : public Component
 {
 public:
@@ -56,10 +28,6 @@ public:
     inline void setChannel(int channel, int outputType) {chan=channel; outType=outputType;}
     void setWindScaleSettings(float &sampRat, float &wBuffSiz);
 
-    
-
-    void setZoomLogar(double lowE, double topE);
-    void setZoomLinear(double endTime);
 
 
     void paint (Graphics&) override;
@@ -67,25 +35,26 @@ public:
     
     void drawGraph();
     void drawMagPath();
+    void drawMagPath2();
     void drawPhaPath();
     void drawGraphSTATIC();
-    void drawMagPathSTATIC();
-    void drawPhaPathSTATIC();
-    void clearDisplay();
+    void resetPath();
+    void staticWrapToggle();
+    
+    void rememberBounds();
     
     Path fftGraphPath;
-    Path fftGraphH;
-private:
+    Path fftStaticPath;
+    bool isStaticGraph = true;
+
 public:
-    Path wavGraph;
     std::vector<Path> timeGraph;
-    std::vector<float> drawStaticY;
     float dataSize;
 private:
     std::vector<float> *dataSource;
-    float fPIshift;
     int chan;
-    int lowEndIndex=1;
+    int    lowEndIndex;
+    float fLowEndIndex;
     float zero_dB;
     float winWidth;
     float wNyquist;
@@ -98,13 +67,19 @@ private:
     
     float yCordScale;
     
-    std::vector<double> xScale;
+//    std::vector<double> xScale;
     
     std::vector<float> pomiarFazy;
     
+    std::atomic<float> yResize;
+    std::atomic<float> xResize;
+    int staticGraphSize;
+    
 public:
     std::atomic<bool> pajUnwrapping;
-    std::atomic<bool> *drawPhase;
+    
+    std::vector<Point<float>> staticPath;
+    int stPathIndex=0;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphAnalyser)
 };
