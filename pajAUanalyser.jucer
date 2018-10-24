@@ -16,34 +16,6 @@
       <GROUP id="{DAF587DF-E996-E9EB-4F83-451211D09C3C}" name="resources">
         <FILE id="mXtejL" name="pajLogoYellow.png" compile="0" resource="1"
               file="Source/resources/pajLogoYellow.png"/>
-        <FILE id="Ize7iI" name="buff_Icon_alt1_1024.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt1_1024.png"/>
-        <FILE id="A7cwut" name="buff_Icon_alt1_2048.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt1_2048.png"/>
-        <FILE id="WSpRhc" name="buff_Icon_alt1_4096.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt1_4096.png"/>
-        <FILE id="bNUazR" name="buff_Icon_alt1_8192.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt1_8192.png"/>
-        <FILE id="sBGFeB" name="buff_Icon_alt1_16384.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt1_16384.png"/>
-        <FILE id="Gwem9f" name="buff_Icon_alt1_32768.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt1_32768.png"/>
-        <FILE id="oh096M" name="buff_Icon_alt1_65536.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt1_65536.png"/>
-        <FILE id="i8WzIC" name="buff_Icon_alt2_1024.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt2_1024.png"/>
-        <FILE id="f7y22d" name="buff_Icon_alt2_2048.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt2_2048.png"/>
-        <FILE id="IBjc9T" name="buff_Icon_alt2_4096.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt2_4096.png"/>
-        <FILE id="HE6Ob2" name="buff_Icon_alt2_8192.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt2_8192.png"/>
-        <FILE id="BnaIlP" name="buff_Icon_alt2_16384.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt2_16384.png"/>
-        <FILE id="Rltb1y" name="buff_Icon_alt2_32768.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt2_32768.png"/>
-        <FILE id="ezmrlv" name="buff_Icon_alt2_65536.png" compile="0" resource="1"
-              file="Source/resources/buff_Icon_alt2_65536.png"/>
       </GROUP>
       <FILE id="R3m3TV" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
@@ -62,8 +34,8 @@
       <FILE id="F1Bk3t" name="DrawingThread.cpp" compile="1" resource="0"
             file="Source/DrawingThread.cpp"/>
       <FILE id="hlzO47" name="DrawingThread.h" compile="0" resource="0" file="Source/DrawingThread.h"/>
-      <FILE id="t4UA5i" name="DefinitionMacros.cpp" compile="1" resource="0"
-            file="Source/DefinitionMacros.cpp"/>
+      <FILE id="t4UA5i" name="DefinitionMacros.h" compile="1" resource="0"
+            file="Source/DefinitionMacros.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
