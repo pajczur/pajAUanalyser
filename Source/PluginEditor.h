@@ -12,7 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "DefinitionMacros.cpp"
+//#include "DefinitionMacros.h"
 
 
 //==============================================================================
@@ -83,13 +83,13 @@ private:
     
     Rectangle<float> buffIconSpace[7];
     
-    Image icon1024  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_1024_png,  pajAUanalyser::buff_Icon_alt1_1024_pngSize);
-    Image icon2048  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_2048_png,  pajAUanalyser::buff_Icon_alt1_2048_pngSize);
-    Image icon4096  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_4096_png,  pajAUanalyser::buff_Icon_alt1_4096_pngSize);
-    Image icon8192  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_8192_png,  pajAUanalyser::buff_Icon_alt1_8192_pngSize);
-    Image icon16384 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_16384_png, pajAUanalyser::buff_Icon_alt1_16384_pngSize);
-    Image icon32768 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_32768_png, pajAUanalyser::buff_Icon_alt1_32768_pngSize);
-    Image icon65536 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_65536_png, pajAUanalyser::buff_Icon_alt1_65536_pngSize);
+//    Image icon1024  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_1024_png,  pajAUanalyser::buff_Icon_alt1_1024_pngSize);
+//    Image icon2048  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_2048_png,  pajAUanalyser::buff_Icon_alt1_2048_pngSize);
+//    Image icon4096  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_4096_png,  pajAUanalyser::buff_Icon_alt1_4096_pngSize);
+//    Image icon8192  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_8192_png,  pajAUanalyser::buff_Icon_alt1_8192_pngSize);
+//    Image icon16384 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_16384_png, pajAUanalyser::buff_Icon_alt1_16384_pngSize);
+//    Image icon32768 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_32768_png, pajAUanalyser::buff_Icon_alt1_32768_pngSize);
+//    Image icon65536 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_65536_png, pajAUanalyser::buff_Icon_alt1_65536_pngSize);
     
 
     

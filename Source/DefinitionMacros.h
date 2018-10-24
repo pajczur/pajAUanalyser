@@ -7,7 +7,7 @@
 
   ==============================================================================
 */
-
+/*
 // COLOURS AND LABELS
 #define PAJ_YELLOW Colour(0xff, 0xe7, 0x00)
 #define PAJ_RED    Colour(0xff, 0x65, 0x23)
@@ -91,3 +91,4 @@
 
 // FFT SETTINGS BOOLEAN
 #define SETTINGS_READY true
+*/

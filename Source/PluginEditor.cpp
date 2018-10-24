@@ -92,13 +92,13 @@ void PajAuanalyserAudioProcessorEditor::paint (Graphics& g)
     g.drawImage(pajLogo, logoSpace);
     g.drawRoundedRectangle(buttonsSpace, 10.f, 1.0f);
     
-    g.drawImage(icon1024, buffIconSpace[B_1024ID]);
-    g.drawImage(icon2048, buffIconSpace[B_2048ID]);
-    g.drawImage(icon4096, buffIconSpace[B_4096ID]);
-    g.drawImage(icon8192, buffIconSpace[B_8192ID]);
-    g.drawImage(icon16384, buffIconSpace[B_16384ID]);
-    g.drawImage(icon32768, buffIconSpace[B_32768ID]);
-    g.drawImage(icon65536, buffIconSpace[B_65536ID]);
+//    g.drawImage(icon1024, buffIconSpace[B_1024ID]);
+//    g.drawImage(icon2048, buffIconSpace[B_2048ID]);
+//    g.drawImage(icon4096, buffIconSpace[B_4096ID]);
+//    g.drawImage(icon8192, buffIconSpace[B_8192ID]);
+//    g.drawImage(icon16384, buffIconSpace[B_16384ID]);
+//    g.drawImage(icon32768, buffIconSpace[B_32768ID]);
+//    g.drawImage(icon65536, buffIconSpace[B_65536ID]);
 }
 
 void PajAuanalyserAudioProcessorEditor::resized()
