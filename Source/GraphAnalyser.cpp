@@ -18,9 +18,11 @@ GraphAnalyser::GraphAnalyser() : pajUnwrapping(false)
     staticPath.resize(10000);
 }
 
+
 GraphAnalyser::~GraphAnalyser()
 {
 }
+
 
 void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
 {
@@ -32,6 +34,7 @@ void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
 //        resetPath();
 //    }
 }
+
 
 void GraphAnalyser::setWindScaleSettings(float &sampRat, float &wBuffSiz)
 {
@@ -57,9 +60,6 @@ void GraphAnalyser::setWindScaleSettings(float &sampRat, float &wBuffSiz)
 }
 
 
-
-
-
 void GraphAnalyser::paint (Graphics& g)
 {
     if(chan==W_LEFT)
@@ -81,8 +81,6 @@ void GraphAnalyser::paint (Graphics& g)
 }
 
 
-
-
 void GraphAnalyser::resized()
 {
     zero_dB = (float)getHeight()/2.0f;
@@ -95,13 +93,6 @@ void GraphAnalyser::resized()
     
     yCordScale = 20.0f*((zero_dB/2.0)/(20.0*log10(4)));
 }
-
-
-
-
-
-
-
 
 
 void GraphAnalyser::drawGraph()
@@ -145,7 +136,6 @@ void GraphAnalyser::resetPath()
 }
 
 
-
 void GraphAnalyser::drawMagPath()
 {
     float beffPointX = 0.0f;
@@ -185,6 +175,7 @@ void GraphAnalyser::drawMagPath()
         }
     }
 }
+
 
 void GraphAnalyser::drawPhaPath()
 {
@@ -242,9 +233,47 @@ void GraphAnalyser::drawPhaPath()
 }
 
 
+void GraphAnalyser::rememberBounds()
+{
+    xResize = (float)getWidth();
+    yResize = (float)getHeight();
+}
+
+
+void GraphAnalyser::staticWrapToggle()
+{
+    fftStaticPath.clear();
+    fftStaticPath.startNewSubPath(staticPath[0]);
+    
+    float fPIshift=0;
+    
+    for(int i=1; i<stPathIndex; i++)
+    {
+        if(pajUnwrapping)
+        {
+            float tempp = (staticPath[i].getY()-zero_dB) - (staticPath[i-1].getY()-zero_dB);
+            
+            if(tempp >= zero_dB)
+                fPIshift -= 2 * zero_dB;
+            else if(tempp <= -zero_dB)
+                fPIshift += 2 * zero_dB;
+        }
+        
+        fftStaticPath.lineTo(staticPath[i].getX(), staticPath[i].getY() + fPIshift);
+        
+    }
+    
+    if(pajUnwrapping)
+        fftStaticPath.applyTransform(AffineTransform::translation(0, -fPIshift));
+    
+    isStaticGraph = true;
+    repaint();
+}
 
 
 
+
+// For quadratic graph
 /*
 void GraphAnalyser::drawMagPath2()
 {
@@ -362,41 +391,3 @@ void GraphAnalyser::drawPhaPath()
         fftGraphPath.applyTransform(AffineTransform::translation(0, -fPIshift*zero_dB));
 }
 */
-
-
-void GraphAnalyser::rememberBounds()
-{
-    xResize = (float)getWidth();
-    yResize = (float)getHeight();
-}
-
-
-void GraphAnalyser::staticWrapToggle()
-{
-    fftStaticPath.clear();
-    fftStaticPath.startNewSubPath(staticPath[0]);
-    
-    float fPIshift=0;
-    
-    for(int i=1; i<stPathIndex; i++)
-    {
-        if(pajUnwrapping)
-        {
-            float tempp = (staticPath[i].getY()-zero_dB) - (staticPath[i-1].getY()-zero_dB);
-            
-            if(tempp >= zero_dB)
-                fPIshift -= 2 * zero_dB;
-            else if(tempp <= -zero_dB)
-                fPIshift += 2 * zero_dB;
-        }
-
-        fftStaticPath.lineTo(staticPath[i].getX(), staticPath[i].getY() + fPIshift);
-        
-    }
-    
-    if(pajUnwrapping)
-        fftStaticPath.applyTransform(AffineTransform::translation(0, -fPIshift));
-    
-    isStaticGraph = true;
-    repaint();
-}

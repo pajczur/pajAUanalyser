@@ -35,33 +35,24 @@ DrawingThread::~DrawingThread()
 void DrawingThread::wSetBounds(int wWidth, int wHeight, int isShowPhase)
 {
     int displayWidth = wWidth-20;
+
+    int displayHeight= wHeight-64;
+    display_magni.setBounds(0, 55, displayWidth, displayHeight);
     
-//    if(!isShowPhase)
-//    {
-        int displayHeight= wHeight-64;
-        display_magni.setBounds(0, 55, displayWidth, displayHeight);
-        
-        int graphWidth = display_magni.getDisplayWidth();
-        int graphHeight= display_magni.getDisplayHeight();
-        
-        for(int channel=0; channel<numChannels; ++channel)
-        {
-            magAnal[channel].setBounds(50, 78, graphWidth, graphHeight);
-        }
-//    }
-//    else
-//    {
-//        int displayHeight= wHeight-64;
-        display_phase.setBounds(0, 55, displayWidth, displayHeight);
-        
-//        int graphWidth = display_phase.getDisplayWidth();
-//        int graphHeight= display_phase.getDisplayHeight();
-        
-        for(int channel=0; channel<numChannels; ++channel)
-        {
-            phaAnal[channel].setBounds(50, 78, graphWidth, graphHeight);
-        }
-//    }
+    int graphWidth = display_magni.getDisplayWidth();
+    int graphHeight= display_magni.getDisplayHeight();
+    
+    for(int channel=0; channel<numChannels; ++channel)
+    {
+        magAnal[channel].setBounds(50, 78, graphWidth, graphHeight);
+    }
+
+    display_phase.setBounds(0, 55, displayWidth, displayHeight);
+
+    for(int channel=0; channel<numChannels; ++channel)
+    {
+        phaAnal[channel].setBounds(50, 78, graphWidth, graphHeight);
+    }
 }
 
 bool DrawingThread::pajSettings(int numberOfChannels, float fftSize, float sampRate)
@@ -115,20 +106,16 @@ void DrawingThread::run()
             makeFFT();
 
             const MessageManagerLock mml (Thread::getCurrentThread());
+            
             if (mml.lockWasGained())
-            {
                 drawFFTgraph();
-//                DBG("FFT GRAPH " << (testPaj++)%100);
-            }
         }
         else
         {
             const MessageManagerLock mml (Thread::getCurrentThread());
+            
             if (mml.lockWasGained())
-            {
                 drawSTATICgraph();
-//                DBG("STATIC GRAPH " << (testPaj++)%100);
-            }
         }
 
         notifyEditor = true;

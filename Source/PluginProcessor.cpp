@@ -38,6 +38,8 @@ PajAuanalyserAudioProcessor::~PajAuanalyserAudioProcessor() {
     bypassTreshold=-1;
 }
 
+
+
 //==============================================================================
 const String PajAuanalyserAudioProcessor::getName() const {
     return JucePlugin_Name;
@@ -89,6 +91,8 @@ const String PajAuanalyserAudioProcessor::getProgramName (int index) {
 void PajAuanalyserAudioProcessor::changeProgramName (int index, const String& newName) {
 }
 
+
+
 //==============================================================================
 void PajAuanalyserAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock) {
     waitForSettings=false;
@@ -133,8 +137,6 @@ bool PajAuanalyserAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
   #endif
 }
 #endif
-
-
 
 void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages) {
     bypassTreshold=2;
@@ -199,7 +201,8 @@ void PajAuanalyserAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
     }
 }
 
- 
+
+
 //==============================================================================
 bool PajAuanalyserAudioProcessor::hasEditor() const {
     return true;
@@ -208,6 +211,8 @@ bool PajAuanalyserAudioProcessor::hasEditor() const {
 AudioProcessorEditor* PajAuanalyserAudioProcessor::createEditor() {
     return new PajAuanalyserAudioProcessorEditor (*this);
 }
+
+
 
 //==============================================================================
 void PajAuanalyserAudioProcessor::getStateInformation (MemoryBlock& destData) {
@@ -235,17 +240,13 @@ bool PajAuanalyserAudioProcessor::updateFFTSize() {
         return false;
 }
 
-
-
-void PajAuanalyserAudioProcessor::timerCallback()
-{
+void PajAuanalyserAudioProcessor::timerCallback() {
     stopTimer();
     isBypassed=true;
     waitForSettings=false;
 }
 
-void PajAuanalyserAudioProcessor::setSize(int pajW, int pajH)
-{
+void PajAuanalyserAudioProcessor::setSize(int pajW, int pajH) {
     wWidth = pajW;
     wHeight = pajH;
 }
@@ -253,7 +254,6 @@ void PajAuanalyserAudioProcessor::setSize(int pajW, int pajH)
 
 //==============================================================================
 // This creates new instances of the plugin..
-AudioProcessor* JUCE_CALLTYPE createPluginFilter()
-{
+AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
     return new PajAuanalyserAudioProcessor();
 }

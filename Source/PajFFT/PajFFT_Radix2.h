@@ -56,7 +56,6 @@ private:
     void firstStepFFT                      (std::vector<             float>  &inputSignal,  int &rdx2);
     void divideAndConquereFFT              (int &rdx2, std::vector<std::complex<float>> &twiddle);
     void lastStepFFT                       (int &rdx2, std::vector<std::complex<float>> &twiddle);
-//    unsigned int bitRev(unsigned int num);
     
     
     // == CALCULATORS ===============================================================
@@ -82,5 +81,4 @@ private:
 
 public:
     std::vector<std::vector<float>> *wOutputData;
-
 };

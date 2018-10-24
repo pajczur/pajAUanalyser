@@ -108,8 +108,6 @@ public:
     std::atomic<bool> waitForSettings;
     int wWidth=520;
     int wHeight=300;
-//    bool blockButtons = false;
-
     bool isUnWrapToggled = false;
     
     //==============================================================================

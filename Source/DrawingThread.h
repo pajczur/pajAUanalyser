@@ -69,6 +69,7 @@ public:
     std::atomic<bool> isHold;
     std::atomic<bool> notifyEditor;
     
+    
 private:
     int testPaj = 0;
     

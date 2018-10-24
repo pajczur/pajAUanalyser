@@ -90,9 +90,7 @@ private:
 //    Image icon16384 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_16384_png, pajAUanalyser::buff_Icon_alt1_16384_pngSize);
 //    Image icon32768 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_32768_png, pajAUanalyser::buff_Icon_alt1_32768_pngSize);
 //    Image icon65536 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_65536_png, pajAUanalyser::buff_Icon_alt1_65536_pngSize);
-    
 
-    
     
     //===================
     Label setBuffSizLabel;
@@ -102,6 +100,7 @@ private:
     uint8 &clickedFFTsizeID;
     
     uint8 fftSizeID = MUTE_IMPULSE_ID;
+    
     
     //===================
     TextButton pajOFFButton;

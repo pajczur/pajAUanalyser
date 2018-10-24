@@ -343,6 +343,8 @@ void Display_Logarithmic::sliderValueChanged (Slider *slider)
     }
 }
 */
+
+
 void Display_Logarithmic::whatToDisplay(GraphAnalyser &graph)
 {
     graphAnalyser = &graph;

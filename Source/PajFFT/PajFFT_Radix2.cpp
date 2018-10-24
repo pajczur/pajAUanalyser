@@ -14,7 +14,6 @@
 
 #include "PajFFT_Radix2.h"
 
-
 // =========================================================================================================================================
 // == C O N S T R U C T O R ==== D E S T R U C T O T =======================================================================================
 // =========================================================================================================================================
@@ -209,13 +208,8 @@ void PajFFT_Radix2::divideAndConquereFFT (int &rdx2, std::vector<std::complex<fl
 
 void PajFFT_Radix2::lastStepFFT (int &rdx2, std::vector<std::complex<float>> &twiddle)
 {
-//    float wAvarageMag=0.0f;
-//    float wAvaragePha=0.0f;
-    
     for(int k=0; k<wBufferSize/pow(2, rdx2+1); k++)
     {
-//        int binScale=0;
-        
         for(int n=0; n<(wBufferSize/2)+1; n++)
         {
             sN0[rdx2][k][n] = sN0[rdx2-1] [2*k][n%(int)pow(2, rdx2)]
@@ -279,5 +273,4 @@ float PajFFT_Radix2::freqMagnitudeCalc (std::complex<float> &fftOutput, long fre
 float PajFFT_Radix2::phaseCalculator (std::complex<float> &fftOutput, long freqBin)
 {
     return atan2(fftOutput.imag(),fftOutput.real())/fPi;
-//    return atan( (fftOutput.imag() / fftOutput.real()) )/fPi;
 }

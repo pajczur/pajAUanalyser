@@ -621,6 +621,7 @@ void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
         }
     }
     
+    
     //===================
     logoSpace.setBounds(MARG_X-45, 5, 40, 40);
     buttonsSpace.setBounds(MARG_X, 5.0f, 445.0f-3, 40.0f);

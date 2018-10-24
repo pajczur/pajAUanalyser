@@ -41,15 +41,6 @@ private:
     float sampRat;
     float sampRatMark;
     
-    
-    float scale1Hz    ;
-    float scale2Hz    ;
-    float scale3Hz    ;
-    float scale4Hz    ;
-    float scale5Hz    ;
-    float scale6Hz    ;
-    float scale7Hz    ;
-    float scale8Hz    ;
     float scale10Hz   ;
     float scale20Hz   ;
     float scale30Hz   ;
