@@ -18,11 +18,8 @@
 #include <complex>
 #include <vector>
 #include "../JuceLibraryCode/JuceHeader.h"
-//#include "../DefinitionMacros.h"
+#include "../DefinitionMacros.h"
 
-#define SETTINGS_READY true
-#define W_MAGN 0
-#define W_PHAS 1
 
 class PajFFT_Radix2
 {

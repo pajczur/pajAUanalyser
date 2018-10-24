@@ -606,7 +606,7 @@ void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
         buffBut[i].setAlwaysOnTop(true);
         buffBut[i].setBounds       ( MARG_X + BUF_BUT_X + i*SPACE_X, 24, 19, 17);
         
-        buffIconSpace[i].setBounds(9+ MARG_X + BUF_LAB_X + i*SPACE_X, 9, 30, 15);
+//        buffIconSpace[i].setBounds(9+ MARG_X + BUF_LAB_X + i*SPACE_X, 9, 30, 15);
         
         switch(i)
         {
@@ -637,7 +637,7 @@ void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
     addAndMakeVisible(&setBuffSizLabel);
     setBuffSizLabel.setJustificationType(Justification::centredBottom);
     setBuffSizLabel.setText("START HERE:", dontSendNotification);
-    setBuffSizLabel.setFont(wFontSize2);
+//    setBuffSizLabel.setFont(wFontSize2);
     setBuffSizLabel.setAlwaysOnTop(true);
     
     setResolutLabel.setBounds( MARG_X + LAB_X, 23, 80, 15);

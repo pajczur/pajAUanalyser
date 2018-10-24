@@ -74,14 +74,17 @@ public:
 private:
     Rectangle<float> buttonsSpace;
     const Font wFontSize=12.0f;
-    const Font wFontSize2=15.0f;
     
     
     //==============================================================================
     Rectangle<float> logoSpace;
     Image pajLogo = ImageCache::getFromMemory(pajAUanalyser::pajLogoYellow_png, pajAUanalyser::pajLogoYellow_pngSize);
     
-    Rectangle<float> buffIconSpace[7];
+    Rectangle<float> startHere_space;
+    //    Image startHere_banner = ImageCache::getFromMemory(pajAUanalyser::StartHere_ban_png, pajAUanalyser::StartHere_ban_pngSize);
+    
+    //    PajButtonsLookAndFeel buffButtonsLook[NUM_OF_RADIO_BUTTONS];
+
     
 //    Image icon1024  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_1024_png,  pajAUanalyser::buff_Icon_alt1_1024_pngSize);
 //    Image icon2048  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_2048_png,  pajAUanalyser::buff_Icon_alt1_2048_pngSize);
