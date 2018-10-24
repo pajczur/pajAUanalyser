@@ -36,13 +36,9 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     pajMessageReceived=false;
     setResizable(true, true);
     setSize (wWidth, wHeight);
-    setResizeLimits(520, 300, 10000, 10000);
+    setResizeLimits(488, 300, 10000, 10000);
     resizableCorner->addMouseListener(this, true);
-    
-    
-    // == H I N T == B U B B L E ==
 
-    
     if(connectToSocket("127.0.0.1", 52425, 1000))
          waitForGenerator = false;
     
@@ -52,13 +48,14 @@ PajAuanalyserAudioProcessorEditor::PajAuanalyserAudioProcessorEditor (PajAuanaly
     
     settingsTimerUnlocked = false;
     
-    hintWall.setText("1) \"pajAUanalyser - gen\" must be lounched and ON\n\n2) Be sure there is any audio source on measured track\n\n3) HIT PLAY", dontSendNotification);
-    hintWall.setJustificationType(Justification::centred);
-    hintWall.setColour(Label::ColourIds::backgroundColourId, Colours::black);
-    hintWall.setAlwaysOnTop(true);
-    hintWall.setAlpha(0.8);
-    addAndMakeVisible(hintWall);
-    hintWall.setVisible(false);
+    // == H I N T == B U B B L E ==
+    hintWallpaper.setText("1) \"pajAUanalyser - gen\" must be lounched and ON\n\n2) Be sure there is any audio source on measured track\n\n3) HIT PLAY", dontSendNotification);
+    hintWallpaper.setJustificationType(Justification::centred);
+    hintWallpaper.setColour(Label::ColourIds::backgroundColourId, Colours::black);
+    hintWallpaper.setAlwaysOnTop(true);
+    hintWallpaper.setAlpha(0.8);
+    addAndMakeVisible(hintWallpaper);
+    hintWallpaper.setVisible(false);
     
     startTimer(HINT_TIMER_ID, 1000);
 }
@@ -84,21 +81,10 @@ PajAuanalyserAudioProcessorEditor::~PajAuanalyserAudioProcessorEditor()
 //==============================================================================
 void PajAuanalyserAudioProcessorEditor::paint (Graphics& g)
 {
-    g.fillAll(Colours::indigo);
+//    g.fillAll(Colours::black);
+    g.fillAll(Colour(0x40, 0x44, 0x4c));
 
-    g.setColour (Colours::lightblue);
-
-//    g.drawRoundedRectangle(logoSpace, 10.f, 1.0f);
     g.drawImage(pajLogo, logoSpace);
-    g.drawRoundedRectangle(buttonsSpace, 10.f, 1.0f);
-    
-//    g.drawImage(icon1024, buffIconSpace[B_1024ID]);
-//    g.drawImage(icon2048, buffIconSpace[B_2048ID]);
-//    g.drawImage(icon4096, buffIconSpace[B_4096ID]);
-//    g.drawImage(icon8192, buffIconSpace[B_8192ID]);
-//    g.drawImage(icon16384, buffIconSpace[B_16384ID]);
-//    g.drawImage(icon32768, buffIconSpace[B_32768ID]);
-//    g.drawImage(icon65536, buffIconSpace[B_65536ID]);
 }
 
 void PajAuanalyserAudioProcessorEditor::resized()
@@ -174,7 +160,6 @@ void PajAuanalyserAudioProcessorEditor::fftSizeClicked(uint8 buttonID)
             else
             {
                 updateButtons(clickedFFTsizeID, W_BUTTON_ON, W_DONT_CLICK);
-//                showBubbleHint(showHint);
             }
         }
     }
@@ -210,6 +195,8 @@ void PajAuanalyserAudioProcessorEditor::clickShowPhase()
         showPhaseBool = (++showPhaseBool)%2;
         showMagniBool = (showPhaseBool+1)%2;
         
+        phaseButtonLookAndFeel.switchIcon(showPhaseBool);
+        
         drawingThread.wSetBounds(getWidth(), getHeight(), showPhaseBool);
         
         pajUnwrap.setVisible(showPhaseBool);
@@ -227,12 +214,7 @@ void PajAuanalyserAudioProcessorEditor::clickShowPhase()
             drawingThread.phaAnal[channel].setVisible(showPhaseBool);
         }
         
-        pajPhaseButton.setButtonText(!showPhaseBool?"PHASE":"MAGN.");
-        
         waitForSettings = false;
-        
-//        if(drawingThread.isWaiting)
-//            drawingThread.notify();
     }
 }
 
@@ -248,11 +230,8 @@ void PajAuanalyserAudioProcessorEditor::clickReset()
 
 void PajAuanalyserAudioProcessorEditor::clickDetectLatency()
 {
-//    if( latencyDetect.getToggleState() )
     processor.waitForLatDetect = 5*(int)processor.pajFFTsize;
         processor.wDetectLatency = true;
-//    else
-//        processor.wDetectLatency = false;
 }
 
 
@@ -396,7 +375,6 @@ void PajAuanalyserAudioProcessorEditor::bypassTimerCallback()
                 sendBypassMessage = false;
                 playBack = false;
                 sendFFTsizeToGenerator(MUTE_IMPULSE_ID);
-//                processor.startTimer(1);
             }
             pajMessageReceived=false;
             fftSizeID=MUTE_IMPULSE_ID;
@@ -414,8 +392,6 @@ void PajAuanalyserAudioProcessorEditor::bypassTimerCallback()
                 sendBypassMessage = true;
                 fftSizeID=clickedFFTsizeID;
                 updateButtons(clickedFFTsizeID, W_BUTTON_ON, W_CLICK);
-//                if(blockButtons)
-//                    sendFFTsizeToGenerator(clickedFFTsizeID);
             }
             pajMessageReceived=false;
         }
@@ -429,6 +405,7 @@ void PajAuanalyserAudioProcessorEditor::waitForPrepToPlayTimerCallback()
     {
         stopTimer(WAIT_FOR_PREP_TO_PLAY_ID);
         drawProcComponents();
+        updateButtons(clickedFFTsizeID, W_BUTTON_ON, W_CLICK);
     }
 }
 
@@ -446,16 +423,16 @@ void PajAuanalyserAudioProcessorEditor::hintTimerCallback()
     
     if((!isConnected() && !offWasClicked) || (fftSizeID!=MUTE_IMPULSE_ID && (!playBack || waitForGenerator) && !offWasClicked) || (buttonWasClicked && waitForGenerator))
     {
-        hintWall.setBounds(0, 0, getWidth(), getHeight());
-        hintWall.setVisible(true);
+        hintWallpaper.setBounds(0, 0, getWidth(), getHeight());
+        hintWallpaper.setVisible(true);
         
         drawingThread.setVisibleGraph(0, 0);
     }
     else
     {
-        if(hintWall.isVisible())
+        if(hintWallpaper.isVisible())
         {
-            hintWall.setVisible(false);
+            hintWallpaper.setVisible(false);
             drawingThread.setVisibleGraph(showPhaseBool, showMagniBool);
         }
     }
@@ -548,12 +525,10 @@ void PajAuanalyserAudioProcessorEditor::sendFFTsizeToGenerator(uint8 fftSizeID)
 
 void PajAuanalyserAudioProcessorEditor::connectionMade()
 {
-    //    DBG("CONNECTED");
 }
 
 void PajAuanalyserAudioProcessorEditor::connectionLost()
 {
-    //    DBG("DISCONNECTED");
 }
 
 void PajAuanalyserAudioProcessorEditor::messageReceived( const MemoryBlock & message)
@@ -562,12 +537,8 @@ void PajAuanalyserAudioProcessorEditor::messageReceived( const MemoryBlock & mes
     
     if(message[0] == MUTE_IMPULSE_ID)
     {
-//        blockButtons = true;
         waitForGenerator=true;
         drawingThread.isHold=true;
-//        drawingThread.resetAnalGraph();
-//        drawingThread.notify();
-//        processor.startTimer(2*processor.bypassTime);
     }
     else if(message[0] == PAJ_PLAY)
     {
@@ -599,14 +570,15 @@ void PajAuanalyserAudioProcessorEditor::messageReceived( const MemoryBlock & mes
 //==============================================================================
 void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
 {
-    for(int i=0; i < 7; ++i)
+    for(int i=0; i < NUM_OF_RADIO_BUTTONS; ++i)
     {
+        buffButtonsLook[i].setResolutionIcon(i);
+        buffBut[i].setLookAndFeel(&buffButtonsLook[i]);
         addAndMakeVisible(&buffBut[i]);
         buffBut[i].setRadioGroupId(BUFF_BUTTON_RADIO_GROUP);
         buffBut[i].setAlwaysOnTop(true);
-        buffBut[i].setBounds       ( MARG_X + BUF_BUT_X + i*SPACE_X, 24, 19, 17);
+        buffBut[i].setBounds ( MARG_X + BUF_BUT_X + i*SPACE_X-20, MARG_Y+3, 30, 30);
         
-//        buffIconSpace[i].setBounds(9+ MARG_X + BUF_LAB_X + i*SPACE_X, 9, 30, 15);
         
         switch(i)
         {
@@ -623,46 +595,28 @@ void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
     
     
     //===================
-    logoSpace.setBounds(MARG_X-45, 5, 40, 40);
-    buttonsSpace.setBounds(MARG_X, 5.0f, 445.0f-3, 40.0f);
+    logoSpace.setBounds   (MARG_X-45+45, MARG_Y-5-4, 48,    48);
     
     
     //===================
-    addAndMakeVisible(&setResolutLabel);
-    setResolutLabel.setJustificationType(Justification::centredBottom);
-    setResolutLabel.setText("(resolution)", dontSendNotification);
-    setResolutLabel.setFont(wFontSize);
-    setResolutLabel.setAlwaysOnTop(true);
-    
-    addAndMakeVisible(&setBuffSizLabel);
-    setBuffSizLabel.setJustificationType(Justification::centredBottom);
-    setBuffSizLabel.setText("START HERE:", dontSendNotification);
-//    setBuffSizLabel.setFont(wFontSize2);
-    setBuffSizLabel.setAlwaysOnTop(true);
-    
-    setResolutLabel.setBounds( MARG_X + LAB_X, 23, 80, 15);
-    setBuffSizLabel.setBounds( MARG_X + LAB_X, 10, 80, 15);
-    
-    
-    //===================
+    pajOFFButton.setLookAndFeel(&offButtonLookAndFeel);
     addAndMakeVisible(&pajOFFButton);
-    pajOFFButton.setButtonText("Off");
     pajOFFButton.onClick = [this] { updateToggleState(&pajOFFButton, PAJ_OFF_BUTTON_ID); };
     pajOFFButton.setAlwaysOnTop(true);
     
+    pajResetButton.setLookAndFeel(&resetButtonLookAndFeel);
     addAndMakeVisible(&pajResetButton);
-    pajResetButton.setButtonText("RESET");
     pajResetButton.onClick = [this] { updateToggleState(&pajResetButton, PAJ_RESET_BUTTON_ID); };
     pajResetButton.setAlwaysOnTop(true);
     
+    pajPhaseButton.setLookAndFeel(&phaseButtonLookAndFeel);
     addAndMakeVisible(&pajPhaseButton);
-    pajPhaseButton.setButtonText("PHASE");
     pajPhaseButton.onClick = [this] { updateToggleState(&pajPhaseButton, PAJ_PHASE_BUTTON_ID); };
     pajPhaseButton.setAlwaysOnTop(true);
     
-    pajOFFButton.setBounds   (MARG_X + BUF_BUT_X + 8*SPACE_X+ 2,  7.6f, 35, 35);
-    pajResetButton.setBounds (MARG_X + BUF_BUT_X + 8*SPACE_X-37,  7.6f, 38, 17);
-    pajPhaseButton.setBounds (MARG_X + BUF_BUT_X + 8*SPACE_X-37, 25.6f, 38, 17);
+    pajOFFButton.setBounds   (MARG_X + BUF_BUT_X + 8*SPACE_X-39,  MARG_Y-7, 46, 15);
+    pajResetButton.setBounds (MARG_X + BUF_BUT_X + 8*SPACE_X-39,  MARG_Y+8, 46, 15);
+    pajPhaseButton.setBounds (MARG_X + BUF_BUT_X + 8*SPACE_X-39,  MARG_Y+23.6f, 46, 15);
     
     
     //===================

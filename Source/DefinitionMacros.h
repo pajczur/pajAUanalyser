@@ -18,6 +18,7 @@
 
 
 // BUTTONS LAYOUT
+#define MARG_Y   13
 #define MARG_X   49
 #define LAB_X    10
 #define BUF_LAB_X 82

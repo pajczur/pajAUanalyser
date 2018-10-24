@@ -12,7 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-//#include "DefinitionMacros.h"
+#include "PajButtonsLookAndFeel.h"
 
 
 //==============================================================================
@@ -72,7 +72,6 @@ public:
     
     //==============================================================================
 private:
-    Rectangle<float> buttonsSpace;
     const Font wFontSize=12.0f;
     
     
@@ -80,30 +79,16 @@ private:
     Rectangle<float> logoSpace;
     Image pajLogo = ImageCache::getFromMemory(pajAUanalyser::pajLogoYellow_png, pajAUanalyser::pajLogoYellow_pngSize);
     
-    Rectangle<float> startHere_space;
-    //    Image startHere_banner = ImageCache::getFromMemory(pajAUanalyser::StartHere_ban_png, pajAUanalyser::StartHere_ban_pngSize);
+    PajButtonsLookAndFeel buffButtonsLook[NUM_OF_RADIO_BUTTONS];
     
-    //    PajButtonsLookAndFeel buffButtonsLook[NUM_OF_RADIO_BUTTONS];
-
-    
-//    Image icon1024  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_1024_png,  pajAUanalyser::buff_Icon_alt1_1024_pngSize);
-//    Image icon2048  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_2048_png,  pajAUanalyser::buff_Icon_alt1_2048_pngSize);
-//    Image icon4096  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_4096_png,  pajAUanalyser::buff_Icon_alt1_4096_pngSize);
-//    Image icon8192  = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_8192_png,  pajAUanalyser::buff_Icon_alt1_8192_pngSize);
-//    Image icon16384 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_16384_png, pajAUanalyser::buff_Icon_alt1_16384_pngSize);
-//    Image icon32768 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_32768_png, pajAUanalyser::buff_Icon_alt1_32768_pngSize);
-//    Image icon65536 = ImageCache::getFromMemory(pajAUanalyser::buff_Icon_alt1_65536_png, pajAUanalyser::buff_Icon_alt1_65536_pngSize);
-
-    
-    //===================
-    Label setBuffSizLabel;
-    Label setResolutLabel;
-    
-    ToggleButton buffBut[7];
+    ToggleButton buffBut[NUM_OF_RADIO_BUTTONS];
     uint8 &clickedFFTsizeID;
     
     uint8 fftSizeID = MUTE_IMPULSE_ID;
     
+    OffButtonLookAndFeel   offButtonLookAndFeel;
+    ResetButtonLookAndFeel resetButtonLookAndFeel;
+    PhaseButtonLookAndFeel phaseButtonLookAndFeel;
     
     //===================
     TextButton pajOFFButton;
@@ -142,7 +127,7 @@ private:
     
     bool shouldSaveGraphBounds = true;
     
-    Label hintWall;
+    Label hintWallpaper;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessorEditor)

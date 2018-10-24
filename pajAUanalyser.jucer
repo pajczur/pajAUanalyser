@@ -14,6 +14,24 @@
         <FILE id="I6SN4h" name="PajFFT_Radix2.h" compile="0" resource="0" file="Source/PajFFT/PajFFT_Radix2.h"/>
       </GROUP>
       <GROUP id="{DAF587DF-E996-E9EB-4F83-451211D09C3C}" name="resources">
+        <FILE id="piI9AM" name="pajLogoYellow.png" compile="0" resource="1"
+              file="Source/resources/pajLogoYellow.png"/>
+        <FILE id="ZBfpRT" name="magnitudeButton_false.png" compile="0" resource="1"
+              file="Source/resources/magnitudeButton_false.png"/>
+        <FILE id="DEmmLF" name="magnitudeButton_true.png" compile="0" resource="1"
+              file="Source/resources/magnitudeButton_true.png"/>
+        <FILE id="fhuBpL" name="offButton_false.png" compile="0" resource="1"
+              file="Source/resources/offButton_false.png"/>
+        <FILE id="XNc7YI" name="offButton_true.png" compile="0" resource="1"
+              file="Source/resources/offButton_true.png"/>
+        <FILE id="E1Nhby" name="phaseButton_false.png" compile="0" resource="1"
+              file="Source/resources/phaseButton_false.png"/>
+        <FILE id="tCQcM1" name="phaseButton_true.png" compile="0" resource="1"
+              file="Source/resources/phaseButton_true.png"/>
+        <FILE id="wVgwCB" name="resetButton_false.png" compile="0" resource="1"
+              file="Source/resources/resetButton_false.png"/>
+        <FILE id="wzmooj" name="resetButton_true.png" compile="0" resource="1"
+              file="Source/resources/resetButton_true.png"/>
         <FILE id="J0HxkR" name="StartHere_ban.png" compile="0" resource="1"
               file="Source/resources/StartHere_ban.png"/>
         <FILE id="Sx4XJ0" name="buffToggleButton_1024_false.png" compile="0"
@@ -28,10 +46,10 @@
               resource="1" file="Source/resources/buffToggleButton_16384_false.png"/>
         <FILE id="tgWqO5" name="buffToggleButton_32768_false.png" compile="0"
               resource="1" file="Source/resources/buffToggleButton_32768_false.png"/>
+        <FILE id="KsxQLg" name="buffToggleButton_65536_false.png" compile="0"
+              resource="1" file="Source/resources/buffToggleButton_65536_false.png"/>
         <FILE id="ATiv3t" name="buffToggleButton_true.png" compile="0" resource="1"
               file="Source/resources/buffToggleButton_true.png"/>
-        <FILE id="mXtejL" name="pajLogoYellow.png" compile="0" resource="1"
-              file="Source/resources/pajLogoYellow.png"/>
       </GROUP>
       <FILE id="R3m3TV" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
@@ -40,6 +58,8 @@
       <FILE id="pN3aAQ" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="fn9xIr" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="mRUh2a" name="PajButtonsLookAndFeel.h" compile="0" resource="0"
+            file="Source/PajButtonsLookAndFeel.h"/>
       <FILE id="vyFan1" name="Display_Logarithmic.cpp" compile="1" resource="0"
             file="Source/Display_Logarithmic.cpp"/>
       <FILE id="qQ9fBA" name="Display_Logarithmic.h" compile="0" resource="0"
