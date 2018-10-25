@@ -63,10 +63,10 @@ public:
     {
         if(isMouseOverButton || isButtonDown)
         {
-            g.setColour(Colours::lightblue);
+            g.setColour(Colours::white);
             
             if(isButtonDown)
-                g.setColour(Colours::lightskyblue);
+                g.setColour(Colours::ghostwhite);
             
             g.fillRect(buttonSize);
             g.drawImage(offIcon_true, buttonSize);
@@ -94,10 +94,10 @@ public:
     {
         if(isMouseOverButton || isButtonDown)
         {
-            g.setColour(Colours::lightblue);
+            g.setColour(Colours::white);
             
             if(isButtonDown)
-                g.setColour(Colours::lightskyblue);
+                g.setColour(Colours::ghostwhite);
             
             g.fillRect(buttonSize);
             g.drawImage(resetIcon_true, buttonSize);
@@ -130,10 +130,11 @@ public:
     {
         if(isMouseOverButton || isButtonDown)
         {
-            g.setColour(Colours::lightblue);
+            g.setColour(Colours::white);
             
             if(isButtonDown)
-                g.setColour(Colours::lightskyblue);
+                g.setColour(Colours::ghostwhite);
+//                g.setColour(Colours::lightskyblue);
             
             g.fillRect(buttonSize);
             g.drawImage(phaseIcon_true[showPhaseBool], buttonSize);
@@ -157,4 +158,83 @@ private:
 
     
     int showPhaseBool = 0;
+};
+
+
+
+class UnwrapButtonLookAndFeel : public LookAndFeel_V4
+{
+public:
+    UnwrapButtonLookAndFeel()
+    {
+        buttonSize.setBounds(0,0,54,19);
+    }
+    
+    void drawToggleButton (Graphics &g, ToggleButton &toggleButton, bool isMouseOverButton, bool isButtonDown)
+    {
+//        g.setColour(Colours::lightblue);
+        g.setColour(Colours::white);
+        g.drawLine(54, 0, 54, 19, 1);
+        
+        if(toggleButton.getToggleState())
+        {
+            g.fillRect(buttonSize);
+            g.drawImage(unwrapIcon_true, buttonSize);
+        }
+        else
+            g.drawImage(unwrapIcon_false, buttonSize);
+            
+        
+        if(isMouseOverButton || isButtonDown)
+        {
+            if(isButtonDown)
+            {
+                g.setColour(Colours::ghostwhite);
+                g.fillRect(buttonSize);
+                g.drawImage(unwrapIcon_true, buttonSize);
+            }
+        }
+    }
+    
+private:
+    Rectangle<float> buttonSize;
+    Image unwrapIcon_false = ImageCache::getFromMemory(pajAUanalyser::unWrap_false_png, pajAUanalyser::unWrap_false_pngSize);
+    Image unwrapIcon_true  = ImageCache::getFromMemory(pajAUanalyser::unWrap_true_png,  pajAUanalyser::unWrap_true_pngSize);
+};
+
+
+
+class LatencyButtonLookAndFeel : public LookAndFeel_V4
+{
+public:
+    LatencyButtonLookAndFeel()
+    {
+        buttonSize.setBounds(0,0,54,19);
+    }
+    
+
+    
+    void drawButtonBackground (Graphics &g, Button &button, const Colour &backgroundColour, bool isMouseOverButton, bool isButtonDown) override
+    {
+//        g.setColour(Colours::lightblue);
+        g.setColour(Colours::white);
+        g.drawLine(0, 0, 0, 19, 1);
+        
+        g.drawImage(latencyIcon_false, buttonSize);
+        
+        if(isMouseOverButton || isButtonDown)
+        {
+            if(isButtonDown)
+            {
+                g.setColour(Colours::ghostwhite);
+                g.fillRect(buttonSize);
+                g.drawImage(latencyIcon_true, buttonSize);
+            }
+        }
+    }
+    
+private:
+    Rectangle<float> buttonSize;
+    Image latencyIcon_false = ImageCache::getFromMemory(pajAUanalyser::latencyButton_false_png, pajAUanalyser::latencyButton_false_pngSize);
+    Image latencyIcon_true  = ImageCache::getFromMemory(pajAUanalyser::latencyButton_true_png,  pajAUanalyser::latencyButton_true_pngSize);
 };

@@ -68,7 +68,7 @@
 
 
 
-// STATUS IDs
+// CONNECTION SOCKET
 #define PAJ_PLAY       19
 
 
@@ -87,6 +87,7 @@
 #define MARG_X_RIGHT 10.0f
 #define MARG_Y_BOT   20.0f
 #define MARG_Y_TOP   23.0f
+#define FREQ_MARK_SIZE 25
 
 
 

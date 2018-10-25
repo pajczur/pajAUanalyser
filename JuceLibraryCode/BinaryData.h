@@ -8,8 +8,20 @@
 
 namespace pajAUanalyser
 {
+    extern const char*   unWrap_false_png;
+    const int            unWrap_false_pngSize = 574;
+
+    extern const char*   unWrap_true_png;
+    const int            unWrap_true_pngSize = 773;
+
+    extern const char*   latencyButton_false_png;
+    const int            latencyButton_false_pngSize = 507;
+
+    extern const char*   latencyButton_true_png;
+    const int            latencyButton_true_pngSize = 738;
+
     extern const char*   pajLogoYellow_png;
-    const int            pajLogoYellow_pngSize = 11005;
+    const int            pajLogoYellow_pngSize = 11487;
 
     extern const char*   magnitudeButton_false_png;
     const int            magnitudeButton_false_pngSize = 638;
@@ -63,7 +75,7 @@ namespace pajAUanalyser
     const int            buffToggleButton_true_pngSize = 1468;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 18;
+    const int namedResourceListSize = 22;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

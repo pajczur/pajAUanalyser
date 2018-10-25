@@ -41,7 +41,8 @@ void Display_Logarithmic::paint (Graphics& g)
 //        scaleNyquist = (log10(nyqFr)    - log10(lowEnd)) / (log10(topEnd) - log10(lowEnd));
 //        scaleSampRat = (log10(sampRat)  - log10(lowEnd)) / (log10(topEnd) - log10(lowEnd));
         
-        g.setColour(Colours::lightblue);
+//        g.setColour(Colours::lightblue);
+        g.setColour(Colours::white);
   
         
 //        g.drawLine((scale10Hz  * _winX)+margXLeft, margYTop, (scale10Hz    * _winX)+margXLeft, margYTop+ _winY+4.0f, lineThickness);
@@ -83,96 +84,100 @@ void Display_Logarithmic::paint (Graphics& g)
         g.drawLine((scale19000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale19000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
         g.drawLine((scale20000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale20000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, lineThickness);
         
+        // Freq mark size
+        int _x = FREQ_MARK_SIZE;
+        
 //        g.drawText("10",    margXLeft-31.0f + (scale10Hz*_winX),    getHeight()-margYBot, 60, 20, Justification::centred);
 
-        g.drawText("20",    MARG_X_LEFT-31.0f + (scale20Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+        g.drawText("20",    MARG_X_LEFT-(_x/2) + (scale20Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
 
         if(_winX>550)
-                g.drawText("30",    MARG_X_LEFT-31.0f + (scale30Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("30",    MARG_X_LEFT-(_x/2) + (scale30Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
         
         if(_winX>650)
-            g.drawText("40",    MARG_X_LEFT-31.0f + (scale40Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("40",    MARG_X_LEFT-(_x/2) + (scale40Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1000)
-            g.drawText("50",    MARG_X_LEFT-31.0f + (scale50Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("50",    MARG_X_LEFT-(_x/2) + (scale50Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
 
         if(_winX>1200)
-            g.drawText("60",    MARG_X_LEFT-31.0f + (scale60Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("60",    MARG_X_LEFT-(_x/2) + (scale60Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1400)
-            g.drawText("70",    MARG_X_LEFT-31.0f + (scale70Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("70",    MARG_X_LEFT-(_x/2) + (scale70Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1500)
-            g.drawText("80",    MARG_X_LEFT-31.0f + (scale80Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("80",    MARG_X_LEFT-(_x/2) + (scale80Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1500)
-            g.drawText("90",    MARG_X_LEFT-31.0f + (scale90Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("90",    MARG_X_LEFT-(_x/2) + (scale90Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
 
-        g.drawText("100",   MARG_X_LEFT-30.0f + (scale100Hz*_winX),   getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+        g.drawText("100",   MARG_X_LEFT-(_x/2) + (scale100Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
 
         if(_winX>500)
-            g.drawText("200",   MARG_X_LEFT-30.0f + (scale200Hz*_winX),  getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("200",   MARG_X_LEFT-(_x/2) + (scale200Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
         
         if(_winX>550)
-            g.drawText("300",   MARG_X_LEFT-30.0f + (scale300Hz*_winX),  getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("300",   MARG_X_LEFT-(_x/2) + (scale300Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>650)
-            g.drawText(".4k",   MARG_X_LEFT-30.0f + (scale400Hz*_winX),  getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText(".4k",   MARG_X_LEFT-(_x/2) + (scale400Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1000)
-            g.drawText(".5k",   MARG_X_LEFT-30.0f + (scale500Hz*_winX),  getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText(".5k",   MARG_X_LEFT-(_x/2) + (scale500Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1200)
-            g.drawText(".6k",   MARG_X_LEFT-30.0f + (scale600Hz*_winX),  getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText(".6k",   MARG_X_LEFT-(_x/2) + (scale600Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1400)
-            g.drawText(".7k",   MARG_X_LEFT-30.0f + (scale700Hz*_winX),  getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText(".7k",   MARG_X_LEFT-(_x/2) + (scale700Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1500)
-            g.drawText(".8k",   MARG_X_LEFT-30.0f + (scale800Hz*_winX),  getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText(".8k",   MARG_X_LEFT-(_x/2) + (scale800Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
         
         if(_winX>1500)
-            g.drawText(".9k",   MARG_X_LEFT-30.0f + (scale900Hz*_winX),  getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText(".9k",   MARG_X_LEFT-(_x/2) + (scale900Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
 
-        g.drawText("1k",    MARG_X_LEFT-30.0f + (scale1000Hz*_winX),   getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+        g.drawText("1k",    MARG_X_LEFT-(_x/2) + (scale1000Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>500)
-            g.drawText("2k",    MARG_X_LEFT-30.0f + (scale2000Hz*_winX),   getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("2k",    MARG_X_LEFT-(_x/2) + (scale2000Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>550)
-            g.drawText("3k",    MARG_X_LEFT-30.0f + (scale3000Hz*_winX),   getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("3k",    MARG_X_LEFT-(_x/2) + (scale3000Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
         
         if(_winX>650)
-            g.drawText("4k",    MARG_X_LEFT-30.0f + (scale4000Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("4k",    MARG_X_LEFT-(_x/2) + (scale4000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1000)
-            g.drawText("5k",    MARG_X_LEFT-30.0f + (scale5000Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("5k",    MARG_X_LEFT-(_x/2) + (scale5000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1200)
-            g.drawText("6k",    MARG_X_LEFT-30.0f + (scale6000Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("6k",    MARG_X_LEFT-(_x/2) + (scale6000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1400)
-            g.drawText("7k",    MARG_X_LEFT-30.0f + (scale7000Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("7k",    MARG_X_LEFT-(_x/2) + (scale7000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
         if(_winX>1500)
-            g.drawText("8k",    MARG_X_LEFT-30.0f + (scale8000Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("8k",    MARG_X_LEFT-(_x/2) + (scale8000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
         
         if(_winX>1500)
-            g.drawText("9k",    MARG_X_LEFT-30.0f + (scale9000Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("9k",    MARG_X_LEFT-(_x/2) + (scale9000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
 
-        g.drawText("10k",    MARG_X_LEFT-30.0f + (scale10000Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+        g.drawText("10k",    MARG_X_LEFT-(_x/2) + (scale10000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
         
         if(_winX>1500)
-            g.drawText("12k",    MARG_X_LEFT-30.0f + (scale12000Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("12k",    MARG_X_LEFT-(_x/2) + (scale12000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
         
         if(_winX>1100)
-            g.drawText("15k",    MARG_X_LEFT-30.0f + (scale15000Hz*_winX),    getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+            g.drawText("15k",    MARG_X_LEFT-(_x/2) + (scale15000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
         
-        g.drawText("20k",   MARG_X_LEFT-30.0f + (scale20000Hz*_winX),   getHeight()-MARG_Y_BOT, 60, 20, Justification::centred);
+        g.drawText("20k",   MARG_X_LEFT-(_x/2) + (scale20000Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
 
-        g.setColour(Colours::lightblue);
+//        g.setColour(Colours::lightblue);
+        
         g.drawLine(MARG_X_LEFT+_winX, MARG_Y_TOP, MARG_X_LEFT+_winX, MARG_Y_TOP+ _winY);
-        g.drawRect((float)(MARG_X_LEFT-0.5f), 3.0f, (float)(_winX+1.0f), (float)(MARG_Y_TOP-2.5));
+        g.drawRect((float)(MARG_X_LEFT-0.5f), 4.0f, (float)(408+1.0f), (float)(MARG_Y_TOP-3.5));
 //        g.fillRect((float)(margXLeft-1), 0.0f, (float)(_winX+2), (float)margYTop);
         
         if (graphTitle == MAGNITUDE)
@@ -216,13 +221,13 @@ void Display_Logarithmic::paint (Graphics& g)
     
     g.setColour (Colours::white);
     g.setFont (12.0f);
-    g.drawFittedText(" - " + graphTitle + " - ", ((getWidth()-MARG_X_LEFT-MARG_X_LEFT)/2.0)-50.0+MARG_X_LEFT, 8.5, 100, 10, Justification::centred, 1);
+    g.drawFittedText(" - " + graphTitle + " - ", ((488-MARG_X_LEFT-MARG_X_LEFT)/2.0)-40.0+MARG_X_LEFT, 8.5, 100, 10, Justification::centred, 1);
     
     if(channelQuantity>1) {
         g.setColour(PAJ_YELLOW);
-        g.drawFittedText("Left", ((getWidth()-MARG_X_LEFT-MARG_X_LEFT)/2.0)-50.0+MARG_X_LEFT -35, 8.5, 50, 10, Justification::centred, 1);
+        g.drawFittedText("L", ((488-MARG_X_LEFT-MARG_X_LEFT)/2.0)-40.0+MARG_X_LEFT -35, 8.5, 50, 10, Justification::centred, 1);
         g.setColour(PAJ_RED);
-        g.drawFittedText("Right", ((getWidth()-MARG_X_LEFT-MARG_X_LEFT)/2.0)-50.0+MARG_X_LEFT + 90, 8.5, 50, 10, Justification::centred, 1);
+        g.drawFittedText("R", ((488-MARG_X_LEFT-MARG_X_LEFT)/2.0)-40.0+MARG_X_LEFT + 90, 8.5, 50, 10, Justification::centred, 1);
     }
 }
 

@@ -100,8 +100,10 @@ private:
     
     
     //===================
-    TextButton latencyDetect; Label latencyDetectLabel;
-    ToggleButton pajUnwrap;     Label pajUnwrapLabel;
+    UnwrapButtonLookAndFeel unwrapButtonLookAndFeel;
+    LatencyButtonLookAndFeel latencyButtonLookAndFeel;
+    TextButton latencyDetect;
+    ToggleButton pajUnwrap;
     
     bool &isUnWrapToggled;
     

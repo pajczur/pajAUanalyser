@@ -82,7 +82,8 @@ PajAuanalyserAudioProcessorEditor::~PajAuanalyserAudioProcessorEditor()
 void PajAuanalyserAudioProcessorEditor::paint (Graphics& g)
 {
 //    g.fillAll(Colours::black);
-    g.fillAll(Colour(0x40, 0x44, 0x4c));
+//    g.fillAll(Colour(0x40, 0x44, 0x4c));
+    g.fillAll(Colour(0x3c, 0x3d, 0x3e));
 
     g.drawImage(pajLogo, logoSpace);
 }
@@ -93,12 +94,8 @@ void PajAuanalyserAudioProcessorEditor::resized()
     {
         processor.settingsToApprove = false;
     }
-    
-    pajUnwrap.setBounds(getWidth()-51, 60, 19, 17);
-    pajUnwrapLabel.setBounds(getWidth()-90, 61.5, 45, 12);
  
     drawingThread.wSetBounds(getWidth(), getHeight(), showPhaseBool);
-    
     processor.setSize(getWidth(), getHeight());
     
     drawingThread.notify();
@@ -200,9 +197,7 @@ void PajAuanalyserAudioProcessorEditor::clickShowPhase()
         drawingThread.wSetBounds(getWidth(), getHeight(), showPhaseBool);
         
         pajUnwrap.setVisible(showPhaseBool);
-        pajUnwrapLabel.setVisible(showPhaseBool);
         latencyDetect.setVisible(showPhaseBool);
-        latencyDetectLabel.setVisible(showPhaseBool);
 
         drawingThread.display_magni.setVisible(showMagniBool);
         drawingThread.display_phase.setVisible(showPhaseBool);
@@ -415,7 +410,8 @@ void PajAuanalyserAudioProcessorEditor::hintTimerCallback()
     {
         if(connectToSocket("127.0.0.1", 52425, 1000))
         {
-            sendFFTsizeToGenerator(clickedFFTsizeID);
+            updateButtons(clickedFFTsizeID, W_BUTTON_ON, W_CLICK);
+//            sendFFTsizeToGenerator(clickedFFTsizeID);
             waitForGenerator = false;
         }
     }
@@ -620,28 +616,22 @@ void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
     
     
     //===================
+    latencyDetect.setLookAndFeel(&latencyButtonLookAndFeel);
     addAndMakeVisible(&latencyDetect);
     latencyDetect.onClick = [this] { updateToggleState(&latencyDetect, LATENCY_ID); };
     latencyDetect.setAlwaysOnTop(true);
-    latencyDetect.setButtonText("LATENCY");
     
+    pajUnwrap.setLookAndFeel(&unwrapButtonLookAndFeel);
     addAndMakeVisible(&pajUnwrap);
     pajUnwrap.setAlwaysOnTop(true);
     pajUnwrap.onClick = [this] { updateToggleState(&pajUnwrap, UNWRAP_PHASE_ID); };
-    addAndMakeVisible(&pajUnwrapLabel);
-    pajUnwrapLabel.setJustificationType(Justification::right);
-    pajUnwrapLabel.setText("unwrap", dontSendNotification);
-    pajUnwrapLabel.setFont(wFontSize);
-    pajUnwrapLabel.setAlwaysOnTop(true);
     
     
     latencyDetect.setVisible(showPhaseBool);
-    latencyDetect.setBounds      ( 51, 60, 55, 17);
-    latencyDetect.setColour(TextButton::textColourOnId, Colours::yellow);
-    latencyDetect.setColour(TextButton::textColourOffId, Colours::yellow);
+    latencyDetect.setBounds(488-84, 59, 54, 19);
     
     pajUnwrap.setVisible(showPhaseBool);
-    pajUnwrapLabel.setVisible(showPhaseBool);
+    pajUnwrap.setBounds(50, 59, 54, 19);
 
     
     startTimer(WAIT_FOR_PREP_TO_PLAY_ID, 100);

@@ -14,7 +14,14 @@
         <FILE id="I6SN4h" name="PajFFT_Radix2.h" compile="0" resource="0" file="Source/PajFFT/PajFFT_Radix2.h"/>
       </GROUP>
       <GROUP id="{DAF587DF-E996-E9EB-4F83-451211D09C3C}" name="resources">
-        <FILE id="piI9AM" name="pajLogoYellow.png" compile="0" resource="1"
+        <FILE id="A6d6kL" name="unWrap_false.png" compile="0" resource="1"
+              file="Source/resources/unWrap_false.png"/>
+        <FILE id="qC3ejK" name="unWrap_true.png" compile="0" resource="1" file="Source/resources/unWrap_true.png"/>
+        <FILE id="v0mJ72" name="latencyButton_false.png" compile="0" resource="1"
+              file="Source/resources/latencyButton_false.png"/>
+        <FILE id="GgaKvR" name="latencyButton_true.png" compile="0" resource="1"
+              file="Source/resources/latencyButton_true.png"/>
+        <FILE id="SWLgbz" name="pajLogoYellow.png" compile="0" resource="1"
               file="Source/resources/pajLogoYellow.png"/>
         <FILE id="ZBfpRT" name="magnitudeButton_false.png" compile="0" resource="1"
               file="Source/resources/magnitudeButton_false.png"/>
@@ -78,9 +85,9 @@
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="pajAUanalyser" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
-                       optimisation="1"/>
+                       optimisation="6"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="pajAUanalyser" auBinaryLocation="/Library/Audio/Plug-Ins/Components/"
-                       optimisation="1"/>
+                       optimisation="6"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../../Applications/JUCE/modules"/>
