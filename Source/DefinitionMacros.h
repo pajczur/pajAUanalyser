@@ -9,8 +9,10 @@
 */
 
 // COLOURS AND LABELS
-#define PAJ_YELLOW Colour(0xff, 0xe7, 0x00)
-#define PAJ_RED    Colour(0xff, 0x65, 0x23)
+#define PAJ_YELLOW         Colour(0xff, 0xe7, 0x00)
+#define PAJ_RED            Colour(0xff, 0x65, 0x23)
+#define LINES_COLOUR       Colour(0xff, 0xff, 0xe2)
+#define BUTTON_DOWN_COLOUR Colour(0xff, 0x69, 0xb4)
 
 #define MAGNITUDE   "MAGNITUDE"
 #define PHASE_SHIFT "PHASE SHIFT"
@@ -55,6 +57,7 @@
 #define BYPASS_TIMER_ID   1
 #define WAIT_FOR_PREP_TO_PLAY_ID 2
 #define HINT_TIMER_ID 3
+#define LATENCY_BLINKING 4
 #define MSG_RECEIVED_TIMER_ID 50
 
 

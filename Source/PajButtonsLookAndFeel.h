@@ -11,6 +11,8 @@
 #pragma once
 #include "DefinitionMacros.h"
 
+
+
 class PajButtonsLookAndFeel : public LookAndFeel_V4
 {
 public:
@@ -63,10 +65,10 @@ public:
     {
         if(isMouseOverButton || isButtonDown)
         {
-            g.setColour(Colours::white);
+            g.setColour(LINES_COLOUR);
             
             if(isButtonDown)
-                g.setColour(Colours::ghostwhite);
+                g.setColour(BUTTON_DOWN_COLOUR);
             
             g.fillRect(buttonSize);
             g.drawImage(offIcon_true, buttonSize);
@@ -94,10 +96,10 @@ public:
     {
         if(isMouseOverButton || isButtonDown)
         {
-            g.setColour(Colours::white);
+            g.setColour(LINES_COLOUR);
             
             if(isButtonDown)
-                g.setColour(Colours::ghostwhite);
+                g.setColour(BUTTON_DOWN_COLOUR);
             
             g.fillRect(buttonSize);
             g.drawImage(resetIcon_true, buttonSize);
@@ -130,11 +132,10 @@ public:
     {
         if(isMouseOverButton || isButtonDown)
         {
-            g.setColour(Colours::white);
+            g.setColour(LINES_COLOUR);
             
             if(isButtonDown)
-                g.setColour(Colours::ghostwhite);
-//                g.setColour(Colours::lightskyblue);
+                g.setColour(BUTTON_DOWN_COLOUR);
             
             g.fillRect(buttonSize);
             g.drawImage(phaseIcon_true[showPhaseBool], buttonSize);
@@ -172,34 +173,22 @@ public:
     
     void drawToggleButton (Graphics &g, ToggleButton &toggleButton, bool isMouseOverButton, bool isButtonDown)
     {
-//        g.setColour(Colours::lightblue);
-        g.setColour(Colours::white);
+        g.setFont(12.0f);
+        g.setColour(LINES_COLOUR);
         g.drawLine(54, 0, 54, 19, 1);
+        g.drawText("UNWRAP", 0, 0, 54, 19, Justification::centred);
         
-        if(toggleButton.getToggleState())
+        if(toggleButton.getToggleState() || isButtonDown)
         {
             g.fillRect(buttonSize);
-            g.drawImage(unwrapIcon_true, buttonSize);
+            g.setColour(Colours::black);
+            g.drawText("UNWRAP", 0, 0, 54, 19, Justification::centred);
         }
-        else
-            g.drawImage(unwrapIcon_false, buttonSize);
-            
         
-        if(isMouseOverButton || isButtonDown)
-        {
-            if(isButtonDown)
-            {
-                g.setColour(Colours::ghostwhite);
-                g.fillRect(buttonSize);
-                g.drawImage(unwrapIcon_true, buttonSize);
-            }
-        }
     }
     
 private:
     Rectangle<float> buttonSize;
-    Image unwrapIcon_false = ImageCache::getFromMemory(pajAUanalyser::unWrap_false_png, pajAUanalyser::unWrap_false_pngSize);
-    Image unwrapIcon_true  = ImageCache::getFromMemory(pajAUanalyser::unWrap_true_png,  pajAUanalyser::unWrap_true_pngSize);
 };
 
 
@@ -210,31 +199,32 @@ public:
     LatencyButtonLookAndFeel()
     {
         buttonSize.setBounds(0,0,54,19);
+        blinkingCause=0;
+        isBlinking=false;
     }
-    
 
     
     void drawButtonBackground (Graphics &g, Button &button, const Colour &backgroundColour, bool isMouseOverButton, bool isButtonDown) override
     {
-//        g.setColour(Colours::lightblue);
-        g.setColour(Colours::white);
+        g.setFont(12.0f);
+        g.setColour(LINES_COLOUR);
         g.drawLine(0, 0, 0, 19, 1);
+        g.drawText("LATENCY", 0, 0, 54, 19, Justification::centred);
         
-        g.drawImage(latencyIcon_false, buttonSize);
-        
-        if(isMouseOverButton || isButtonDown)
+        if((!isBlinking && isButtonDown) || (blinkingCause%2))
         {
-            if(isButtonDown)
-            {
-                g.setColour(Colours::ghostwhite);
-                g.fillRect(buttonSize);
-                g.drawImage(latencyIcon_true, buttonSize);
-            }
+            g.fillRect(buttonSize);
+            g.setColour(Colours::black);
+            g.drawText("LATENCY", 0, 0, 54, 19, Justification::centred);
         }
+
+        
     }
     
 private:
     Rectangle<float> buttonSize;
-    Image latencyIcon_false = ImageCache::getFromMemory(pajAUanalyser::latencyButton_false_png, pajAUanalyser::latencyButton_false_pngSize);
-    Image latencyIcon_true  = ImageCache::getFromMemory(pajAUanalyser::latencyButton_true_png,  pajAUanalyser::latencyButton_true_pngSize);
+
+public:
+    std::atomic<int> blinkingCause;
+    std::atomic<bool> isBlinking;
 };

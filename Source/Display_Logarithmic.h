@@ -20,10 +20,15 @@ class Display_Logarithmic    : public Component
 public:
     Display_Logarithmic();
     ~Display_Logarithmic();
-//    void sliderValueChanged (Slider *slider) override;
 
-    void paint (Graphics&) override;
+    void paint (Graphics &g) override;
     void resized() override;
+    void drawFreqLines(Graphics &g);
+    void drawFreqText(Graphics &g);
+    void drawHorizontalLines(Graphics &g);
+    void drawDBtext(Graphics &g);
+    void drawDegreeText(Graphics &g);
+    void drawTitleBar(Graphics &g);
     int getDisplayHeight();
     int getDisplayWidth();
     int getDisplayMargXLeft();
@@ -81,13 +86,8 @@ private:
     float scale20000Hz;
     float scaleNyquist;
     float scaleSampRat;
-    
-    std::vector<Line<float>> freqLines;
-    
-//    Slider wZoom;
+
     GraphAnalyser *graphAnalyser;
-//    float aPlusMinus;
-//    float middlThumb;
     
     float _winX;
     float _winY;

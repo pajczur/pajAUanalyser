@@ -52,6 +52,7 @@ public:
     void waitForPrepToPlayTimerCallback();
     void hintTimerCallback();
     void msgReceivedTimerCallback();
+    void latencyBlinkingTimerCallback();
     
     
     //==============================================================================

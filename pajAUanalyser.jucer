@@ -14,33 +14,26 @@
         <FILE id="I6SN4h" name="PajFFT_Radix2.h" compile="0" resource="0" file="Source/PajFFT/PajFFT_Radix2.h"/>
       </GROUP>
       <GROUP id="{DAF587DF-E996-E9EB-4F83-451211D09C3C}" name="resources">
-        <FILE id="A6d6kL" name="unWrap_false.png" compile="0" resource="1"
-              file="Source/resources/unWrap_false.png"/>
-        <FILE id="qC3ejK" name="unWrap_true.png" compile="0" resource="1" file="Source/resources/unWrap_true.png"/>
-        <FILE id="v0mJ72" name="latencyButton_false.png" compile="0" resource="1"
-              file="Source/resources/latencyButton_false.png"/>
-        <FILE id="GgaKvR" name="latencyButton_true.png" compile="0" resource="1"
-              file="Source/resources/latencyButton_true.png"/>
+        <FILE id="KjAsUU" name="buffToggleButton_true.png" compile="0" resource="1"
+              file="Source/resources/buffToggleButton_true.png"/>
+        <FILE id="nBQlHj" name="magnitudeButton_false.png" compile="0" resource="1"
+              file="Source/resources/magnitudeButton_false.png"/>
+        <FILE id="c44dAE" name="magnitudeButton_true.png" compile="0" resource="1"
+              file="Source/resources/magnitudeButton_true.png"/>
+        <FILE id="hm9k3M" name="offButton_false.png" compile="0" resource="1"
+              file="Source/resources/offButton_false.png"/>
+        <FILE id="RTLgeG" name="offButton_true.png" compile="0" resource="1"
+              file="Source/resources/offButton_true.png"/>
+        <FILE id="M9hokM" name="phaseButton_false.png" compile="0" resource="1"
+              file="Source/resources/phaseButton_false.png"/>
+        <FILE id="aDb7SE" name="phaseButton_true.png" compile="0" resource="1"
+              file="Source/resources/phaseButton_true.png"/>
+        <FILE id="qlaZRt" name="resetButton_false.png" compile="0" resource="1"
+              file="Source/resources/resetButton_false.png"/>
+        <FILE id="xHe8SP" name="resetButton_true.png" compile="0" resource="1"
+              file="Source/resources/resetButton_true.png"/>
         <FILE id="SWLgbz" name="pajLogoYellow.png" compile="0" resource="1"
               file="Source/resources/pajLogoYellow.png"/>
-        <FILE id="ZBfpRT" name="magnitudeButton_false.png" compile="0" resource="1"
-              file="Source/resources/magnitudeButton_false.png"/>
-        <FILE id="DEmmLF" name="magnitudeButton_true.png" compile="0" resource="1"
-              file="Source/resources/magnitudeButton_true.png"/>
-        <FILE id="fhuBpL" name="offButton_false.png" compile="0" resource="1"
-              file="Source/resources/offButton_false.png"/>
-        <FILE id="XNc7YI" name="offButton_true.png" compile="0" resource="1"
-              file="Source/resources/offButton_true.png"/>
-        <FILE id="E1Nhby" name="phaseButton_false.png" compile="0" resource="1"
-              file="Source/resources/phaseButton_false.png"/>
-        <FILE id="tCQcM1" name="phaseButton_true.png" compile="0" resource="1"
-              file="Source/resources/phaseButton_true.png"/>
-        <FILE id="wVgwCB" name="resetButton_false.png" compile="0" resource="1"
-              file="Source/resources/resetButton_false.png"/>
-        <FILE id="wzmooj" name="resetButton_true.png" compile="0" resource="1"
-              file="Source/resources/resetButton_true.png"/>
-        <FILE id="J0HxkR" name="StartHere_ban.png" compile="0" resource="1"
-              file="Source/resources/StartHere_ban.png"/>
         <FILE id="Sx4XJ0" name="buffToggleButton_1024_false.png" compile="0"
               resource="1" file="Source/resources/buffToggleButton_1024_false.png"/>
         <FILE id="G5ECNd" name="buffToggleButton_2048_false.png" compile="0"
@@ -55,8 +48,6 @@
               resource="1" file="Source/resources/buffToggleButton_32768_false.png"/>
         <FILE id="KsxQLg" name="buffToggleButton_65536_false.png" compile="0"
               resource="1" file="Source/resources/buffToggleButton_65536_false.png"/>
-        <FILE id="ATiv3t" name="buffToggleButton_true.png" compile="0" resource="1"
-              file="Source/resources/buffToggleButton_true.png"/>
       </GROUP>
       <FILE id="R3m3TV" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

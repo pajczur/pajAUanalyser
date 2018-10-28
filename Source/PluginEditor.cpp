@@ -81,9 +81,10 @@ PajAuanalyserAudioProcessorEditor::~PajAuanalyserAudioProcessorEditor()
 //==============================================================================
 void PajAuanalyserAudioProcessorEditor::paint (Graphics& g)
 {
-//    g.fillAll(Colours::black);
+    g.fillAll(Colours::black);
 //    g.fillAll(Colour(0x40, 0x44, 0x4c));
-    g.fillAll(Colour(0x3c, 0x3d, 0x3e));
+//    g.fillAll(Colour(0x3c, 0x3d, 0x3e));
+//    g.fillAll(Colour(0x3c, 0x3d, 0x3e));
 
     g.drawImage(pajLogo, logoSpace);
 }
@@ -225,6 +226,9 @@ void PajAuanalyserAudioProcessorEditor::clickReset()
 
 void PajAuanalyserAudioProcessorEditor::clickDetectLatency()
 {
+    if(!isTimerRunning(LATENCY_BLINKING))
+        startTimer(LATENCY_BLINKING, 200);
+    
     processor.waitForLatDetect = 5*(int)processor.pajFFTsize;
         processor.wDetectLatency = true;
 }
@@ -319,6 +323,7 @@ void PajAuanalyserAudioProcessorEditor::timerCallback(int timerID)
         case WAIT_FOR_PREP_TO_PLAY_ID: waitForPrepToPlayTimerCallback(); return;
         case HINT_TIMER_ID:            hintTimerCallback();              return;
         case MSG_RECEIVED_TIMER_ID:    msgReceivedTimerCallback();       return;
+        case LATENCY_BLINKING:         latencyBlinkingTimerCallback();   return;
         default: return;
     }
 }
@@ -441,6 +446,21 @@ void PajAuanalyserAudioProcessorEditor::msgReceivedTimerCallback()
 {
     stopTimer(MSG_RECEIVED_TIMER_ID);
     pajMessageReceived = false;
+}
+
+void PajAuanalyserAudioProcessorEditor::latencyBlinkingTimerCallback()
+{
+    latencyButtonLookAndFeel.isBlinking = true;
+    latencyButtonLookAndFeel.blinkingCause++;
+    
+    if(latencyButtonLookAndFeel.blinkingCause > 8)
+    {
+        stopTimer(LATENCY_BLINKING);
+        latencyButtonLookAndFeel.blinkingCause=0;
+        latencyButtonLookAndFeel.isBlinking = false;
+    }
+    
+    latencyDetect.repaint();
 }
 
 
@@ -573,7 +593,7 @@ void PajAuanalyserAudioProcessorEditor::pajDrawAllComponents()
         addAndMakeVisible(&buffBut[i]);
         buffBut[i].setRadioGroupId(BUFF_BUTTON_RADIO_GROUP);
         buffBut[i].setAlwaysOnTop(true);
-        buffBut[i].setBounds ( MARG_X + BUF_BUT_X + i*SPACE_X-20, MARG_Y+3, 30, 30);
+        buffBut[i].setBounds ( MARG_X + BUF_BUT_X + i*SPACE_X-20, MARG_Y+6, 30, 30);
         
         
         switch(i)
