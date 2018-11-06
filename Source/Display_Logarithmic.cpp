@@ -29,8 +29,8 @@ void Display_Logarithmic::paint (Graphics& g)
     g.setFont (12.0f);
     g.setColour(LINES_COLOUR);
     
-    if(wNyquist>1)
-    {
+//    if(wNyquist>1)
+//    {
         _winX = getWidth() - MARG_X_LEFT - MARG_X_RIGHT;
         _winY = getHeight() - MARG_Y_BOT - MARG_Y_TOP;
         
@@ -43,7 +43,7 @@ void Display_Logarithmic::paint (Graphics& g)
             drawDBtext(g);
         else
             drawDegreeText(g);
-    }
+//    }
 }
 
 void Display_Logarithmic::resized()
@@ -71,12 +71,12 @@ int Display_Logarithmic::getDisplayMargYTop()
     return MARG_Y_TOP;
 }
 
-void Display_Logarithmic::setNyquist(float nyquistFreq)
+void Display_Logarithmic::setNyquist(/*float nyquistFreq*/)
 {
-    wNyquist = nyquistFreq;
-    topEnd = wNyquist;
+//    wNyquist = nyquistFreq;
+//    topEnd = wNyquist;
     
-    scale10Hz    = (log10(10.0f)    - log10(lowEnd)) / (log10(topEnd) - log10(lowEnd));
+//    scale10Hz    = (log10(10.0f)    - log10(lowEnd)) / (log10(topEnd) - log10(lowEnd));
     scale20Hz    = (log10(20.0f)    - log10(lowEnd)) / (log10(topEnd) - log10(lowEnd));
     scale30Hz    = (log10(30.0f)    - log10(lowEnd)) / (log10(topEnd) - log10(lowEnd));
     scale40Hz    = (log10(40.0f)    - log10(lowEnd)) / (log10(topEnd) - log10(lowEnd));
@@ -135,49 +135,46 @@ void Display_Logarithmic::whatToDisplay(GraphAnalyser &graph)
 
 void Display_Logarithmic::drawFreqLines(Graphics &g)
 {
-    float lineThickness = 0.9f;
-    float altLineThickness = 0.3f;
+    g.drawLine((scale20Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale20Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, mainLineThickness);
     
-    g.drawLine((scale20Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale20Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, lineThickness);
+    g.setOpacity(linesOpacity);
     
-    g.setOpacity(0.4);
-    
-    g.drawLine((scale30Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale30Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale40Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale40Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale50Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale50Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale60Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale60Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale70Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale70Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale80Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale80Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale90Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale90Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale100Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale100Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, lineThickness);
-    g.drawLine((scale200Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale200Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale300Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale300Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale400Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale400Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale500Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale500Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale600Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale600Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale700Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale700Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale800Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale800Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale900Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale900Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale1000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale1000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, lineThickness);
-    g.drawLine((scale2000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale2000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale3000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale3000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale4000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale4000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale5000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale5000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale6000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale6000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale7000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale7000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale8000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale8000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale9000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale9000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale10000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale10000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, lineThickness);
-    g.drawLine((scale11000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale11000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale12000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale12000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale13000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale13000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale14000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale14000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale15000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale15000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale16000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale16000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale17000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale17000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale18000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale18000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale19000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale19000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, altLineThickness);
-    g.drawLine((scale20000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale20000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY+4.0f, lineThickness);
+    g.drawLine((scale30Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale30Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale40Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale40Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale50Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale50Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale60Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale60Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale70Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale70Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale80Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale80Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale90Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale90Hz    * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale100Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale100Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, mainLineThickness);
+    g.drawLine((scale200Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale200Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale300Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale300Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale400Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale400Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale500Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale500Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale600Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale600Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale700Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale700Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale800Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale800Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale900Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale900Hz   * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale1000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale1000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, mainLineThickness);
+    g.drawLine((scale2000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale2000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale3000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale3000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale4000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale4000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale5000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale5000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale6000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale6000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale7000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale7000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale8000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale8000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale9000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale9000Hz  * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale10000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale10000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, mainLineThickness);
+    g.drawLine((scale11000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale11000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale12000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale12000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale13000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale13000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale14000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale14000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale15000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale15000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale16000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale16000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale17000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale17000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale18000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale18000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale19000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale19000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, altLineThickness);
+    g.drawLine((scale20000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP, (scale20000Hz * _winX)+MARG_X_LEFT, MARG_Y_TOP+ _winY, mainLineThickness);
     
     g.setOpacity(1.0f);
     g.drawLine(MARG_X_LEFT+_winX, MARG_Y_TOP, MARG_X_LEFT+_winX, MARG_Y_TOP+ _winY);
@@ -188,116 +185,120 @@ void Display_Logarithmic::drawFreqText(Graphics &g)
 {
     int _x = FREQ_MARK_SIZE;
     
-    g.drawText("20",    MARG_X_LEFT-(_x/2) + (scale20Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+    g.drawText("20",  MARG_X_LEFT-(_x/2) + (scale20Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+    g.drawText("100", MARG_X_LEFT-(_x/2) + (scale100Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+    g.drawText("1k",  MARG_X_LEFT-(_x/2) + (scale1000Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+    g.drawText("10k", MARG_X_LEFT-(_x/2) + (scale10000Hz*_winX), getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+    g.drawText("20k", MARG_X_LEFT-(_x/2) + (scale20000Hz*_winX), getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
     
-    if(_winX>550)
-        g.drawText("30",    MARG_X_LEFT-(_x/2) + (scale30Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>650)
-        g.drawText("40",    MARG_X_LEFT-(_x/2) + (scale40Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1000)
-        g.drawText("50",    MARG_X_LEFT-(_x/2) + (scale50Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1200)
-        g.drawText("60",    MARG_X_LEFT-(_x/2) + (scale60Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1400)
-        g.drawText("70",    MARG_X_LEFT-(_x/2) + (scale70Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1500)
-        g.drawText("80",    MARG_X_LEFT-(_x/2) + (scale80Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1500)
-        g.drawText("90",    MARG_X_LEFT-(_x/2) + (scale90Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    g.drawText("100",   MARG_X_LEFT-(_x/2) + (scale100Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>500)
-        g.drawText("200",   MARG_X_LEFT-(_x/2) + (scale200Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>550)
-        g.drawText("300",   MARG_X_LEFT-(_x/2) + (scale300Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>650)
-        g.drawText(".4k",   MARG_X_LEFT-(_x/2) + (scale400Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1000)
-        g.drawText(".5k",   MARG_X_LEFT-(_x/2) + (scale500Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1200)
-        g.drawText(".6k",   MARG_X_LEFT-(_x/2) + (scale600Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1400)
-        g.drawText(".7k",   MARG_X_LEFT-(_x/2) + (scale700Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1500)
-        g.drawText(".8k",   MARG_X_LEFT-(_x/2) + (scale800Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1500)
-        g.drawText(".9k",   MARG_X_LEFT-(_x/2) + (scale900Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    g.drawText("1k",    MARG_X_LEFT-(_x/2) + (scale1000Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>500)
-        g.drawText("2k",    MARG_X_LEFT-(_x/2) + (scale2000Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>550)
-        g.drawText("3k",    MARG_X_LEFT-(_x/2) + (scale3000Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>650)
-        g.drawText("4k",    MARG_X_LEFT-(_x/2) + (scale4000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1000)
-        g.drawText("5k",    MARG_X_LEFT-(_x/2) + (scale5000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1200)
-        g.drawText("6k",    MARG_X_LEFT-(_x/2) + (scale6000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1400)
-        g.drawText("7k",    MARG_X_LEFT-(_x/2) + (scale7000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1500)
-        g.drawText("8k",    MARG_X_LEFT-(_x/2) + (scale8000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1500)
-        g.drawText("9k",    MARG_X_LEFT-(_x/2) + (scale9000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    g.drawText("10k",    MARG_X_LEFT-(_x/2) + (scale10000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1500)
-        g.drawText("12k",    MARG_X_LEFT-(_x/2) + (scale12000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    if(_winX>1100)
-        g.drawText("15k",    MARG_X_LEFT-(_x/2) + (scale15000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
-    
-    g.drawText("20k",   MARG_X_LEFT-(_x/2) + (scale20000Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+    if(_winX>500) {
+        g.setOpacity(0.5f);
+        
+        g.drawText("200", MARG_X_LEFT-(_x/2) + (scale200Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+        g.drawText("2k",  MARG_X_LEFT-(_x/2) + (scale2000Hz*_winX), getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+        
+        if(_winX>550) {
+            g.drawText("30",  MARG_X_LEFT-(_x/2) + (scale30Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+            g.drawText("300", MARG_X_LEFT-(_x/2) + (scale300Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+            g.drawText("3k",  MARG_X_LEFT-(_x/2) + (scale3000Hz*_winX), getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+            
+            if(_winX>650) {
+                g.drawText("40",  MARG_X_LEFT-(_x/2) + (scale40Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                g.drawText(".4k", MARG_X_LEFT-(_x/2) + (scale400Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                g.drawText("4k",  MARG_X_LEFT-(_x/2) + (scale4000Hz*_winX), getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                
+                if(_winX>1000) {
+                    g.drawText("50",    MARG_X_LEFT-(_x/2) + (scale50Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                    g.drawText(".5k",   MARG_X_LEFT-(_x/2) + (scale500Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                    g.drawText("5k",    MARG_X_LEFT-(_x/2) + (scale5000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                    
+                    if(_winX>1100) {
+                        g.drawText("15k",    MARG_X_LEFT-(_x/2) + (scale15000Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                        
+                        if(_winX>1200) {
+                            g.drawText("60",  MARG_X_LEFT-(_x/2) + (scale60Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                            g.drawText(".6k", MARG_X_LEFT-(_x/2) + (scale600Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                            g.drawText("6k",  MARG_X_LEFT-(_x/2) + (scale6000Hz*_winX), getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                            
+                            if(_winX>1400) {
+                                g.drawText("70",  MARG_X_LEFT-(_x/2) + (scale70Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                g.drawText(".7k", MARG_X_LEFT-(_x/2) + (scale700Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                g.drawText("7k",  MARG_X_LEFT-(_x/2) + (scale7000Hz*_winX), getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                
+                                if(_winX>1500) {
+                                    g.drawText("80",  MARG_X_LEFT-(_x/2) + (scale80Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                    g.drawText("90",  MARG_X_LEFT-(_x/2) + (scale90Hz*_winX),    getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                    g.drawText(".8k", MARG_X_LEFT-(_x/2) + (scale800Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                    g.drawText(".9k", MARG_X_LEFT-(_x/2) + (scale900Hz*_winX),   getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                    g.drawText("8k",  MARG_X_LEFT-(_x/2) + (scale8000Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                    g.drawText("9k",  MARG_X_LEFT-(_x/2) + (scale9000Hz*_winX),  getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                    g.drawText("12k", MARG_X_LEFT-(_x/2) + (scale12000Hz*_winX), getHeight()-MARG_Y_BOT, _x, 20, Justification::centred);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 
 void Display_Logarithmic::drawHorizontalLines(Graphics &g)
 {
-    g.drawLine(MARG_X_LEFT-4, MARG_Y_TOP, MARG_X_LEFT+_winX, MARG_Y_TOP, 1.0f);
-    g.setOpacity(0.4f);
+    g.drawLine(MARG_X_LEFT, MARG_Y_TOP, MARG_X_LEFT+_winX, MARG_Y_TOP, edgeThickness);
+    g.setOpacity(linesOpacity);
     
     for (int i=1; i<4; i++) {
-        g.drawLine(MARG_X_LEFT-4, ((float)i*_winY/4.0f)+MARG_Y_TOP, MARG_X_LEFT+_winX, ((float)i*_winY/4.0f)+MARG_Y_TOP, 0.6f);
+        g.drawLine(MARG_X_LEFT, ((float)i*_winY/4.0f)+MARG_Y_TOP, MARG_X_LEFT+_winX, ((float)i*_winY/4.0f)+MARG_Y_TOP, mainLineThickness);
     }
     for (int i=0; i<4; i++) {
-        g.drawLine(MARG_X_LEFT-4, ((float)i*_winY/4.0f)+MARG_Y_TOP+(_winY/8.0f), MARG_X_LEFT+_winX, ((float)i*_winY/4.0f)+MARG_Y_TOP+(_winY/8.0f), 0.2f);
+        g.drawLine(MARG_X_LEFT, ((float)i*_winY/4.0f)+MARG_Y_TOP+(_winY/8.0f), MARG_X_LEFT+_winX, ((float)i*_winY/4.0f)+MARG_Y_TOP+(_winY/8.0f), _winY<400?altLineThickness:mainLineThickness);
     }
     
+    if(_winY >= 400)
+        for (int i=0; i<8; i++) {
+            g.drawLine(MARG_X_LEFT, ((float)i*_winY/8.0f)+MARG_Y_TOP+(_winY/16.0f), MARG_X_LEFT+_winX, ((float)i*_winY/8.0f)+MARG_Y_TOP+(_winY/16.0f), altLineThickness);
+        }
+
     g.setOpacity(1.0f);
-    g.drawLine(MARG_X_LEFT-4, (4*_winY/4.0f)+MARG_Y_TOP, MARG_X_LEFT+_winX, (4*_winY/4.0f)+MARG_Y_TOP, 1.0f);
+    g.drawLine(MARG_X_LEFT, (4*_winY/4.0f)+MARG_Y_TOP, MARG_X_LEFT+_winX, (4*_winY/4.0f)+MARG_Y_TOP, edgeThickness);
 }
 
 void Display_Logarithmic::drawDBtext(Graphics &g)
 {
-    g.drawText( " 24dB",   MARG_X_LEFT-47, (0*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
-    g.drawText( " 12dB",   MARG_X_LEFT-47, (1*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
-    g.drawText( "  0dB",   MARG_X_LEFT-47, (2*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
-    g.drawText( "-12dB",   MARG_X_LEFT-47, (3*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
-    g.drawText( "-24dB",   MARG_X_LEFT-47, (4*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    g.drawText( " 24 dB",   MARG_X_LEFT-47, (0*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    g.drawText( " 12 dB",   MARG_X_LEFT-47, (1*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    g.drawText( "  0 dB",   MARG_X_LEFT-47, (2*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    g.drawText( "-12 dB",   MARG_X_LEFT-47, (3*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    g.drawText( "-24 dB",   MARG_X_LEFT-47, (4*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    
+    if(_winY >= 400)
+    {
+        if(_winY <= 625)
+            g.setOpacity(0.5f);
+        else
+            g.setOpacity(1.0f);
+        
+        g.drawText( " 18 dB",   MARG_X_LEFT-47, (1*_winY/8.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( "  6 dB",   MARG_X_LEFT-47, (3*_winY/8.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( " -6 dB",   MARG_X_LEFT-47, (5*_winY/8.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( "-18 dB",   MARG_X_LEFT-47, (7*_winY/8.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    }
+    
+    if(_winY >= 625)
+    {
+        g.setOpacity(0.5f);
+        
+        g.drawText( " 21 dB",   MARG_X_LEFT-47, (1 *_winY/16.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( " 15 dB",   MARG_X_LEFT-47, (3 *_winY/16.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( "  9 dB",   MARG_X_LEFT-47, (5 *_winY/16.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( "  3 dB",   MARG_X_LEFT-47, (7 *_winY/16.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( " -3 dB",   MARG_X_LEFT-47, (9 *_winY/16.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( " -9 dB",   MARG_X_LEFT-47, (11*_winY/16.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( "-15 dB",   MARG_X_LEFT-47, (13*_winY/16.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( "-21 dB",   MARG_X_LEFT-47, (15*_winY/16.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    }
 }
 
 
@@ -309,12 +310,25 @@ void Display_Logarithmic::drawDegreeText(Graphics &g)
     g.drawText( "   0"+degreesymbol,   MARG_X_LEFT-47, (2*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
     g.drawText( " -90"+degreesymbol,   MARG_X_LEFT-47, (3*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
     g.drawText( "-180"+degreesymbol,   MARG_X_LEFT-47, (4*_winY/4.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    
+    if(_winY >= 400)
+    {
+        if(_winY <= 625)
+            g.setOpacity(0.5f);
+        else
+            g.setOpacity(1.0f);
+        
+        g.drawText( " 135"+degreesymbol,   MARG_X_LEFT-47, (1*_winY/8.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( "  45"+degreesymbol,   MARG_X_LEFT-47, (3*_winY/8.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( " -45"+degreesymbol,   MARG_X_LEFT-47, (5*_winY/8.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+        g.drawText( "-135"+degreesymbol,   MARG_X_LEFT-47, (7*_winY/8.0f)+MARG_Y_TOP-9,  40, 20, Justification::right);
+    }
 }
 
 
 void Display_Logarithmic::drawTitleBar(Graphics &g)
 {
-    g.drawRect((float)(MARG_X_LEFT-0.5f), 4.0f, (float)(408+1.0f), (float)(MARG_Y_TOP-3.5));
+    g.drawRect((float)(MARG_X_LEFT-0.5f), 4.0f, (float)(408+1.0f), (float)(MARG_Y_TOP-3.5), edgeThickness);
 
     g.setFont (12.0f);
     g.drawFittedText(" - " + graphTitle + " - ", ((488-MARG_X_LEFT-MARG_X_LEFT)/2.0)-40.0+MARG_X_LEFT, 8.5, 100, 10, Justification::centred, 1);

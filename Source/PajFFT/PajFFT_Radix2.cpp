@@ -69,6 +69,8 @@ bool PajFFT_Radix2::wSettings (float sampleRate, float bufferSize)
     setSampleRate(sampleRate);
     setBufferSize(bufferSize);
     
+    wTopEndIndex = ceil(bufferSize / (sampleRate / TOP_END_IN_HERTZ));
+    
     if(resetData())
         return SETTINGS_READY;
     else
@@ -210,7 +212,7 @@ void PajFFT_Radix2::lastStepFFT (int &rdx2, std::vector<std::complex<float>> &tw
 {
     for(int k=0; k<wBufferSize/pow(2, rdx2+1); k++)
     {
-        for(int n=0; n<(wBufferSize/2)+1; n++)
+        for(int n=0; n<wTopEndIndex+1; n++)
         {
             sN0[rdx2][k][n] = sN0[rdx2-1] [2*k][n%(int)pow(2, rdx2)]
                             +

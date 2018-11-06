@@ -86,11 +86,14 @@
 
 
 // DISPLAY LAYOUT
-#define MARG_X_LEFT  50.0f
-#define MARG_X_RIGHT 10.0f
-#define MARG_Y_BOT   20.0f
-#define MARG_Y_TOP   23.0f
+#define MARG_X_LEFT    50.0f
+#define MARG_X_RIGHT   10.0f
+#define MARG_Y_BOT     20.0f
+#define MARG_Y_TOP     23.0f
 #define FREQ_MARK_SIZE 25
+
+#define LOW_END_IN_HERTZ 20.0f
+#define TOP_END_IN_HERTZ 20000.0f
 
 
 

@@ -108,7 +108,7 @@ public:
     std::atomic<bool> waitForSettings;
     int wWidth=488;
     int wHeight=300;
-    bool isUnWrapToggled = false;
+    bool isUnWrapToggled = true;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PajAuanalyserAudioProcessor)

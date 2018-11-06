@@ -175,16 +175,34 @@ public:
     {
         g.setFont(12.0f);
         g.setColour(LINES_COLOUR);
-        g.drawLine(54, 0, 54, 19, 1);
-        g.drawText("UNWRAP", 0, 0, 54, 19, Justification::centred);
+        g.drawLine(53, 0, 53, 19, 1);
         
-        if(toggleButton.getToggleState() || isButtonDown)
+        if(!isButtonDown)
         {
-            g.fillRect(buttonSize);
-            g.setColour(Colours::black);
-            g.drawText("UNWRAP", 0, 0, 54, 19, Justification::centred);
+            if(!toggleButton.getToggleState())
+            {
+                g.drawText("UNWRAP", 0, 0, 54, 19, Justification::centred);
+            }
+            else
+            {
+                g.fillRect(buttonSize);
+                g.setColour(Colours::black);
+                g.drawText("UNWRAP", 0, 0, 54, 19, Justification::centred);
+            }
         }
-        
+        else
+        {
+            if(!toggleButton.getToggleState())
+            {
+                g.fillRect(buttonSize);
+                g.setColour(Colours::black);
+                g.drawText("UNWRAP", 0, 0, 54, 19, Justification::centred);
+            }
+            else
+            {
+                g.drawText("UNWRAP", 0, 0, 54, 19, Justification::centred);
+            }
+        }
     }
     
 private:
@@ -208,7 +226,7 @@ public:
     {
         g.setFont(12.0f);
         g.setColour(LINES_COLOUR);
-        g.drawLine(0, 0, 0, 19, 1);
+        g.drawLine(1, 0, 1, 19, 1);
         g.drawText("LATENCY", 0, 0, 54, 19, Justification::centred);
         
         if((!isBlinking && isButtonDown) || (blinkingCause%2))

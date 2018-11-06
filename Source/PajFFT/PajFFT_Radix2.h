@@ -63,11 +63,13 @@ public:
     float                  phaseCalculator          (std::complex<float> &fftOutput, long index);
 
     
+    // == VARIABLES =================================================================
 private:
     double fPi;
     
     float wSampleRate;
     float wBufferSize;
+    float wTopEndIndex;
     int   dividerInt;
     float dividerFloat;
     

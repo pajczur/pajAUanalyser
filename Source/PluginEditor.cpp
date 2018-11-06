@@ -82,9 +82,6 @@ PajAuanalyserAudioProcessorEditor::~PajAuanalyserAudioProcessorEditor()
 void PajAuanalyserAudioProcessorEditor::paint (Graphics& g)
 {
     g.fillAll(Colours::black);
-//    g.fillAll(Colour(0x40, 0x44, 0x4c));
-//    g.fillAll(Colour(0x3c, 0x3d, 0x3e));
-//    g.fillAll(Colour(0x3c, 0x3d, 0x3e));
 
     g.drawImage(pajLogo, logoSpace);
 }

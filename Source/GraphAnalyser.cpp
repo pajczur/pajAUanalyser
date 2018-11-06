@@ -13,7 +13,7 @@
 
 
 //==============================================================================
-GraphAnalyser::GraphAnalyser() : pajUnwrapping(false)
+GraphAnalyser::GraphAnalyser() : pajUnwrapping(true)
 {
     staticPath.resize(10000);
 }
@@ -38,15 +38,7 @@ void GraphAnalyser::wSettings(std::vector<float> &fftSourceData, float buffSizz)
 
 void GraphAnalyser::setWindScaleSettings(float &sampRat, float &wBuffSiz)
 {
-    wNyquist = sampRat/2.0f;
-    
-    logScaleWidth = wNyquist/(wBuffSiz/2.0);
-    
-//    float wZoomMin = 10.0f;
-    float wZoomMax = wNyquist;
-
-    lowEnd = 20.0f;
-    topEnd = pow(10.0, wZoomMax*log10(wNyquist)/wNyquist);
+    logScaleWidth = sampRat/wBuffSiz;
     
     if(log10(topEnd) - log10(lowEnd) != 0.0)
         dispLogScale = ( (double)getWidth() ) / ( log10(topEnd) - log10(lowEnd));

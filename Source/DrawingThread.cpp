@@ -63,8 +63,8 @@ bool DrawingThread::pajSettings(int numberOfChannels, float fftSize, float sampR
     
     display_magni.channelQuantity = numChannels;
     display_phase.channelQuantity = numChannels;
-    display_magni.setNyquist(sampRate/2.0f);
-    display_phase.setNyquist(sampRate/2.0f);
+    display_magni.setNyquist(/*sampRate/2.0f*/);
+    display_phase.setNyquist(/*sampRate/2.0f*/);
 
     wOutput.resize(numChannels);
     

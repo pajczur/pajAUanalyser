@@ -55,13 +55,12 @@ private:
     float fLowEndIndex;
     float zero_dB;
     float winWidth;
-    float wNyquist;
     int outType;
     float dispLogScale;
     float logScaleWidth;
     
-    float lowEnd;
-    float topEnd;
+    float lowEnd = LOW_END_IN_HERTZ;
+    float topEnd = TOP_END_IN_HERTZ;
     
     float yCordScale;
     

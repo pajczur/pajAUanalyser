@@ -33,20 +33,24 @@ public:
     int getDisplayWidth();
     int getDisplayMargXLeft();
     int getDisplayMargYTop();
-    void setNyquist(float nyquistFreq);
+    void setNyquist(/*float nyquistFreq*/);
     void whatToDisplay(GraphAnalyser &graph);
     
     String graphTitle;
 
 private:
-    float wNyquist = 1.0f;
-    float topEnd;
-    float lowEnd = 20.0f;
+    float mainLineThickness = 0.9f;
+    float altLineThickness = 0.3f;
+    float edgeThickness = 1.0f;
+    float linesOpacity = 0.55f;
+//    float wNyquist = 1.0f;
+    float lowEnd = LOW_END_IN_HERTZ;
+    float topEnd = TOP_END_IN_HERTZ;
     float nyqFr;
     float sampRat;
     float sampRatMark;
     
-    float scale10Hz   ;
+//    float scale10Hz   ;
     float scale20Hz   ;
     float scale30Hz   ;
     float scale40Hz   ;
