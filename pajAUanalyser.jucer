@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="DZZypE" name="pajAUanalyser" projectType="audioplug" jucerVersion="5.3.2"
+<JUCERPROJECT id="DZZypE" name="pajAUanalyser" projectType="audioplug" jucerVersion="5.4.0"
               bundleIdentifier="com.pajczur.pajAUanalyser" pluginFormats="buildAU"
               companyName="Pajczur" companyCopyright="Pajczur &amp; co." pluginName="pajAUanalyser"
               pluginDesc="pajAUanalyser" pluginManufacturer="Pajczur" pluginManufacturerCode="Paju"
