@@ -246,7 +246,6 @@ void Display_Logarithmic::drawFreqText(Graphics &g)
 
 void Display_Logarithmic::drawHorizontalLines(Graphics &g)
 {
-    g.drawLine(MARG_X_LEFT, MARG_Y_TOP, MARG_X_LEFT+_winX, MARG_Y_TOP, edgeThickness);
     g.setOpacity(linesOpacity);
     
     for (int i=1; i<4; i++) {
@@ -262,6 +261,7 @@ void Display_Logarithmic::drawHorizontalLines(Graphics &g)
         }
 
     g.setOpacity(1.0f);
+    g.drawLine(MARG_X_LEFT, MARG_Y_TOP, MARG_X_LEFT+_winX, MARG_Y_TOP, edgeThickness);
     g.drawLine(MARG_X_LEFT, (4*_winY/4.0f)+MARG_Y_TOP, MARG_X_LEFT+_winX, (4*_winY/4.0f)+MARG_Y_TOP, edgeThickness);
 }
 
